@@ -1,0 +1,149 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-badge.css';
+import { sizes, types, colors, styles, colorTokens, render, chip, variantCount } from '../../data/badge';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['colors', 'Colors and styles'],
+  ['types', 'Types'],
+  ['sizes', 'Sizes and shape'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const colorNotes: Record<string, string> = { Main: 'Brand', Neutral: 'Default', Green: 'Success', Orange: 'Warning', Blue: 'Info', Red: 'Error' };
+const typeTiles: [string, Parameters<typeof render>[0]][] = [
+  ['Basic', { type: 'Basic', text: 'Draft' }],
+  ['Dot', { type: 'Dot', text: 'Live', color: 'Green' }],
+  ['Icon', { type: 'Icon', text: 'Beta', color: 'Blue' }],
+  ['Number', { type: 'Basic', number: true, num: '12', style: 'Filled', color: 'Red', rounded: true }],
+];
+const specs: [string, string, string][] = [
+  ['Height', '—', '20 px, 16 px at Small'],
+  ['Padding', '—', '2 / 8 px, 2 / 4 px for Icon and Dot'],
+  ['Radius', 'radius-6', '6 px, 999 px when rounded'],
+  ['Text', '—', 'Inter Medium 12/16, 10/12 at Small'],
+  ['Number', '—', '20 × 20 px, 18 × 16 px at Small'],
+  ['Dot', '—', '4 px in a 12 px frame, 2 px to the text'],
+  ['Icon', '—', '12 px, 10 px at Small'],
+  ...colors.map((c): [string, string, string] => [`${c}`, colorTokens[c][0], colorTokens[c][1]]),
+  ...colors.map((c): [string, string, string] => [`${c}, light`, colorTokens[c][2], colorTokens[c][3]]),
+  ['Filled text', 'text/white-0', '#FFFFFF'],
+  ['White fill', 'bg/white-0', '#FFFFFF'],
+  ['Stroke', '—', '1 px inside, the color’s base'],
+];
+---
+<DocPage
+  title="Badge"
+  description="Badges label status, categories and counts in a compact pill. Explore every type, color, style and size of the Unictive badge."
+  intro="Badges are small labels for a status, a category or a count, next to the thing they describe"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Colors', colors.length], ['Styles', styles.length]]}
+>
+  <Section id="playground" label="Playground" desc="Build a badge, then change its text. Numbers work on Basic and Dot, icons on the Icon type">
+    <form class="pg" data-playground data-kind="badge" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="size" label="Size" options={sizes} />
+        <PgSelect name="type" label="Type" options={types} />
+        <PgSelect name="color" label="Color" options={colors} />
+        <PgSelect name="style" label="Style" options={styles} value="Light" />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="rounded" /><span>Rounded</span></label>
+        <label class="toggle"><input type="checkbox" name="number" /><span>Number</span></label>
+        <label class="toggle"><input type="checkbox" name="left" checked /><span>Left icon</span></label>
+        <label class="toggle"><input type="checkbox" name="right" checked /><span>Right icon</span></label>
+        <label class="text-field">
+          <span class="label muted">Text</span>
+          <input type="text" name="text" value="Badge" maxlength="24" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div data-host><Fragment set:html={render({})} /></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ size: 'Medium', type: 'Basic', color: 'Main', style: 'Light', number: false, rounded: false })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="colors" label="Colors and styles" desc="Six colors in four styles. Light is the default; Filled stands out the most, so keep it for one badge per view">
+    <div class="grid2">
+      {styles.map((st) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{st}</span></span>
+          <span class="tile-body"><span class={st === 'White' ? 'surface' : ''}><span class="tile-wrap">{colors.map((c) => <Fragment set:html={render({ color: c, style: st, text: colorNotes[c] })} />)}</span></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="types" label="Types" desc="Basic for labels, Dot for live states, Icon for removable filters, Number for counts">
+    <div class="grid4">
+      {typeTiles.map(([name, o]) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{name}</span></span>
+          <span class="tile-body"><Fragment set:html={render(o)} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes and shape" desc="Medium next to body text, Small inside dense rows and tabs. Rounded reads as a status pill">
+    <div class="grid4">
+      {sizes.map((z) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{z}</span><span class="label muted">{z === 'Medium' ? 20 : 16} px</span></span>
+          <span class="tile-body"><Fragment set:html={render({ size: z, type: 'Dot', color: 'Green', text: 'Active' })} /></span>
+        </div>
+      ))}
+      {[false, true].map((r) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">Rounded {String(r)}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ rounded: r, color: 'Orange', text: 'Pending' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['An item has a status people scan for, like Draft, Live or Overdue', 'A count matters, like unread messages on a tab', 'A filter people picked can be removed with one click']}
+      avoid={['The label is a long sentence, use plain text', 'People need to act on it, use a Button', 'The message needs space and an explanation, use an Alert']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Use one or two words and the color that matches the meaning, green for done, red for a problem"
+      dontText="Don’t color badges at random, people read color as status and will guess wrong"
+    >
+      <Fragment slot="do"><Fragment set:html={render({ type: 'Dot', color: 'Green', text: 'Paid' })} /><Fragment set:html={render({ type: 'Dot', color: 'Red', text: 'Overdue' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={render({ color: 'Red', text: 'Paid' })} /><Fragment set:html={render({ color: 'Green', text: 'Overdue' })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Badge tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Tab Menu', 'Tabs with a count'],
+      ['Alert', 'Longer status messages'],
+      ['Tooltip', 'Explain a short label'],
+      ['Button', 'When it needs to act'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

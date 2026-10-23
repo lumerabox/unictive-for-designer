@@ -1,0 +1,139 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-progress.css';
+import { states, circleSizes, render, bar, circle, chip, variantCount } from '../../data/progress-bar';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['bar', 'Bar indicator'],
+  ['states', 'States'],
+  ['circular', 'Circular'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const pcts = [0, 25, 50, 75, 100];
+const specs: [string, string, string][] = [
+  ['Track', 'bg/soft-200', '#EBEBEB, 6 px high, fully rounded'],
+  ['Fill', 'brand/core/base', '#1868D0'],
+  ['Fill, success', 'state/success/base', '#1FC16B'],
+  ['Fill, error', 'state/error/base', '#FB3748'],
+  ['Width', '—', '400 px, or fill the container'],
+  ['Label to bar to info', 'spacing-8', '8 px'],
+  ['Title', 'text/strong-950', 'Inter Medium 12/16'],
+  ['Percentage', 'text/sub-600', 'Inter Regular 12/16, 12 px icon'],
+  ['Loading icon', 'icon/soft-400', '#A3A3A3'],
+  ['Info', 'text/sub-600', 'Inter Regular 10/12, state/error/base on error'],
+  ['Circular sizes', '—', '80 / 64 / 48 px, ring 10% of the size'],
+  ['Circular track', 'bg/weak-50', '#F7F7F7'],
+  ['Circular fill', 'state/information/base', '#335CFF'],
+  ['Circular value', 'text/strong-950', 'Inter Regular 14/20, 12/16, 10/12'],
+];
+---
+<DocPage
+  title="Progress Bar"
+  description="Progress bars show how far an upload, download or process has gone. Explore the bar, the labelled progress bar and the circular progress of Unictive."
+  intro="Progress bars show how much of a task is done, so people know it’s working and roughly how long is left"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Sets', 3], ['States', states.length]]}
+>
+  <Section id="playground" label="Playground" desc="Drag the value or start a fake upload, it runs to 100% and lands on Success">
+    <form class="pg" data-playground data-kind="progress" onsubmit="return false">
+      <div class="fields" data-cols="3">
+        <PgSelect name="state" label="State" options={states} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="label" checked /><span>Label</span></label>
+        <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="info" checked /><span>Info</span></label>
+        <label class="range">
+          <span class="label muted">Value</span>
+          <input type="range" name="value" min="0" max="100" value="40" />
+          <output data-out>40%</output>
+        </label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div class="canvas-fill" data-host><Fragment set:html={render({ live: true })} /></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ state: 'On Progress' })} · 40%</p>
+        <div class="canvas-tools"><Btn size="Small" label="Start upload" data-upload /></div>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="bar" label="Bar indicator" desc="The bare bar, in 10% steps in the DS. Use it on its own inside cards, rows and file items">
+    <div class="tile tile-static tile-wide">
+      <span class="tile-top"><span class="label muted">Bar-indicators</span></span>
+      <span class="tile-body"><span class="rows">{pcts.map((p) => <><span class="label muted">{p}%</span><Fragment set:html={bar(p)} /></>)}</span></span>
+    </div>
+  </Section>
+
+  <Section id="states" label="States" desc="On Progress shows the value and a spinning icon. Success and Error fill the bar with the result color">
+    <div class="tile-stack fill">
+      {states.map((s) => (
+        <div class="tile tile-static tile-wide">
+          <span class="tile-top"><span class="label muted">{s}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ state: s, value: 62 })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="circular" label="Circular" desc="For compact spots like a dashboard tile or an avatar, three sizes in 25% steps">
+    <div class="tile tile-static tile-wide">
+      <span class="tile-top"><span class="label muted">Circural-progress-bar</span></span>
+      <span class="tile-body">
+        <span class="surface"><span class="ring-grid">
+          {circleSizes.map(([z, px]) => (
+            <>
+              <span class="label muted row-head">{px}</span>
+              {pcts.map((p) => <Fragment set:html={circle(p, z)} />)}
+            </>
+          ))}
+        </span></span>
+      </span>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['A task takes more than a second or two, like an upload or export', 'You know how much is done, so the value means something', 'People can keep working while it runs']}
+      avoid={['You can’t measure progress, show a spinner instead', 'The task has named steps people move through, use a Stepper', 'It finishes almost instantly, show the result']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Say what’s happening and how much is left, and turn the bar red with a reason if it fails"
+      dontText="Don’t leave a failed task at a full blue bar, people will think it worked"
+    >
+      <Fragment slot="do"><Fragment set:html={render({ state: 'Error' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={render({ state: 'On Progress', value: 100, icon: false, info: false })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Progress bar tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Stepper', 'Progress through named steps'],
+      ['File Upload', 'Uploads with a progress card'],
+      ['Alert', 'Tell people it finished'],
+      ['Badge', 'Short status labels'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

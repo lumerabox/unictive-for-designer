@@ -1,0 +1,59 @@
+/* shared by the feedback and overlay components: DS state colors, Link-buttons and Icon Buttons */
+[data-status='error'] { --st: #fb3748; --st-lighter: #ffebec; }
+[data-status='warning'] { --st: #fa7319; --st-lighter: #fff3eb; }
+[data-status='success'] { --st: #1fc16b; --st-lighter: #e3f7ec; }
+[data-status='info'] { --st: #335cff; --st-lighter: #eef0ff; }
+[data-status='feature'] { --st: #7b7b7b; --st-lighter: #f5f5f5; }
+
+/* Link-buttons: Medium, the text color comes from the parent */
+.u-link { display: inline-flex; align-items: center; padding: 0; border: 0; background: none; font-family: inherit; font-size: inherit; line-height: inherit; font-weight: 500; letter-spacing: inherit; color: inherit; white-space: nowrap; cursor: pointer; text-underline-offset: 3px; }
+.u-link[data-u] { text-decoration: underline; }
+.u-link:hover { text-decoration: underline; }
+.u-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
+
+/* dismiss buttons inside a component: icon at 48% until hovered */
+.u-x { display: grid; place-items: center; flex: none; padding: 0; border: 0; background: none; color: inherit; opacity: 0.48; cursor: pointer; border-radius: 4px; transition: opacity 120ms var(--ease, ease); }
+.u-x:hover, .u-x:focus-visible { opacity: 1; }
+.u-x:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+
+/* Icon Buttons (Tertiary, Neutral) and Compact-buttons (Ghost) */
+.u-ibtn { --s: 40px; --r: 8px; display: grid; place-items: center; flex: none; width: var(--s); height: var(--s); padding: 0; border: 0; border-radius: var(--r); background: transparent; color: #5c5c5c; box-shadow: inset 0 0 0 1px #ebebeb; cursor: pointer; transition: background-color 120ms var(--ease, ease), color 120ms var(--ease, ease), box-shadow 120ms var(--ease, ease); }
+.u-ibtn[data-kind='ghost'] { box-shadow: none; }
+.u-ibtn:hover:not(:disabled) { background: #f7f7f7; color: #171717; box-shadow: none; }
+.u-ibtn:disabled { background: #f7f7f7; color: #d1d1d1; box-shadow: none; cursor: not-allowed; }
+.u-ibtn:focus-visible { outline: none; box-shadow: inset 0 0 0 1px #dedede, 0 0 0 4px #1868d029; }
+
+@media (prefers-reduced-motion: reduce) {
+  .u-spin { animation: none !important; }
+}
+
+/* floating surfaces (tooltip, popover): a tail on one edge, and placement around a trigger in .u-anchor.
+   each surface sets --surface, --tw / --th (tail width and height) and --off (tail inset from the corner) */
+.u-float { position: relative; }
+.u-tail { position: absolute; width: var(--tw); height: var(--th); background: var(--surface); }
+[data-arrow^='top'] > .u-tail { bottom: 100%; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+[data-arrow^='bottom'] > .u-tail { top: 100%; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+[data-arrow='top-left'] > .u-tail, [data-arrow='bottom-left'] > .u-tail { left: var(--off); }
+[data-arrow='top-center'] > .u-tail, [data-arrow='bottom-center'] > .u-tail { left: calc(50% - var(--tw) / 2); }
+[data-arrow='top-right'] > .u-tail, [data-arrow='bottom-right'] > .u-tail { right: var(--off); }
+[data-arrow^='left'] > .u-tail, [data-arrow^='right'] > .u-tail { width: var(--th); height: var(--tw); }
+[data-arrow^='left'] > .u-tail { right: 100%; clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+[data-arrow^='right'] > .u-tail { left: 100%; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+[data-arrow='left-top'] > .u-tail, [data-arrow='right-top'] > .u-tail { top: var(--off); }
+[data-arrow='left-center'] > .u-tail, [data-arrow='right-center'] > .u-tail { top: calc(50% - var(--tw) / 2); }
+[data-arrow='left-bottom'] > .u-tail, [data-arrow='right-bottom'] > .u-tail { bottom: var(--off); }
+
+/* the tail points at the trigger's center, 4 px away */
+.u-anchor { position: relative; display: inline-flex; }
+.u-anchor > .u-float[data-arrow] { position: absolute; z-index: 5; max-width: none; --gap: calc(var(--th) + 4px); --side: calc(50% - var(--off) - var(--tw) / 2); }
+.u-anchor > [data-arrow^='top'] { top: calc(100% + var(--gap)); }
+.u-anchor > [data-arrow^='bottom'] { bottom: calc(100% + var(--gap)); }
+.u-anchor > [data-arrow$='-left'] { left: var(--side); }
+.u-anchor > [data-arrow='top-center'], .u-anchor > [data-arrow='bottom-center'], .u-anchor > [data-arrow='no'] { left: 50%; transform: translateX(-50%); }
+.u-anchor > [data-arrow$='-right'] { right: var(--side); }
+.u-anchor > [data-arrow^='left'] { left: calc(100% + var(--gap)); }
+.u-anchor > [data-arrow^='right'] { right: calc(100% + var(--gap)); }
+.u-anchor > [data-arrow$='-top'] { top: var(--side); }
+.u-anchor > [data-arrow='left-center'], .u-anchor > [data-arrow='right-center'] { top: 50%; transform: translateY(-50%); }
+.u-anchor > [data-arrow$='-bottom'] { bottom: var(--side); }
+.u-anchor > [data-arrow='no'] { bottom: calc(100% + 8px); }

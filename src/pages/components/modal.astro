@@ -1,0 +1,148 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-modal.css';
+import { headers, aligns, footers, render, head, foot, chip, variantCount } from '../../data/modal';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['headers', 'Headers'],
+  ['footers', 'Footers'],
+  ['examples', 'In context'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const headerNotes: Record<string, string> = {
+  Default: 'Title and description',
+  Icon: 'Any icon in an outline box',
+  Error: 'Destructive or failed actions',
+  Warning: 'Risky actions, like leaving unsaved work',
+  Success: 'Confirm that something worked',
+  Info: 'Explain a setting or a change',
+};
+const examples: [string, string, Record<string, unknown>][] = [
+  ['Delete files', 'Error header, Default footer', { header: 'Error', footer: 'Default' }],
+  ['Unsaved changes', 'Warning header, Horizontal footer', { header: 'Warning', footer: 'Horizontal' }],
+  ['Invite sent', 'Success, centered, Vertical footer', { header: 'Success', align: 'Center', footer: 'Vertical' }],
+];
+const specs: [string, string, string][] = [
+  ['Width', '—', '480 px'],
+  ['Radius', 'radius-16', '16 px'],
+  ['Fill', 'bg/white-0', '#FFFFFF'],
+  ['Shadow', 'Reguler-shadows/Medium', '0 12 32 −12, #0E121B 10%'],
+  ['Overlay', 'overlay/overlay-slate', '#2B303B 24%'],
+  ['Header padding and gap', '—', '16 / 20 px, 16 px gap'],
+  ['Header divider', 'stroke/soft-200', '#EBEBEB, 1 px'],
+  ['Title', 'text/strong-950', 'Inter Medium 14/20'],
+  ['Description', 'text/sub-600', 'Inter Regular 12/16'],
+  ['Icon box', '—', '40 px, radius 12, 20 px icon'],
+  ['Icon box, status', 'state/*/lighter', 'state/*/base icon'],
+  ['Icon box, outline', 'stroke/soft-200', 'icon/sub-600 icon'],
+  ['Close', 'icon/sub-600', '16 px'],
+  ['Body padding', '—', '16 / 20 px'],
+  ['Footer padding', '—', '16 / 20 px, 8 px between buttons'],
+  ['Buttons', '—', 'Medium Tertiary Neutral + Medium Primary Main'],
+];
+---
+<DocPage
+  title="Modal"
+  description="Modals stop the flow for a decision or a focused task, on top of the page. Explore every header, footer and alignment of the Unictive modal."
+  intro="Modals sit on top of the page and ask for one decision or one short task before people carry on"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Headers', headers.length], ['Footers', footers.length]]}
+>
+  <Section id="playground" label="Playground" desc="Mix a header and a footer, then open it for real. Escape, the overlay or Cancel closes it">
+    <form class="pg" data-playground data-kind="modal" onsubmit="return false">
+      <div class="fields" data-cols="3">
+        <PgSelect name="header" label="Header" options={headers} />
+        <PgSelect name="align" label="Align" options={aligns} />
+        <PgSelect name="footer" label="Footer" options={footers} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="description" checked /><span>Description</span></label>
+        <label class="toggle"><input type="checkbox" name="close" checked /><span>Close</span></label>
+      </div>
+      <div class="canvas canvas-tall" data-canvas>
+        <div class="canvas-fill" data-host><Fragment set:html={render({})} /></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ header: 'Default', description: true, align: 'Left', footer: 'Default' })}</p>
+        <div class="canvas-tools"><Btn size="Small" label="Open modal" data-open-modal /></div>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="headers" label="Headers" desc="Six header types. Status headers add a tinted icon; Center stacks the icon above the text and drops the close">
+    <div class="tile-stack fill">
+      {headers.map((h) => (
+        <div class="tile tile-static tile-wide">
+          <span class="tile-top"><span class="label muted">{h}</span><span class="label muted">{headerNotes[h]}</span></span>
+          <span class="tile-body"><span class="u-modal"><Fragment set:html={head({ header: h })} /></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="footers" label="Footers" desc="Seven footers. Default fits most modals; Horizontal and Vertical stretch the buttons for narrow screens">
+    <div class="tile-stack fill">
+      {footers.map((f) => (
+        <div class="tile tile-static tile-wide">
+          <span class="tile-top"><span class="label muted">{f}</span></span>
+          <span class="tile-body"><span class="u-modal"><Fragment set:html={foot(f)} /></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="examples" label="In context" desc="Three common dialogs. Open each one to see the header, body and footer work together">
+    <div class="grid3">
+      {examples.map(([name, note, o]) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="label muted">{note}</span></span>
+          <span class="tile-body"><Btn variant="Tertiary" type="Neutral" label={name} data-open-modal data-modal={JSON.stringify(o)} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People must confirm before something hard to undo, like deleting files', 'A short task needs focus, like renaming or inviting someone', 'Leaving now would lose work, and people should choose']}
+      avoid={['The message needs no decision, use an Alert or a toast', 'The task is long or has many steps, give it its own page', 'The content belongs next to a control, use a Popover']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Name the button after the action, like “Delete”, so people know exactly what they agree to"
+      dontText="Don’t ask a question and answer it with “Yes” and “No”, people have to read it twice"
+    >
+      <Fragment slot="do"><span class="u-modal"><Fragment set:html={foot('Default', 'Delete')} /></span></Fragment>
+      <Fragment slot="dont"><span class="u-modal"><Fragment set:html={foot('Default', 'Yes').replace('>Cancel<', '>No<')} /></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Modal tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Popover', 'Content anchored to a control'],
+      ['Alert', 'Feedback without a decision'],
+      ['Button', 'Modal actions'],
+      ['Checkbox', 'Don’t show again'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

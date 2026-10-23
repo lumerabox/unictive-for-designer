@@ -1,0 +1,47 @@
+/* the Unictive DS modal: Modal-header + slot + Modal-footer, 480 px wide, on the Overlay */
+.u-modal {
+  display: flex; flex-direction: column; width: 480px; max-width: 100%; border-radius: 16px; overflow: hidden;
+  background: #fff; box-shadow: 0 12px 32px -12px rgb(14 18 27 / 0.1);
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; color: #171717; text-align: left;
+}
+
+.u-modal-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid #ebebeb; }
+.u-modal-head[data-align='center'] { flex-direction: column; text-align: center; }
+.u-modal-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--st-lighter); color: var(--st); }
+.u-modal-icon[data-kind='outline'] { background: #fff; color: #5c5c5c; box-shadow: inset 0 0 0 1px #ebebeb; }
+.u-modal-titles { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; align-self: stretch; justify-content: center; }
+.u-modal-title { font-weight: 500; }
+.u-modal-desc { font-size: 12px; line-height: 16px; letter-spacing: 0; color: #5c5c5c; }
+.u-modal-close { display: grid; place-items: center; flex: none; align-self: flex-start; padding: 0; border: 0; background: none; color: #5c5c5c; cursor: pointer; border-radius: 4px; }
+.u-modal-close:hover { color: #171717; }
+.u-modal-close:focus-visible { outline: 2px solid #1868d0; outline-offset: 2px; }
+
+.u-modal-body { padding: 16px 20px; color: #5c5c5c; }
+.u-modal-body p { max-width: none; }
+
+.u-modal-foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 16px 20px; }
+.u-modal-actions { display: flex; gap: 8px; margin-left: auto; }
+.u-modal-foot[data-type='horizontal'] .u-modal-actions { flex: 1; margin-left: 0; }
+.u-modal-foot[data-type='horizontal'] .u-btn { flex: 1; }
+.u-modal-foot[data-type='vertical'] .u-modal-actions { flex: 1; flex-direction: column; margin-left: 0; }
+.u-modal-lead { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: 500 16px / 24px 'Inter', system-ui, sans-serif; letter-spacing: -0.011em; color: #5c5c5c; cursor: pointer; }
+.u-modal-lead:hover { color: #171717; }
+.u-modal-linkbtn { color: #1868d0; font-size: 14px; line-height: 20px; }
+.u-modal-dots { display: flex; gap: 8px; }
+.u-modal-dots i { width: 6px; height: 6px; border-radius: 999px; background: #ebebeb; }
+.u-modal-dots i[data-on] { background: #1868d0; }
+.u-modal-check { display: inline-flex; align-items: center; gap: 12px; font-weight: 500; cursor: pointer; }
+.u-modal-check input { width: 16px; height: 16px; margin: 0; accent-color: #1868d0; cursor: pointer; }
+
+/* the live dialog: native <dialog> on the Overlay color, overlay/overlay-slate */
+.u-dialog { padding: 16px; border: 0; background: none; max-width: 100vw; max-height: 100dvh; overflow: visible; }
+.u-dialog::backdrop { background: rgb(43 48 59 / 0.24); }
+.u-dialog[open] .u-modal { animation: u-modal-in 200ms var(--ease, ease); }
+.u-dialog[open]::backdrop { animation: u-fade-in 200ms var(--ease, ease); }
+@keyframes u-modal-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+@keyframes u-fade-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .u-dialog[open] .u-modal, .u-dialog[open]::backdrop { animation: none; } }
+
+@media (max-width: 539px) {
+  .u-modal-foot:not([data-type='vertical']):not([data-type='horizontal']) { flex-wrap: wrap; }
+}

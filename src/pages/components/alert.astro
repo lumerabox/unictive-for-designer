@@ -1,0 +1,153 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-alert.css';
+import { sizes, statuses, styles, render, chip, variantCount } from '../../data/alert';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['statuses', 'Statuses'],
+  ['styles', 'Styles'],
+  ['sizes', 'Sizes'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const statusNotes: Record<string, string> = {
+  Error: 'Something failed and needs action',
+  Warning: 'Something may go wrong soon',
+  Success: 'A task finished as expected',
+  Info: 'Neutral news worth knowing',
+  Feature: 'Something new to try',
+};
+const specs: [string, string, string][] = [
+  ['Width', '—', '360 px'],
+  ['Height', '—', '32 / 36 px, hug at Large'],
+  ['Padding and gap', 'spacing-8', '8 px, 12 px at Large'],
+  ['Radius', 'radius-8', '8 px, 12 px at Large'],
+  ['Error', 'state/error/base', '#FB3748'],
+  ['Error, light', 'state/error/lighter', '#FFEBEC'],
+  ['Warning', 'state/warning/base', '#FA7319'],
+  ['Warning, light', 'state/warning/lighter', '#FFF3EB'],
+  ['Success', 'state/success/base', '#1FC16B'],
+  ['Success, light', 'state/success/lighter', '#E3F7EC'],
+  ['Info', 'state/information/base', '#335CFF'],
+  ['Info, light', 'state/information/lighter', '#EEF0FF'],
+  ['Feature', 'state/faded/base', '#7B7B7B'],
+  ['Feature, light', 'state/faded/lighter', '#F5F5F5'],
+  ['Stroke, fill and outline', 'bg/white-0 + stroke/soft-200', '#FFFFFF / #EBEBEB'],
+  ['Stroke, title and description', 'text/strong-950 + text/sub-600', '#171717 / #5C5C5C'],
+  ['Title', '—', 'Inter Regular 12/16 and 14/20, Medium at Large'],
+  ['Description and actions', '—', 'Inter Regular / Medium 14/20'],
+  ['Icon', '—', '16 px at Small, 20 px otherwise'],
+  ['Close icon', '—', '48% opacity, 100% on hover'],
+];
+---
+<DocPage
+  title="Alert"
+  description="Alerts tell people about something that happened or needs attention, right where they are. Explore every status, style and size of the Unictive alert."
+  intro="Alerts give short, timely feedback inside a page, from a saved change to a failed payment"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Statuses', statuses.length], ['Styles', styles.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a size, status and style, then dismiss it to see how it leaves">
+    <form class="pg" data-playground data-kind="alert" onsubmit="return false">
+      <div class="fields" data-cols="3">
+        <PgSelect name="size" label="Size" options={sizes} value="Large" />
+        <PgSelect name="status" label="Status" options={statuses} value="Info" />
+        <PgSelect name="style" label="Style" options={styles} value="Light" />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="action" checked /><span>Action</span></label>
+        <label class="toggle"><input type="checkbox" name="second" checked /><span>Second action</span></label>
+        <label class="toggle"><input type="checkbox" name="close" checked /><span>Close</span></label>
+        <label class="text-field">
+          <span class="label muted">Title</span>
+          <input type="text" name="title" placeholder="Sample title" maxlength="60" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div data-host><Fragment set:html={render({ live: true })} /></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ size: 'Large', status: 'Info', style: 'Light' })}</p>
+        <div class="canvas-tools"><Btn size="Small" variant="Secondary" type="Neutral" label="Show again" data-restore hidden /></div>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="statuses" label="Statuses" desc="Five statuses, each with its own color and icon. The color carries the meaning, so the title still has to say what happened">
+    <div class="grid2">
+      {statuses.map((s) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{s}</span><span class="label muted">{statusNotes[s]}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ status: s, style: 'Light' })} /></span>
+        </div>
+      ))}
+      <div class="note"><p class="label">Tip</p><p>Close an alert in any tile, it comes back after a moment so you can try again.</p></div>
+    </div>
+  </Section>
+
+  <Section id="styles" label="Styles" desc="Filled is the loudest, for problems that block the task. Light suits most messages. Stroke sits quietly on white pages and cards">
+    <div class="tile-stack fill">
+      {styles.map((st) => (
+        <div class="tile tile-static tile-wide">
+          <span class="tile-top"><span class="label muted">{st}</span></span>
+          <span class="tile-body"><span class="tile-wrap">{(['Error', 'Success', 'Info'] as const).map((s) => <Fragment set:html={render({ size: 'Medium', status: s, style: st, action: false })} />)}</span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Small and Medium are one line, for forms and toolbars. Large adds a description and up to two actions">
+    <div class="tile-stack fill">
+      {sizes.map((z) => (
+        <div class="tile tile-static tile-wide">
+          <span class="tile-top"><span class="label muted">{z}</span><span class="label muted">{z === 'Small' ? '32 px' : z === 'Medium' ? '36 px' : 'Hug'}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ size: z, status: 'Warning', style: 'Stroke' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Feedback belongs to one part of the page, like a form or a card', 'The message should stay until people read or dismiss it', 'People may need to act on it, like retrying a payment']}
+      avoid={['The message is about the whole product or account, use a Banner', 'The feedback is short-lived and needs no action, use a toast', 'People must decide before going on, use a Modal']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Say what happened in the title and what to do next in the action, like “Payment failed” and “Try again”"
+      dontText="Don’t use a vague title like “Error”, people can’t tell what went wrong or how to fix it"
+    >
+      <Fragment slot="do"><Fragment set:html={render({ size: 'Medium', status: 'Error', style: 'Light', close: false })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={render({ size: 'Medium', status: 'Error', style: 'Light', title: 'Error', close: false, action: false })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Alert tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Banner', 'Page-wide announcements'],
+      ['Modal', 'Feedback that blocks the task'],
+      ['Badge', 'Short status labels'],
+      ['Progress Bar', 'Show how far a task is'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

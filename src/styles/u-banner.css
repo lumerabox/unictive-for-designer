@@ -1,0 +1,29 @@
+/* the Unictive DS banner: a full-width strip, Type × Status × Align */
+.u-banner {
+  --bg: var(--st); --fg: #fff; --sub: #fff; --ic: #fff; --dot: #fff; --x: #fff;
+  display: flex; align-items: center; gap: 16px; width: 100%; min-height: 44px; padding: 12px 48px;
+  background: var(--bg); color: var(--fg); box-shadow: var(--bd, none);
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; text-align: left;
+}
+.u-banner[data-type='light'] { --bg: var(--st-lighter); --fg: var(--st); --sub: var(--st); --ic: var(--st); --dot: var(--st); --x: var(--st); }
+.u-banner[data-type='stroke'] { --bg: #fff; --fg: #171717; --sub: #5c5c5c; --ic: var(--st); --dot: #a3a3a3; --x: #5c5c5c; --bd: inset 0 0 0 1px #ebebeb; }
+
+.u-banner-item { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 12px; }
+.u-banner[data-align='left'] .u-banner-item { justify-content: flex-start; }
+.u-banner-icon { display: grid; place-items: center; flex: none; color: var(--ic); }
+.u-banner-info { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.u-banner-title { font-weight: 500; white-space: nowrap; }
+.u-banner-dot { flex: none; width: 2px; height: 2px; border-radius: 999px; background: var(--dot); }
+.u-banner-desc { color: var(--sub); }
+.u-banner-link { font-size: 12px; line-height: 16px; letter-spacing: 0; }
+.u-banner-close { color: var(--x); }
+
+@media (max-width: 767px) {
+  .u-banner { padding: 12px 16px; align-items: flex-start; }
+  .u-banner-item { display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: start; gap: 4px 12px; }
+  .u-banner-icon { margin-top: 2px; }
+  .u-banner-info { flex-direction: column; align-items: flex-start; gap: 0; }
+  .u-banner-title { white-space: normal; }
+  .u-banner-dot { display: none; }
+  .u-banner-link { grid-column: 2; justify-self: start; }
+}

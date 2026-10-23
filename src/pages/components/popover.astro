@@ -1,0 +1,142 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-popover.css';
+import { arrows, sizes, footers, render, chip, variantCount } from '../../data/popover';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['footers', 'Footers'],
+  ['placement', 'Placement'],
+  ['sizes', 'Sizes'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const footerNotes: Record<string, string> = {
+  'Button Hug': 'Back and Next on the right',
+  'Button Fill': 'Buttons share the width',
+  Step: 'Step count and arrows',
+  Indicator: 'Dots and arrows',
+};
+const placements = ['Top Left', 'Bottom Center', 'Left Top', 'Right Center'] as const;
+const specs: [string, string, string][] = [
+  ['Width', '—', '320 px, 312 px at Small'],
+  ['Radius', 'radius-16', '16 px'],
+  ['Fill', 'bg/white-0', '#FFFFFF'],
+  ['Shadow', '—', '0 12 32 −12, #0E121B 10% + 0 2 8 −8, #000000 20%'],
+  ['Arrow', '—', '17 × 8 px, 24 px from the corner'],
+  ['Header padding and gap', '—', '16 px / 12 px, 12 px / 8 px at Small'],
+  ['Header icon', '—', 'Icon Buttons 40 px, 28 px at Small'],
+  ['Title', 'text/strong-950', 'Inter Medium 16/24, 14/20 at Small'],
+  ['Description', 'text/sub-600', 'Inter Regular 14/20, 12/16 at Small'],
+  ['Close', 'icon/sub-600', 'Compact-buttons 20 px, Ghost'],
+  ['Dividers', 'stroke/soft-200', '#EBEBEB, 1 px'],
+  ['Slot padding', '—', '16 px, 12 px at Small, or none'],
+  ['Footer padding', '—', '16 px, 12 px at Small'],
+  ['Step text', 'text/sub-600', 'Inter Regular 14/20, 12/16 at Small'],
+  ['Indicator dots', 'brand/core/base + bg/soft-200', '8 px, 6 px at Small, 10 px apart'],
+];
+---
+<DocPage
+  title="Popover"
+  description="Popovers open next to a control to show extra content and actions, from a short form to a product tour. Explore every arrow, footer and size of the Unictive popover."
+  intro="Popovers open next to the control that triggered them, with room for a title, content and actions"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Arrows', arrows.length], ['Footers', footers.length]]}
+>
+  <Section id="playground" label="Playground" desc="Step through the tour with the footer, close it, then open it again from its trigger">
+    <form class="pg" data-playground data-kind="popover" onsubmit="return false">
+      <div class="fields" data-cols="3">
+        <PgSelect name="arrow" label="Arrow" options={arrows} />
+        <PgSelect name="size" label="Size" options={sizes} />
+        <PgSelect name="footerType" label="Footer" options={footers} value="Step" />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="header" checked /><span>Header</span></label>
+        <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="description" checked /><span>Description</span></label>
+        <label class="toggle"><input type="checkbox" name="footer" checked /><span>Footer</span></label>
+        <label class="toggle"><input type="checkbox" name="padding" checked /><span>Slot padding</span></label>
+      </div>
+      <div class="canvas canvas-tall" data-canvas>
+        <div class="stage" data-host></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ arrow: 'Top Left', size: 'Medium', padding: true })} · Step 1 of 4</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="footers" label="Footers" desc="Buttons for a single task, Step and Indicator for tours. The arrows move between steps">
+    <div class="grid2">
+      {footers.map((f) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{f}</span><span class="label muted">{footerNotes[f]}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ arrow: 'No', footerType: f, step: 1, header: false })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="placement" label="Placement" desc="Twelve arrow positions, three per side. The arrow points at the trigger; pick the side with the most room">
+    <div class="grid2">
+      {placements.map((a) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{a}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ arrow: a, size: 'Small', footer: false, icon: false })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Medium for most popovers, Small for dense toolbars and side panels">
+    <div class="grid2">
+      {sizes.map((z) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{z}</span><span class="label muted">{z === 'Medium' ? 320 : 312} px</span></span>
+          <span class="tile-body"><Fragment set:html={render({ arrow: 'No', size: z, footerType: 'Button Hug' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Extra content belongs to one control, like filters behind a button', 'A product tour points at features one by one', 'People should keep seeing the page while they read or act']}
+      avoid={['It only names or hints at a control, use a Tooltip', 'People must decide before going on, use a Modal', 'The content is long or needs scrolling, give it a page or a panel']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Open it next to its trigger with the arrow pointing back, so people see what it belongs to"
+      dontText="Don’t float a popover without an arrow far from its trigger, it reads like a modal without an overlay"
+    >
+      <Fragment slot="do"><Fragment set:html={render({ arrow: 'Top Left', size: 'Small', footer: false, icon: false, description: false, body: '<p>Filter by owner, date or type.</p>' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={render({ arrow: 'No', size: 'Small', footer: false, icon: false, description: false, body: '<p>Filter by owner, date or type.</p>' })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Popover tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Tooltip', 'Short hints on hover'],
+      ['Modal', 'Decisions that block the page'],
+      ['Dropdown', 'Pick from a list'],
+      ['Stepper', 'Longer step-by-step flows'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

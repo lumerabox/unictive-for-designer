@@ -217,3 +217,45 @@
 .tile-row { display: flex; align-items: center; gap: 16px; }
 .canvas-tall { height: auto; min-height: var(--canvas-h); padding: 48px 0 96px; }
 @media (max-width: 767px) { .canvas-tools { top: var(--gutter); bottom: auto; } .canvas-tall { padding-top: 80px; } }
+
+/* feedback and overlay pages */
+/* a stage for floating previews: the trigger moves to the side the surface opens away from */
+.stage { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: var(--stage-h, 480px); padding: 32px var(--gutter); }
+.stage:has([data-arrow^='top']) { align-items: flex-start; }
+.stage:has([data-arrow^='bottom']) { align-items: flex-end; }
+.stage:has([data-arrow^='left']) { justify-content: flex-start; }
+.stage:has([data-arrow^='right']) { justify-content: flex-end; }
+.stage:has([data-arrow$='-left']) { justify-content: flex-start; padding-left: 15%; }
+.stage:has([data-arrow$='-right']) { justify-content: flex-end; padding-right: 15%; }
+.stage:has([data-arrow$='-top']) { align-items: flex-start; }
+.stage:has([data-arrow$='-bottom']) { align-items: flex-end; }
+.stage.short { --stage-h: 240px; }
+/* labelled rows, like a bar at each value */
+.rows { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 16px 20px; width: 100%; }
+.rows > .label { text-align: right; }
+.ring-grid { display: grid; grid-template-columns: 56px repeat(5, minmax(0, 1fr)); align-items: center; justify-items: center; gap: 20px 12px; width: 100%; }
+.ring-grid > .label:first-child, .ring-grid > .label.row-head { justify-self: start; }
+.tile-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 100%; }
+.range { display: flex; align-items: center; gap: 12px; height: 36px; padding: 0 12px; box-shadow: inset 0 0 0 1px var(--stroke-sub-300); }
+.range input { width: 160px; accent-color: var(--brand); }
+.range input:disabled { opacity: 0.4; }
+.range output { min-width: 32px; font-size: var(--fs-small); font-weight: 500; font-variant-numeric: tabular-nums; }
+.canvas-fill > .u-banner, .tile-body > .u-banner, .dd-canvas > .u-banner { width: 100%; }
+.dd-canvas > .u-alert, .dd-canvas > .u-progress { width: min(360px, 100% - 48px); }
+.tile-stack.fill { justify-items: stretch; }
+@media (max-width: 767px) {
+  .stage:has([data-arrow$='-left']) { padding-left: var(--gutter); }
+  .stage:has([data-arrow$='-right']) { padding-right: var(--gutter); }
+  .ring-grid { grid-template-columns: 40px repeat(5, minmax(0, 1fr)); gap: 16px 4px; }
+  .range { width: 100%; }
+  .range input { flex: 1; width: auto; }
+}
+/* previews wider than the tile shrink to it instead of spilling out */
+.tile-body { grid-template-columns: minmax(0, 1fr); }
+.u-btn[hidden] { display: none; }
+/* keep the chip clear of the canvas buttons */
+@media (min-width: 768px) { .canvas:has(> .canvas-tools .u-btn:not([hidden])) > .chip { max-width: calc(100% - 2 * var(--gutter) - 136px); } }
+.canvas-fill > *, .tile-body > *, .dd-canvas > * { min-width: 0; }
+.canvas { grid-template-columns: minmax(0, 1fr); }
+.canvas > [data-host]:not(.canvas-fill):not(.stage) { max-width: calc(100% - 2 * var(--gutter)); justify-self: center; }
+@media (max-width: 767px) { .grid2, .grid3 { grid-template-columns: minmax(0, 1fr); } }

@@ -1,0 +1,27 @@
+/* the Unictive DS tooltip: Type × Arrow × Size × Dark */
+.u-tip {
+  --surface: #262626; --fg: #fff; --sub: #ffffffe0; --ic: #fff; --x: #a3a3a3;
+  --tw: 8px; --th: 4px; --off: 8px;
+  display: inline-flex; align-items: center; width: max-content; max-width: 240px; padding: 4px 8px; border-radius: 6px;
+  background: var(--surface); color: var(--fg); box-shadow: var(--shadow, none);
+  font: 400 12px / 16px 'Inter', system-ui, sans-serif; letter-spacing: 0; text-align: left; white-space: normal;
+}
+.u-tip[data-dark='false'] { --surface: #fff; --fg: #5c5c5c; --sub: #5c5c5c; --ic: #5c5c5c; --x: #5c5c5c; --shadow: 0 1px 5px -8px rgb(0 0 0 / 0.2); }
+.u-tip[data-size='large'] { --tw: 10px; --th: 5px; --off: 10px; padding: 6px 10px; font-size: 14px; line-height: 20px; letter-spacing: -0.006em; }
+
+/* Description: icon, title and text, close; 268 / 284 px wide */
+.u-tip[data-type='description'] { --tw: 12px; --th: 6px; --off: 16px; align-items: flex-start; gap: 8px; width: 268px; max-width: 100%; padding: 12px; border-radius: 10px; font-size: 10px; line-height: 12px; letter-spacing: 0; }
+.u-tip[data-type='description'][data-size='large'] { gap: 12px; width: 284px; border-radius: 12px; font-size: 12px; line-height: 16px; }
+.u-tip[data-type='description'][data-dark='false'] { --fg: #171717; --shadow: 0 2px 8px -8px rgb(0 0 0 / 0.2); }
+.u-tip-icon { display: grid; flex: none; color: var(--ic); }
+.u-tip-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.u-tip-title { font-size: 12px; line-height: 16px; font-weight: 500; }
+.u-tip[data-size='large'] .u-tip-title { font-size: 14px; line-height: 20px; letter-spacing: -0.006em; }
+.u-tip-desc { color: var(--sub); }
+.u-tip-close { display: grid; place-items: center; flex: none; padding: 0; border: 0; background: none; color: var(--x); cursor: pointer; border-radius: 4px; }
+.u-tip-close:hover { color: var(--fg); }
+.u-tip-close:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+
+/* live tooltips: hidden until the trigger is hovered or focused */
+.u-anchor > .u-tip[data-live] { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 120ms var(--ease, ease), visibility 0s 120ms; }
+.u-anchor > .u-tip[data-live].is-open { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 120ms var(--ease, ease); }

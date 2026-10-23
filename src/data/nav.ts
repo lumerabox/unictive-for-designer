@@ -31,4 +31,11 @@ export const livePages: Record<string, string> = {
   'Tab Menu': '/components/tab-menu/',
   Pagination: '/components/pagination/',
   Stepper: '/components/stepper/',
+  Alert: '/components/alert/',
+  Banner: '/components/banner/',
+  Badge: '/components/badge/',
+  'Progress Bar': '/components/progress-bar/',
+  Tooltip: '/components/tooltip/',
+  Modal: '/components/modal/',
+  Popover: '/components/popover/',
 };

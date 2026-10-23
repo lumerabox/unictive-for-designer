@@ -1,0 +1,157 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-feedback.css';
+import '../../styles/u-tooltip.css';
+import { types, arrows, sizes, render, chip, variantCount } from '../../data/tooltip';
+import { iconBtn, btn } from '../../data/markup';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['types', 'Types'],
+  ['arrows', 'Arrows'],
+  ['themes', 'Dark and light'],
+  ['behavior', 'Behavior'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+// live triggers for the behavior section: the tooltip opens away from where it has room
+const live = [
+  { name: 'Icon button', trigger: iconBtn('copy-04-line', 'Copy link', { attrs: 'data-tip-trigger aria-describedby="tip-copy"' }), tip: render({ id: 'tip-copy', text: 'Copy link', arrow: 'Bottom Center', live: true }) },
+  { name: 'Shortcut', trigger: btn('Comment', { style: 'Tertiary', type: 'Neutral', attrs: 'data-tip-trigger aria-describedby="tip-key"' }), tip: render({ id: 'tip-key', text: 'Add a comment  C', arrow: 'Bottom Center', size: 'Large', live: true }) },
+  { name: 'Explain a field', trigger: iconBtn('alert-circle-line', 'What is a workspace ID?', { size: 28, icon: 16, attrs: 'data-tip-trigger aria-describedby="tip-id"' }), tip: render({ id: 'tip-id', type: 'Description', text: 'Workspace ID', desc: 'Share it with support so they can find your workspace faster.', arrow: 'Top Center', close: false, live: true }) },
+];
+const specs: [string, string, string][] = [
+  ['Dark fill', 'bg/surface-800', '#262626'],
+  ['Dark text', 'text/white-0', '#FFFFFF'],
+  ['Dark description', 'text/white-0-alpha-088', '#FFFFFF 88%'],
+  ['Light fill', 'bg/white-0', '#FFFFFF'],
+  ['Light text', 'text/sub-600', '#5C5C5C, title text/strong-950'],
+  ['Light shadow', '—', '0 2 8 −8, #000000 20%'],
+  ['Default, Small', '—', 'Inter Regular 12/16, 4 / 8 padding, radius 6'],
+  ['Default, Large', '—', 'Inter Regular 14/20, 6 / 10 padding, radius 6'],
+  ['Description width', '—', '268 / 284 px'],
+  ['Description padding', 'spacing-12', '12 px, radius 10 / 12'],
+  ['Description title', '—', 'Inter Medium 12/16, 14/20 at Large'],
+  ['Description text', '—', 'Inter Regular 10/12, 12/16 at Large'],
+  ['Icon and close', '—', '16 + 12 px, 20 + 16 px at Large'],
+  ['Arrow', '—', '8 × 4, 10 × 5, 12 × 6 for Description'],
+  ['Arrow inset', '—', '8 / 10 / 16 px from the corner'],
+  ['Show delay', '—', '300 ms on hover, none on focus'],
+];
+---
+<DocPage
+  title="Tooltip"
+  description="Tooltips name an icon or add a short hint when people hover or focus an element. Explore every type, arrow and theme of the Unictive tooltip."
+  intro="Tooltips put a name or a short hint next to an element, only when people hover or focus it"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Types', types.length], ['Arrows', arrows.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a type and an arrow. The arrow always points at the trigger, so the tooltip opens on the other side">
+    <form class="pg" data-playground data-kind="tooltip" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="type" label="Type" options={types} />
+        <PgSelect name="arrow" label="Arrow" options={arrows} value="Bottom Center" />
+        <PgSelect name="size" label="Size" options={sizes} />
+        <PgSelect name="dark" label="Theme" options={[['true', 'Dark'], ['false', 'Light']]} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="close" checked /><span>Close</span></label>
+        <label class="text-field">
+          <span class="label muted">Text</span>
+          <input type="text" name="text" placeholder="Sample text" maxlength="40" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas canvas-tall" data-canvas>
+        <div class="stage" data-host></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ type: 'Default', arrow: 'Bottom Center', size: 'Small', dark: true })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="types" label="Types" desc="Default names a control in a few words. Description adds a title, a sentence and an optional icon and close">
+    <div class="grid2">
+      {types.map((t) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{t}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ type: t, arrow: 'No', size: 'Large' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="arrows" label="Arrows" desc="Nine positions. Pick the one that points at the trigger and keeps the tooltip inside the screen">
+    <div class="grid3">
+      {arrows.map((a) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{a}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ arrow: a, text: 'Tooltip' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="themes" label="Dark and light" desc="Dark is the default and stands out on any page. Light suits dark surfaces and image backgrounds">
+    <div class="grid2">
+      {[true, false].map((d) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{d ? 'Dark' : 'Light'}</span></span>
+          <span class="tile-body"><Fragment set:html={render({ type: 'Description', arrow: 'Top Left', dark: d })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="behavior" label="Behavior" desc="Hover a trigger for 300 ms, or tab to it. Press Escape or move away to hide it">
+    <div class="grid3">
+      {live.map((l) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="label muted">{l.name}</span></span>
+          <span class="tile-body"><span class="u-anchor"><Fragment set:html={l.trigger} /><Fragment set:html={l.tip} /></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['An icon button has no visible label', 'A short hint helps, like a keyboard shortcut or a field’s format', 'Text is cut off and people may want to read all of it']}
+      avoid={['The information is needed to finish the task, show it on the page', 'It holds links, buttons or forms, use a Popover', 'On touch screens, where there’s no hover, rely on visible labels']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep it to a few words that add something, like the action and its shortcut"
+      dontText="Don’t repeat the visible label, or squeeze a paragraph into a Default tooltip"
+    >
+      <Fragment slot="do"><Fragment set:html={render({ arrow: 'No', text: 'Bold  ⌘B' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={render({ arrow: 'No', text: 'Click this button to make the selected text bold so it stands out' })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Tooltip tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Popover', 'Rich content and actions'],
+      ['Button', 'Icon buttons that need a name'],
+      ['Badge', 'Short visible labels'],
+      ['Text Input', 'Hints next to a field'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/feedback-page';
+</script>

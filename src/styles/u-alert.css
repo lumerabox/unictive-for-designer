@@ -1,0 +1,24 @@
+/* the Unictive DS alert: Size × Status × Style, 360 px wide */
+.u-alert {
+  --bg: var(--st); --fg: #fff; --sub: #fff; --ic: #fff; --x: #fff; --link: #fff; --r: 8px;
+  display: flex; align-items: center; gap: 8px; width: min(360px, 100%); padding: 8px; border-radius: var(--r);
+  background: var(--bg); color: var(--fg); box-shadow: var(--bd, none);
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; text-align: left;
+}
+.u-alert[data-style='light'] { --bg: var(--st-lighter); --fg: var(--st); --sub: var(--st); --ic: var(--st); --x: var(--st); --link: var(--st); }
+.u-alert[data-style='stroke'] { --bg: #fff; --fg: #171717; --sub: #5c5c5c; --ic: var(--st); --x: #171717; --link: #171717; --bd: inset 0 0 0 1px #ebebeb; }
+.u-alert[data-size='small'] { font-size: 12px; line-height: 16px; letter-spacing: 0; }
+.u-alert[data-size='large'] { align-items: flex-start; gap: 12px; padding: 12px; --r: 12px; }
+
+.u-alert-icon { display: grid; place-items: center; flex: none; color: var(--ic); }
+.u-alert-body { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.u-alert:not([data-size='large']) .u-alert-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.u-alert[data-size='large'] .u-alert-body { flex-direction: column; align-items: flex-start; gap: 12px; }
+.u-alert-text { display: flex; flex-direction: column; gap: 4px; }
+.u-alert[data-size='large'] .u-alert-title { font-weight: 500; }
+.u-alert-desc { color: var(--sub); }
+.u-alert-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--link); }
+.u-alert-close { color: var(--x); }
+
+/* dismissed: collapse, then the script removes the node */
+.u-alert.is-leaving, .u-banner.is-leaving { opacity: 0; transform: translateY(-4px); transition: opacity 160ms var(--ease, ease), transform 160ms var(--ease, ease); }
