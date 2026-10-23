@@ -1,0 +1,17 @@
+---
+interface Props {
+  label: string;
+  rows: [property: string, token: string, value: string][];
+}
+const { label, rows } = Astro.props;
+---
+<div class="table" role="table" aria-label={label}>
+  <div class="tr th" role="row"><span class="label muted" role="columnheader">Property</span><span class="label muted" role="columnheader">Token</span><span class="label muted" role="columnheader">Value</span></div>
+  {rows.map(([a, b, c]) => (
+    <div class="tr" role="row">
+      <span role="cell">{a}</span>
+      <span role="cell">{b === '—' ? b : <button type="button" class="token" data-token={b} title="Copy token name">{b}</button>}</span>
+      <span role="cell" class="val">{c.startsWith('#') && <i class="swatch" style={`background:${c}`}></i>}{c}</span>
+    </div>
+  ))}
+</div>

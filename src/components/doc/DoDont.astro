@@ -1,0 +1,18 @@
+---
+// examples go in the "do" and "dont" slots
+interface Props {
+  doText: string;
+  dontText: string;
+}
+const { doText, dontText } = Astro.props;
+---
+<div class="grid2">
+  <figure class="dd do">
+    <div class="dd-canvas"><slot name="do" /></div>
+    <figcaption><span class="label">Do</span><p>{doText}</p></figcaption>
+  </figure>
+  <figure class="dd dont">
+    <div class="dd-canvas"><slot name="dont" /></div>
+    <figcaption><span class="label">Don’t</span><p>{dontText}</p></figcaption>
+  </figure>
+</div>

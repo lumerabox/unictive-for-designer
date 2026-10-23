@@ -1,0 +1,158 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { sizes, styles, types, states, variantCount, metrics } from '../../data/button';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['variants', 'Variants'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const copyAttr = (v: Record<string, unknown>) => JSON.stringify(v);
+const specs: [string, string, string][] = [
+  ['Container fill', 'brand/core/base', '#1868D0'],
+  ['Label color', 'text/white-0', '#FFFFFF'],
+  ['Corner radius', 'radius-8 · radius-6', '8 px · 6 px on Small'],
+  ['Height', '—', '48 / 40 / 32'],
+  ['Padding', 'spacing-12 · 10 · 8', '12 / 10 / 8 px'],
+  ['Icon to label gap', 'spacing-4', '4 px'],
+  ['Label style', 'Label / Medium', 'Inter Medium 16/24 · 14/20'],
+];
+---
+<DocPage
+  title="Button"
+  description="Buttons let people take an action with a single click. Explore every variant and copy it straight into Figma."
+  intro="Buttons let people take an action with a single click, use them for the most important actions in forms, dialogs and pages"
+  toc={toc}
+  meta={[['Updated', 'Sep 18, 2026'], ['Variants', variantCount]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+
+  <Section id="playground" label="Playground" desc="Pick a variant, then copy it into Figma">
+    <form class="pg" data-playground onsubmit="return false">
+      <div class="fields">
+        {[['style', 'Style', styles], ['type', 'Type', types], ['size', 'Size', sizes], ['state', 'State', states]].map(([key, label, opts]) => (
+          <label class="field">
+            <span class="label muted">{label}</span>
+            <span class="select">
+              <select name={key as string}>
+                {(opts as readonly string[]).map((o) => <option value={o}>{o === 'Disable' ? 'Disabled' : o}</option>)}
+              </select>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </label>
+        ))}
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="rounded" /><span>Rounded</span></label>
+        <label class="toggle"><input type="checkbox" name="leftIcon" /><span>Left icon</span></label>
+        <label class="toggle"><input type="checkbox" name="rightIcon" /><span>Right icon</span></label>
+        <label class="text-field">
+          <span class="label muted">Label</span>
+          <input type="text" name="label" value="Button" maxlength="32" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div class="spec">
+          <span class="measure-num" data-measure>48</span>
+          <span class="measure-line" aria-hidden="true"></span>
+          <Btn size="Large" data-preview title="Click to copy to Figma" />
+        </div>
+        <p class="chip" data-chip aria-live="polite">Size=Large · Style=Primary · Type=Main · State=Default</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the preview or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="variants" label="Variants" desc="Four styles across three types, Primary carries the most emphasis">
+    <div class="grid4">
+      {types.map((t) => styles.map((s) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr({ style: s, type: t, size: 'Medium' })} aria-label={`Copy ${t} ${s} button to Figma`}>
+          <span class="tile-top"><span class="label muted">{t} / {s}</span></span>
+          <span class="tile-body"><Btn as="span" variant={s} type={t} static /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      )))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes">
+    <div class="grid4">
+      {sizes.map((z) => (
+        <button type="button" class="tile tile-big" data-copy={copyAttr({ size: z })} aria-label={`Copy ${z} button to Figma`}>
+          <span class="tile-top"><span class="big">{metrics[z].height}</span><span class="label muted">{z}</span></span>
+          <span class="tile-body"><Btn as="span" size={z} static /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+      <button type="button" class="tile tile-big" data-copy={copyAttr({ size: 'Medium', rounded: true })} aria-label="Copy rounded button to Figma">
+        <span class="tile-top"><span class="big">R</span><span class="label muted">Rounded</span></span>
+        <span class="tile-body"><Btn as="span" rounded static /></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+    </div>
+  </Section>
+
+  <Section id="states" label="States">
+    <div class="grid-states">
+      {[['A', 'Default', 'Default'], ['B', 'Hover', 'Hover'], ['C', 'Disabled', 'Disable']].map(([k, name, st]) => (
+        <button type="button" class="tile tile-big" data-copy={copyAttr({ size: 'Medium', state: st })} aria-label={`Copy ${name} state to Figma`}>
+          <span class="tile-top"><span class="big">{k}</span><span class="label muted">{name}</span></span>
+          <span class="tile-body"><Btn as="span" state={st as any} static /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+      <div class="note">
+        <p class="label muted">Note</p>
+        <p>States are values of the State property, focus is handled in code (phase 2)</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['You need to trigger an action like Save, Submit or Continue', 'A person moves to the next step in a flow', 'It is the single most important action in an area']}
+      avoid={['The action opens another page, use a Link Button', 'The action is icon-only, use an Icon Button', 'A Primary button already exists in the same area']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Pair one Primary button with a Secondary button for the less important action"
+      dontText="Don’t put two Primary buttons side by side, nothing stands out"
+    >
+      <Fragment slot="do"><Btn variant="Secondary" type="Neutral" label="Cancel" /><Btn label="Save" /></Fragment>
+      <Fragment slot="dont"><Btn label="Cancel" /><Btn label="Save" /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Button tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Icon Button', 'Icon-only actions'],
+      ['Link Button', 'Inline navigation'],
+      ['Compact Button', 'Dense toolbars'],
+      ['Social Button', 'Sign in with a provider'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/button-page';
+</script>

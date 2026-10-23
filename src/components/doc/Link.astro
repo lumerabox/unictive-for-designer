@@ -1,0 +1,10 @@
+---
+// live pages render a link, unpublished ones a button that shows the coming soon toast
+interface Props {
+  href?: string;
+  name: string;
+  class?: string;
+}
+const { href, name, class: cls } = Astro.props;
+---
+{href ? <a class={cls} href={href}><slot /></a> : <button type="button" class={cls} data-soon={name}><slot /></button>}

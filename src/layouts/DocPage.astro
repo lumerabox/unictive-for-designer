@@ -1,0 +1,85 @@
+---
+// template for every doc page: sidebar, header, sections, pager, on-this-page
+import Base from './Base.astro';
+import Link from '../components/doc/Link.astro';
+import { sideNav, livePages, topNav } from '../data/nav';
+
+interface Props {
+  title: string;
+  description: string;
+  intro: string;
+  section?: string;
+  toc: [id: string, label: string][];
+  meta?: [label: string, value: string | number][];
+}
+const { title, description, intro, section = 'Components', toc, meta = [] } = Astro.props;
+
+const group = sideNav.find((g) => g.items.includes(title))?.group ?? '';
+const flat = sideNav.flatMap((g) => g.items);
+const at = flat.indexOf(title);
+const prev = at > 0 ? flat[at - 1] : null;
+const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
+---
+<Base title={title} description={description} active={section}>
+  <div class="shell">
+    <div class="scrim" data-scrim aria-hidden="true"></div>
+    <aside id="sidebar" class="sidebar" aria-label={section}>
+      <nav class="drawer-nav" aria-label="Sections">
+        {topNav.map((n) => n.href
+          ? <a href={n.href} aria-current={n.label === section ? 'page' : undefined}>{n.label}</a>
+          : <button type="button" data-soon={n.label}>{n.label}</button>)}
+      </nav>
+      <nav>
+        {sideNav.map((g) => (
+          <div class="side-group">
+            <p class="label">{g.group}</p>
+            <ul>
+              {g.items.map((item) => livePages[item]
+                ? <li><a class="side-item" href={livePages[item]} aria-current={item === title ? 'page' : undefined}>{item}</a></li>
+                : <li><button type="button" class="side-item" data-soon={item}>{item}</button></li>)}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
+
+    <div class="center" id="content">
+      <header class="page-head">
+        <p class="crumbs"><span class="label">{section}</span>{group && <><span class="slash">/</span><span class="label">{group}</span></>}</p>
+        <h1>{title}</h1>
+        <div class="intro">
+          <p>{intro}</p>
+          <slot name="action" />
+        </div>
+        {meta.length > 0 && (
+          <dl class="meta">
+            {meta.map(([k, v]) => <div><dt class="label muted">{k}</dt><dd>{v}</dd></div>)}
+          </dl>
+        )}
+      </header>
+
+      <div class="main-row">
+        <main class="main">
+          <slot />
+          <nav class="pager" aria-label="Pagination">
+            {prev
+              ? <Link class="pager-item" href={livePages[prev]} name={prev}><span class="label muted">← Previous</span><span class="pager-title">{prev}</span></Link>
+              : <span></span>}
+            {next && <Link class="pager-item next" href={livePages[next]} name={next}><span class="label muted">Next →</span><span class="pager-title">{next}</span></Link>}
+          </nav>
+        </main>
+
+        <aside class="toc" aria-label="On this page">
+          <p class="label">On this page</p>
+          <ul>
+            {toc.map(([id, label]) => <li><a href={`#${id}`} data-toc={id}>{label}</a></li>)}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import '../scripts/doc-page';
+</script>

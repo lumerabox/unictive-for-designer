@@ -1,0 +1,33 @@
+---
+interface Props {
+  size?: 'Large' | 'Medium' | 'Small';
+  variant?: 'Primary' | 'Secondary' | 'Tertiary' | 'Ghost';
+  type?: 'Main' | 'Neutral' | 'Error';
+  state?: 'Default' | 'Hover' | 'Disable';
+  rounded?: boolean;
+  leftIcon?: boolean;
+  rightIcon?: boolean;
+  label?: string;
+  static?: boolean;
+  as?: 'button' | 'span';
+  [key: string]: any;
+}
+const { size = 'Medium', variant = 'Primary', type = 'Main', state = 'Default', rounded = false, leftIcon = false, rightIcon = false, label = 'Button', static: isStatic = false, as = 'button', ...rest } = Astro.props;
+const Tag = as;
+---
+<Tag
+  class="u-btn"
+  data-size={size.toLowerCase()}
+  data-style={variant.toLowerCase()}
+  data-type={type.toLowerCase()}
+  data-state={state.toLowerCase()}
+  data-rounded={String(rounded)}
+  data-static={isStatic ? '' : undefined}
+  type={as === 'button' ? 'button' : undefined}
+  disabled={as === 'button' && state === 'Disable' ? true : undefined}
+  {...rest}
+>
+  <svg data-icon="left" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden={!leftIcon}><path d="M15 18L9 12L15 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  <span class="u-btn-text">{label}</span>
+  <svg data-icon="right" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden={!rightIcon}><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round" /></svg>
+</Tag>

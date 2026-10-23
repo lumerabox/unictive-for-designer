@@ -1,0 +1,39 @@
+/* the Unictive DS button, mirrors the Buttons component set */
+.u-btn {
+  --h: 40px; --px: 10px; --r: 8px; --icon: 20px; --fs: 14px; --lh: 20px; --ls: -0.006em;
+  --base: #1868d0; --base-hover: #0d4690; --lighter: #ecf0fe; --tint: #1868d0; --tint-hover: #1868d0; --line: #1868d0;
+
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: var(--h); padding: 0 var(--px); border: 0; border-radius: var(--r);
+  font: 500 var(--fs) / var(--lh) 'Inter', system-ui, sans-serif; letter-spacing: var(--ls);
+  white-space: nowrap; cursor: pointer; user-select: none; flex: none;
+  background: var(--d-bg); color: var(--d-fg); box-shadow: inset 0 0 0 1px var(--d-bd);
+  transition: background-color 120ms var(--ease, ease), color 120ms var(--ease, ease), box-shadow 120ms var(--ease, ease);
+}
+.u-btn .u-btn-text { padding: 0 4px; }
+.u-btn svg { width: var(--icon); height: var(--icon); flex: none; }
+.u-btn svg[hidden] { display: none; }
+.u-btn svg path { stroke: currentColor; stroke-width: var(--sw, 2); }
+
+.u-btn[data-size='large'] { --h: 48px; --px: 12px; --icon: 24px; --fs: 16px; --lh: 24px; --ls: -0.011em; }
+.u-btn[data-size='small'] { --h: 32px; --px: 8px; --r: 6px; --icon: 16px; }
+/* icon strokes are 2 / 1.6 / 1.6 px, expressed in 24-unit viewBox space */
+.u-btn[data-size='medium'] { --sw: 1.92; }
+.u-btn[data-size='small'] { --sw: 2.4; }
+.u-btn[data-rounded='true'] { --r: 999px; }
+
+.u-btn[data-type='neutral'] { --base: #262626; --base-hover: #171717; --lighter: #f7f7f7; --tint: #5c5c5c; --tint-hover: #171717; --line: #dedede; }
+.u-btn[data-type='error'] { --base: #fb3748; --base-hover: #d02533; --lighter: #ffebec; --tint: #fb3748; --tint-hover: #fb3748; --line: #fb3748; }
+
+.u-btn[data-style='primary'] { --d-bg: var(--base); --d-fg: #fff; --d-bd: transparent; --h-bg: var(--base-hover); --h-fg: #fff; --h-bd: transparent; }
+.u-btn[data-style='secondary'] { --d-bg: var(--lighter); --d-fg: var(--tint); --d-bd: transparent; --h-bg: transparent; --h-fg: var(--tint-hover); --h-bd: var(--line); }
+.u-btn[data-style='tertiary'] { --d-bg: transparent; --d-fg: var(--tint); --d-bd: var(--line); --h-bg: var(--lighter); --h-fg: var(--tint-hover); --h-bd: transparent; }
+.u-btn[data-style='ghost'] { --d-bg: transparent; --d-fg: var(--tint); --d-bd: transparent; --h-bg: var(--lighter); --h-fg: var(--tint-hover); --h-bd: transparent; }
+
+.u-btn[data-state='hover'] { background: var(--h-bg); color: var(--h-fg); box-shadow: inset 0 0 0 1px var(--h-bd); }
+@media (hover: hover) {
+  .u-btn:not([data-state='disable']):not([data-static]):hover { background: var(--h-bg); color: var(--h-fg); box-shadow: inset 0 0 0 1px var(--h-bd); }
+}
+.u-btn[data-state='disable'], .u-btn:disabled { background: #f7f7f7; color: #d1d1d1; box-shadow: none; cursor: not-allowed; }
+.u-btn[data-static] { cursor: default; }
+.u-btn:focus-visible { outline: 2px solid var(--brand-alpha-16, #1868d029); outline-offset: 2px; box-shadow: inset 0 0 0 1px var(--d-bd), 0 0 0 4px #1868d029; }

@@ -1,0 +1,17 @@
+---
+import { livePages } from '../../data/nav';
+import Link from './Link.astro';
+
+interface Props {
+  items: [name: string, hint: string][];
+}
+const { items } = Astro.props;
+---
+<div class="grid4">
+  {items.map(([a, b]) => (
+    <Link class="tile tile-rel" href={livePages[a]} name={a}>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.16666 9.99984H15.8333M9.99999 15.8332L15.8333 9.99984L9.99999 4.1665" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><strong>{a}</strong><span>{b}</span></span>
+    </Link>
+  ))}
+</div>

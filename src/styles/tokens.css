@@ -1,0 +1,103 @@
+/*
+  single source of truth for the site. every page reads these values,
+  so changing one line here changes every page. rules: DESIGN.md
+*/
+:root {
+  /* color, mirrors Unictive DS 1.0 semantic tokens */
+  --bg-white-0: #ffffff;
+  --bg-weak-50: #f7f7f7;
+  --bg-soft-200: #ebebeb;
+  --bg-strong-950: #171717;
+  --text-strong-950: #171717;
+  --text-sub-600: #5c5c5c;
+  --text-soft-400: #a3a3a3;
+  --text-white-0: #ffffff;
+  --stroke-soft-200: #ebebeb;
+  --stroke-sub-300: #dedede;
+  --brand: #1868d0;
+  --brand-dark: #0d4690;
+  --brand-lighter: #ecf0fe;
+  --brand-alpha-16: #1868d029;
+  --error: #fb3748;
+  --scrim: rgb(23 23 23 / 0.24);
+
+  /* grid, 1440 canvas: 120 margin, 12 cols x 78, 24 gutter = 1200 container */
+  --container: 1200px;
+  --margin: 120px;
+  --gutter: 24px;
+  --line: 0.5px solid var(--stroke-soft-200);
+  --guide: 0.5px solid var(--brand-alpha-16);
+
+  /* doc page shell: sidebar 2 cols, center 960 = main 792 + gutter + toc 144 */
+  --sidebar: 180px;
+  --shell-gap: 60px;
+  --center: 960px;
+  --main: 792px;
+  --toc: 144px;
+  --topbar: 72px;
+  --drawer: min(320px, 86vw);
+
+  /* spacing */
+  --space-page-top: 48px;
+  --space-section: 64px;
+  --space-head: 32px;
+  --space-pager-top: 48px;
+  --space-pager-bottom: 96px;
+  --gap-tile: 16px;
+  --pad-tile: 20px;
+
+  /* type */
+  --font: 'Inter', system-ui, sans-serif;
+  --fs-display: clamp(64px, 11vw, 120px);
+  --lh-display: 0.934;
+  --ls-display: -0.05em;
+  --fs-h2: 32px;
+  --lh-h2: 40px;
+  --ls-h2: -0.03em;
+  --fs-title: 32px;
+  --lh-title: 40px;
+  --fs-lead: 20px;
+  --lh-lead: 30px;
+  --fs-body: 16px;
+  --lh-body: 24px;
+  --fs-small: 14px;
+  --lh-small: 20px;
+  --fs-label: 10px;
+  --lh-label: 12px;
+  --ls-label: 0.08em;
+
+  /* tile heights */
+  --tile-sm: 144px;
+  --tile-md: 160px;
+  --tile-lg: 220px;
+  --dd-h: 220px;
+  --canvas-h: 400px;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --fast: 120ms;
+  --base: 160ms;
+  --slow: 260ms;
+
+  color-scheme: light;
+}
+
+/* breakpoints (css vars can't drive media queries, keep these four in sync with DESIGN.md):
+   1439 margin, 1279 toc hides, 1023 drawer nav, 767 mobile, 639 narrow margin */
+@media (max-width: 1439px) { :root { --margin: 64px; } }
+@media (max-width: 1279px) { :root { --shell-gap: 40px; } }
+@media (max-width: 1023px) { :root { --margin: 32px; --topbar: 64px; } }
+@media (max-width: 767px) {
+  :root {
+    --space-page-top: 32px;
+    --space-section: 48px;
+    --fs-h2: 28px;
+    --lh-h2: 36px;
+    --fs-lead: 18px;
+    --lh-lead: 28px;
+    --tile-lg: 180px;
+    --canvas-h: 320px;
+  }
+}
+@media (max-width: 639px) { :root { --margin: 20px; } }
+@media (max-width: 399px) { :root { --pad-tile: 14px; } }
