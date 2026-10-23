@@ -9,7 +9,6 @@ const { id, label, title = label, desc } = Astro.props;
 ---
 <section id={id} class="sec">
   <div class="sec-head">
-    <p class="label">{label}</p>
     <h2>{title}</h2>
     {desc && <p class="desc">{desc}</p>}
   </div>
