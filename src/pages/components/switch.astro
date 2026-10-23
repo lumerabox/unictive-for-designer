@@ -1,0 +1,169 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Switch from '../../components/Switch.astro';
+import ChoiceLabel from '../../components/choice/ChoiceLabel.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import { bare, labeled, group, copyAttr } from '../../lib/figma/choice-copy';
+import { sizes, positions, metrics, variantCount } from '../../data/switch';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['label', 'With label'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const states: [name: string, selected: boolean, disabled: boolean][] = [
+  ['Off', false, false],
+  ['On', true, false],
+  ['Disabled off', false, true],
+  ['Disabled on', true, true],
+];
+const specs: [string, string, string][] = [
+  ['Track size', '—', '36 × 20 / 28 × 16'],
+  ['Track padding', 'spacing-2', '2 px'],
+  ['Knob size', '—', '16 / 12 px'],
+  ['Corner radius', 'radius-full', '999 px'],
+  ['Track, off', 'bg/soft-200', '#EBEBEB'],
+  ['Track, on', 'brand/core/base', '#1868D0'],
+  ['Knob', 'bg/white-0', '#FFFFFF'],
+  ['Disabled knob', 'bg/sub-300', '#D1D1D1'],
+  ['Knob motion', '—', '160 ms, cubic-bezier(.2, 0, 0, 1)'],
+  ['Label width', '—', '360 px'],
+  ['Control to text', 'spacing-12', '12 px'],
+  ['Label style', 'Label / Medium / Small', 'Inter Medium 14/20'],
+  ['Description style', 'Paragraphs / Extra Small', 'Inter Regular 12/16'],
+  ['Link button style', 'Label / Medium / Extra Small', 'Inter Medium 12/16'],
+];
+---
+<DocPage
+  title="Switch"
+  description="Switches turn a single setting on or off, and the change applies right away. Explore every size and state of the Unictive switch."
+  intro="Switches turn a single setting on or off, and the change takes effect the moment people flip it"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Component sets', 2]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Section id="playground" label="Playground" desc="Pick a variant, then click the preview to flip it">
+    <form class="pg" data-playground data-kind="switch" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="component" label="Component" options={['Switch', 'Switch-label']} value="Switch-label" />
+        <PgSelect name="size" label="Size" options={sizes} />
+        <PgSelect name="position" label="Position" options={positions} />
+        <PgSelect name="select" label="Select" options={[['false', 'Off'], ['true', 'On']]} value="true" />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="disabled" /><span>Disabled</span></label>
+        <label class="toggle"><input type="checkbox" name="description" checked /><span>Description</span></label>
+        <label class="toggle"><input type="checkbox" name="badge" checked /><span>Badge</span></label>
+        <label class="toggle"><input type="checkbox" name="button" checked /><span>Link button</span></label>
+        <label class="text-field">
+          <span class="label muted">Label</span>
+          <input type="text" name="text" value="Dark mode" maxlength="40" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div class="spec spec-choice">
+          <span class="measure-num" data-measure>20</span>
+          <span class="measure-line" aria-hidden="true"></span>
+          <div>
+            <div data-bare data-measure-target hidden><Switch live selected ariaLabel="Preview switch" /></div>
+            <div data-labeled data-measure-target>
+              <ChoiceLabel live labelText="Dark mode" descriptionText="Match the system setting or pick one yourself" badgeText="New"><Switch live selected /></ChoiceLabel>
+            </div>
+          </div>
+        </div>
+        <p class="chip" data-chip aria-live="polite">Switch-label · Position=Right · Select=true · Disable=false</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Medium for settings pages and forms, Small for dense lists and table rows">
+    <div class="grid2">
+      {sizes.map((z) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr(`${z} switches`, group('Switches', 'HORIZONTAL', 24, [bare('switch', z, 'false'), bare('switch', z, 'true')]))} aria-label={`Copy ${z} switches to Figma`}>
+          <span class="tile-top"><span class="big">{metrics[z].height}</span><span class="label muted">{z} · {metrics[z].width} × {metrics[z].height}</span></span>
+          <span class="tile-body"><span class="choice-pair"><Switch size={z} /><Switch size={z} selected /></span></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="states" label="States" desc="On fills the track with brand blue and slides the knob right. Disabled keeps the knob position and greys it out">
+    <div class="grid4">
+      {states.map(([name, selected, disabled], i) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr(`Switch · ${name}`, { parts: [bare('switch', 'Medium', String(selected), disabled)] })} aria-label={`Copy ${name} switch to Figma`}>
+          <span class="tile-top"><span class="big">{'ABCD'[i]}</span></span>
+          <span class="tile-body"><Switch selected={selected} disabled={disabled} /></span>
+          <span class="label muted">{name}</span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="label" label="With label" desc="Switch-label adds a label, an optional description, badge and link button. Position sets which side the switch sits on">
+    <div class="grid2">
+      {positions.map((p) => (
+        <button type="button" class="tile tile-big" data-copy={copyAttr(`Switch with label · ${p} · On`, { parts: [labeled('switch', p, 'true', false, { label: 'Two-step verification', desc: 'Ask for a code when you sign in on a new device', badge: 'Recommended', button: 'Learn more' })] })} aria-label={`Copy switch with label, position ${p}, to Figma`}>
+          <span class="tile-top"><span class="label muted">Position {p}</span></span>
+          <span class="tile-body"><ChoiceLabel position={p} labelText="Two-step verification" descriptionText="Ask for a code when you sign in on a new device" badgeText="Recommended" buttonText="Learn more"><Switch selected /></ChoiceLabel></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['A setting turns on or off and applies right away, with no Save button', 'The two states are clear opposites, like on and off or show and hide', 'People scan a list of settings and flip the ones they need']}
+      avoid={['The change only applies after people submit a form, use a Checkbox', 'People pick one of several options, use a Radio Group', 'The action can’t be undone or needs a confirmation, use a Button']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Name the setting in the label and let the switch show its state"
+      dontText="Don’t use a switch when the change waits for a Save button, use a Checkbox"
+    >
+      <Fragment slot="do"><ChoiceLabel labelText="Order notifications" description={false} badge={false} button={false}><Switch selected /></ChoiceLabel></Fragment>
+      <Fragment slot="dont">
+        <div class="choice-stack">
+          <ChoiceLabel labelText="Subscribe to newsletter" description={false} badge={false} button={false}><Switch /></ChoiceLabel>
+          <Btn size="Small" label="Save changes" as="span" static />
+        </div>
+      </Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Switch tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Checkbox', 'Confirm a choice in a form'],
+      ['Radio Group', 'Pick one of several'],
+      ['Dropdown', 'Pick from a long list'],
+      ['Rating', 'Score an experience'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/choice-page';
+</script>

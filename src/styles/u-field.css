@@ -1,0 +1,94 @@
+/* the Unictive DS text input and text area, mirrors the Text-input and Text-area component sets */
+.u-field {
+  --h: 40px; --icon: 20px; --sw: 1.6;
+  --bg: #ffffff; --bd: #dedede; --fg: #171717; --ph: #a3a3a3; --ic: #5c5c5c; --cap: #5c5c5c;
+  --addon-bg: #ffffff; --addon-bd: #dedede;
+
+  display: grid; gap: 4px; width: 300px; max-width: 100%;
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; color: var(--fg); text-align: left;
+}
+.u-field[hidden], .u-field [hidden] { display: none !important; }
+.u-field[data-size='large'] { --h: 48px; }
+.u-field[data-size='small'] { --h: 32px; --icon: 16px; --sw: 2; }
+
+/* style and state */
+.u-field[data-style='contained'] { --bg: #f7f7f7; --bd: transparent; --addon-bg: #ebebeb; --addon-bd: transparent; }
+.u-field[data-state='focus'], .u-field[data-state='typing'],
+.u-field[data-live]:not([data-state='error']):not([data-state='disable']):focus-within { --bd: #1868d0; }
+.u-field[data-state='error'] { --bd: #fb3748; --cap: #fb3748; }
+.u-field[data-state='disable'] { --bg: #f7f7f7; --fg: #5c5c5c; --ph: #5c5c5c; --ic: #a4a4a4; }
+.u-field[data-kind='area'][data-style='outline'][data-state='disable'] { --ph: #a3a3a3; }
+.u-field[data-style='contained'][data-state='disable'] { --fg: #d1d1d1; --ph: #d1d1d1; --ic: #d1d1d1; }
+
+/* label row */
+.u-field-label { display: flex; gap: 2px; font-weight: 500; color: #171717; white-space: nowrap; }
+.u-field-label .req { color: #fb3748; }
+.u-field-label .opt { color: #a3a3a3; }
+
+/* frame, the border sits on the control so addons keep their own stroke */
+.u-field-box { display: flex; height: var(--h); border-radius: 8px; }
+.u-field-box > * { height: 100%; }
+.u-field-box > :first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.u-field-box > :last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+.u-field-control {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+  background: var(--bg); box-shadow: inset 0 0 0 1px var(--bd);
+  transition: box-shadow 120ms var(--ease, ease), background-color 120ms var(--ease, ease);
+}
+.u-field[data-type$='dropdown'] .u-field-box { background: var(--bg); box-shadow: inset 0 0 0 1px var(--bd); transition: box-shadow 120ms var(--ease, ease); }
+.u-field[data-type$='dropdown'] .u-field-control { background: none; box-shadow: none; }
+
+.u-field svg path { stroke: currentColor; stroke-width: var(--sw); stroke-linecap: round; stroke-linejoin: round; }
+.u-field-icon { width: var(--icon); height: var(--icon); flex: none; color: var(--ic); }
+
+.u-field-value { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--fg); }
+.u-field-value[data-ph] { color: var(--ph); }
+.u-caret { display: inline-block; width: 1px; height: 18px; vertical-align: middle; background: #dedede; }
+.u-field-input {
+  flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; border-radius: 0; outline: 0; background: transparent;
+  font: inherit; letter-spacing: inherit; color: var(--fg); caret-color: #171717;
+}
+.u-field-input::placeholder { color: var(--ph); opacity: 1; }
+.u-field-input:disabled { cursor: not-allowed; opacity: 1; -webkit-text-fill-color: var(--fg); }
+.u-field-input:disabled::placeholder { -webkit-text-fill-color: var(--ph); }
+
+/* addons: leading text, trailing button, file upload */
+.u-field-addon { display: flex; align-items: center; gap: 4px; flex: none; padding: 0 12px; background: var(--addon-bg); color: #171717; white-space: nowrap; }
+.u-field-addon:first-child { box-shadow: inset 1px 0 var(--addon-bd), inset 0 1px var(--addon-bd), inset 0 -1px var(--addon-bd); }
+.u-field-addon:last-child { box-shadow: inset -1px 0 var(--addon-bd), inset 0 1px var(--addon-bd), inset 0 -1px var(--addon-bd); }
+.u-field-addon.strong { font-weight: 500; }
+.u-field-addon svg, .u-field-drop svg { width: var(--icon); height: var(--icon); flex: none; color: #5c5c5c; }
+
+/* dropdown segment inside the frame */
+.u-field-drop { display: flex; align-items: center; gap: 4px; flex: none; padding: 0 4px 0 12px; color: #171717; white-space: nowrap; }
+.u-field-drop:last-child { padding: 0 12px 0 4px; }
+
+/* tag input */
+.u-field[data-type='tag-input'] .u-field-control { padding-left: 8px; }
+.u-field-tags { display: flex; gap: 6px; flex: none; }
+.u-tag { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px 0 6px; border-radius: 4px; box-shadow: inset 0 0 0 1px #dedede; font-size: 12px; line-height: 16px; letter-spacing: 0; color: #171717; white-space: nowrap; }
+.u-field[data-state='disable'] .u-tag { color: var(--ph); }
+.u-tag svg { width: 12px; height: 12px; color: #a4a4a4; }
+.u-tag svg path { stroke-width: 1.2; }
+
+/* password */
+.u-field-dots { flex: 1; display: flex; gap: 4px; }
+.u-field-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--fg); }
+
+/* caption and counter */
+.u-field-foot { display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; letter-spacing: 0; color: #5c5c5c; }
+.u-field-caption { flex: 1; min-width: 0; color: var(--cap); }
+.u-field-counter { margin-left: auto; font-size: 10px; line-height: 12px; white-space: nowrap; }
+
+/* text area */
+.u-field[data-kind='area'] { --h: 120px; }
+.u-field[data-kind='area'][data-size='small'] { --h: 80px; }
+.u-field[data-kind='area'] .u-field-box {
+  flex-direction: column; gap: 8px; padding: 2px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--bd);
+  transition: box-shadow 120ms var(--ease, ease);
+}
+.u-field[data-kind='area'] .u-field-control { flex: 1; min-height: 0; height: auto; align-items: stretch; padding: 8px 10px; background: none; box-shadow: none; border-radius: 0; }
+.u-field[data-kind='area'] .u-field-value { white-space: normal; }
+.u-field[data-kind='area'] .u-field-input { height: 100%; resize: none; line-height: 20px; }
+.u-field-resize { align-self: flex-end; width: 12px; height: 12px; flex: none; color: #5c5c5c; }
+.u-field .u-field-resize path { stroke-width: 1; stroke-linecap: butt; }

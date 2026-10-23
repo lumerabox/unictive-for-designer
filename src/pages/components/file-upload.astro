@@ -1,0 +1,188 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import FileUpload from '../../components/FileUpload.astro';
+import FileCard from '../../components/file-upload/FileCard.astro';
+import Btn from '../../components/Btn.astro';
+import { areaSizes, disables, cardSizes, cardStates, areaMetrics, cardMetrics, maxSizeMB, variantCount } from '../../data/file-upload';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['area', 'Upload area'],
+  ['card-sizes', 'File card sizes'],
+  ['card-states', 'File card states'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const selects: [string, string, readonly string[]][] = [
+  ['areaSize', 'Area size', areaSizes],
+  ['disable', 'Area disable', disables],
+  ['cardSize', 'Card size', cardSizes],
+  ['cardState', 'Card state', cardStates],
+];
+const areaCopy = (z: string, d: string) => JSON.stringify({ label: `${z} area${d === 'true' ? ' · Disabled' : ''}`, spec: { parts: [{ variant: `File Upload Area / ${d} / ${z}` }] } });
+const cardCopy = (z: string, s: string) => JSON.stringify({ label: `${z} card · ${s}`, spec: { parts: [{ variant: `File Card / ${z} / ${s}` }] } });
+const stateNotes: Record<string, string> = {
+  'Ready to Upload': 'Picked but not sent yet, the dashed border shows it is still pending',
+  Loading: 'Sending, the spinner and percentage update until the upload ends',
+  Finish: 'Stored, the check and file size confirm it went through',
+  Failed: 'The upload stopped, the card turns red and offers a retry',
+  View: 'Uploaded and being processed, or opened later to review',
+};
+const specs: [string, string, string][] = [
+  ['Area width', '—', '400 px'],
+  ['Area padding', 'spacing-32', '32 px'],
+  ['Area radius', 'radius-16', '16 px'],
+  ['Area border', 'stroke/sub-300', '#DEDEDE, 1 px dashed'],
+  ['Area fill', 'bg/white-0 · bg/weak-50', '#FFFFFF, #F7F7F7 when disabled'],
+  ['Area gap', 'spacing-16 · spacing-12', 'Large stacks with 16 px, Small sits in a row with 12 px'],
+  ['Label, area and caption gap', 'spacing-8', '8 px'],
+  ['Upload icon button', 'radius-full · stroke/soft-200', '40 px, 10 px padding, #EBEBEB border'],
+  ['Browse files button', 'radius-6 · stroke/sub-300', '6 px top and bottom, 12 px sides'],
+  ['Disabled button text', 'text/disabled-300', '#D1D1D1'],
+  ['Card width', '—', '338 px'],
+  ['Card height', '—', '60 / 48 / 44'],
+  ['Card padding', 'spacing-8 · spacing-12', '8 px left, top and bottom, 12 px right'],
+  ['Card radius', 'radius-16 · radius-10', '16 px Large, 10 px Medium and Small'],
+  ['Card icon box', 'spacing-12 / 8 / 6 · radius-12 / 8', '44 / 32 / 28 px, #EBEBEB border'],
+  ['Pending border', 'stroke/sub-300', '#DEDEDE, 1 px dashed'],
+  ['Failed border and text', 'state/error/base', '#FB3748'],
+  ['Icons', 'text/sub-600', '20 px Large, 16 px Medium and Small'],
+  ['Title and file name', 'Label / Medium / Small', 'Inter Medium 14/20'],
+  ['Description and caption', 'Paragraphs / Extra Small', 'Inter Regular 12/16'],
+  ['Medium card status', 'Paragraphs / Super Small', 'Inter Regular 10/12'],
+];
+---
+<DocPage
+  title="File Upload"
+  description="File upload lets people attach files by dropping them or browsing. Explore the Unictive upload area and every file card size and state."
+  intro="File upload lets people attach documents or images by dropping them on an area or browsing their device, then shows each file’s progress in its own card"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Limit', `${maxSizeMB}MB per file`]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Section id="playground" label="Playground" desc="Pick a variant, or drop a real file on the area to watch it upload. Nothing leaves your browser">
+    <form class="pg" data-playground onsubmit="return false">
+      <div class="fields">
+        {selects.map(([key, label, opts]) => (
+          <label class="field">
+            <span class="label muted">{label}</span>
+            <span class="select">
+              <select name={key}>
+                {opts.map((o) => <option value={o}>{o}</option>)}
+              </select>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </label>
+        ))}
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="label" checked /><span>Label</span></label>
+        <label class="toggle"><input type="checkbox" name="required" checked /><span>Required</span></label>
+        <label class="toggle"><input type="checkbox" name="optional" checked /><span>Optional hint</span></label>
+        <label class="toggle"><input type="checkbox" name="caption" checked /><span>Caption</span></label>
+        <label class="toggle"><input type="checkbox" name="close" checked /><span>Close</span></label>
+        <label class="text-field">
+          <span class="label muted">File name</span>
+          <input type="text" name="name" value="File name" maxlength="60" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas fu-canvas" data-canvas>
+        <div class="fu-stack">
+          <FileUpload live data-area />
+          <FileCard live data-card />
+        </div>
+        <p class="chip" data-chip aria-live="polite">Area: Size=Large · Disable=false — Card: Size=Large · State=Ready to Upload</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="area" label="Upload area" desc="Large stacks an icon, instructions and a button for a page with room. Small fits the drop target in one row inside a form">
+    <div class="grid2">
+      {areaSizes.flatMap((z) => disables.map((d) => (
+        <button type="button" class="tile fu-tile" data-copy={areaCopy(z, d)} aria-label={`Copy ${z}${d === 'true' ? ' disabled' : ''} upload area to Figma`}>
+          <span class="tile-top"><span class="big">{areaMetrics[z].height}</span><span class="label muted">{z}{d === 'true' ? ' · Disabled' : ''}</span></span>
+          <span class="tile-body"><FileUpload size={z} disabled={d === 'true'} /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      )))}
+    </div>
+  </Section>
+
+  <Section id="card-sizes" label="File card" title="File card sizes" desc="Each picked file gets a card. Large and Medium show a status line, Small shows the name only for dense lists">
+    <div class="grid3">
+      {cardSizes.map((z) => (
+        <button type="button" class="tile fu-tile" data-copy={cardCopy(z, 'Loading')} aria-label={`Copy ${z} file card to Figma`}>
+          <span class="tile-top"><span class="big">{cardMetrics[z].height}</span><span class="label muted">{z}</span></span>
+          <span class="tile-body"><FileCard size={z} state="Loading" /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="card-states" label="File card" title="File card states" desc="A file moves from Ready to Upload through Loading to Finish, or to Failed. View is the card after the upload, while the file is processed or reviewed">
+    <div class="fu-list">
+      {cardStates.map((s, i) => (
+        <button type="button" class="tile fu-tile fu-row" data-copy={cardCopy('Large', s)} aria-label={`Copy ${s} file card to Figma`}>
+          <span class="tile-top"><span class="label muted">{'ABCDE'[i]} — {s}</span><span class="desc">{stateNotes[s]}</span></span>
+          <span class="tile-body"><FileCard state={s} /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People attach documents or images to a form, like an ID scan or a receipt', 'People need to see each file’s progress and fix a failed upload without starting over', 'The flow accepts several files and people should review the list before they submit']}
+      avoid={['People pick from files already in the product, use a Dropdown or a list instead', 'The input is a short link or a code, use a Text Input', 'The upload runs in the background with no file to review, show a Progress Bar']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Say which file types and sizes are accepted in the caption, and keep each file’s status in its own card"
+      dontText="Don’t disable the area without saying why, use the caption to explain, for example that the file limit is reached"
+    >
+      <Fragment slot="do">
+        <div class="fu-stack">
+          <FileUpload size="Small" labelText="Passport scan" optional={false} captionText="PDF or JPG, up to 5MB" />
+          <FileCard size="Medium" state="Finish" name="passport-scan.pdf" extraText="1.2MB" />
+        </div>
+      </Fragment>
+      <Fragment slot="dont">
+        <div class="fu-stack">
+          <FileUpload size="Small" disabled labelText="Passport scan" optional={false} caption={false} />
+        </div>
+      </Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="File Upload tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Text Input', 'Single-line text'],
+      ['Progress Bar', 'Show task progress'],
+      ['Button', 'Trigger an action'],
+      ['Alert', 'Explain an error'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/file-upload-page';
+</script>

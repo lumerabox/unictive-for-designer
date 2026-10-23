@@ -1,0 +1,147 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Rating from '../../components/Rating.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import { ratingRow, group, copyAttr } from '../../lib/figma/choice-copy';
+import { types, sizes, metrics, count, variantCount } from '../../data/rating';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['types', 'Types'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const values = Array.from({ length: count * 2 + 1 }, (_, i) => String(i / 2));
+const states: [name: string, value: number, disabled: boolean][] = [
+  ['Default', 0, false],
+  ['Precision', 0.5, false],
+  ['Select', 1, false],
+  ['Disabled', 0, true],
+];
+const specs: [string, string, string][] = [
+  ['Item size', '—', '12 / 20 / 28'],
+  ['Items', '—', `${count}`],
+  ['Empty item', 'icon/disabled-300', '#D1D1D1'],
+  ['Star, selected', 'state/away/base', '#F6B51E'],
+  ['Heart, selected', 'state/error/base', '#FB3748'],
+  ['Disabled item', 'icon/disabled-300', '#D1D1D1'],
+  ['Precision', '—', 'left half filled, outline in the selected color'],
+  ['Heart outline', '—', '1.2 / 1.4 / 1.6 px'],
+  ['Gap between items', '—', '2 / 4 / 4 px'],
+];
+---
+<DocPage
+  title="Rating"
+  description="Ratings let people score an experience on a short scale, or show an average score. Explore every type, size and state of the Unictive rating."
+  intro="Ratings let people score an experience on a scale of five, or show the average score others gave"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Scale', `${count} items`]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Section id="playground" label="Playground" desc="Pick a variant, then hover and click the preview to rate. Arrow keys work too">
+    <form class="pg" data-playground data-kind="rating" onsubmit="return false">
+      <div class="fields" data-cols="3">
+        <PgSelect name="type" label="Type" options={types} />
+        <PgSelect name="size" label="Size" options={sizes} value="Large" />
+        <PgSelect name="value" label="Value" options={values} value="3.5" />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="half" checked /><span>Half steps</span></label>
+        <label class="toggle"><input type="checkbox" name="disabled" /><span>Disabled</span></label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div class="spec spec-choice">
+          <span class="measure-num" data-measure>28</span>
+          <span class="measure-line" aria-hidden="true"></span>
+          <div><Rating live size="Large" value={3.5} label="Rate your order" /></div>
+        </div>
+        <p class="chip" data-chip aria-live="polite">Rating-items · Type=Star · Size=Large · Disable=false · Value=3.5</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="types" label="Types" desc="Star is the default for scores and reviews. Heart suits favourites and likes, where the score is about affection">
+    <div class="grid2">
+      {types.map((t) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr(`${t} rating · Medium · 3.5`, ratingRow(t, 'Medium', 3.5))} aria-label={`Copy ${t} rating to Figma`}>
+          <span class="tile-top"><span class="label muted">{t}</span></span>
+          <span class="tile-body"><Rating type={t} value={3.5} /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Small for review counts in lists, Medium next to body text, Large when the rating is the main task">
+    <div class="grid3">
+      {sizes.map((z) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr(`Star rating · ${z} · 4`, ratingRow('Star', z, 4))} aria-label={`Copy ${z} rating to Figma`}>
+          <span class="tile-top"><span class="big">{metrics[z].size}</span><span class="label muted">{z}</span></span>
+          <span class="tile-body"><Rating size={z} value={4} /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="states" label="States" desc="Each item is Default, Precision for a half point, or Select. Disabled items are filled grey whatever the value">
+    <div class="grid4">
+      {states.map(([name, value, disabled], i) => (
+        <button type="button" class="tile tile-v" data-copy={copyAttr(`Rating items · ${name}`, group('Rating items', 'HORIZONTAL', 24, ['Star', 'Heart'].flatMap((t) => ratingRow(t, 'Large', value, disabled, 1).parts)))} aria-label={`Copy ${name} rating items to Figma`}>
+          <span class="tile-top"><span class="big">{'ABCD'[i]}</span></span>
+          <span class="tile-body"><span class="choice-pair"><Rating size="Large" count={1} value={value} disabled={disabled} /><Rating type="Heart" size="Large" count={1} value={value} disabled={disabled} /></span></span>
+          <span class="label muted">{name}</span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People score a product, a service or an order on a simple scale', 'You show the average score of many reviews, use half steps for precision', 'A quick, low effort answer is enough and a written review is optional']}
+      avoid={['You need a precise answer like a number or a percentage, use a Text Input', 'The answer is yes or no, use a Switch or a Checkbox', 'The options have their own names, like sizes or plans, use a Radio Group']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Show the score as a number next to the read only rating, so it reads without counting"
+      dontText="Don’t mix stars and hearts for the same kind of score on one screen"
+    >
+      <Fragment slot="do"><span class="choice-pair rating-score"><Rating value={4.5} /><strong>4.5</strong><span>128 reviews</span></span></Fragment>
+      <Fragment slot="dont"><span class="choice-stack"><Rating value={4} /><Rating type="Heart" value={3} /></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Rating tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Radio Group', 'Pick one of several'],
+      ['Text Area', 'Add a written review'],
+      ['Checkbox', 'Pick any number'],
+      ['Switch', 'Turn a setting on or off'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/choice-page';
+</script>

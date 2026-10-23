@@ -1,0 +1,53 @@
+---
+// the Unictive DS date picker, mirrors the Date-picker component set (Alight × Calendar × Multiple)
+import '../styles/u-field.css';
+import '../styles/u-date-picker.css';
+import Calendar from './date-picker/Calendar.astro';
+import { calendar as calIcon } from './date-picker/icons';
+import { keyOf, today, type Align } from '../data/date-picker';
+
+interface Props {
+  align?: Align;
+  open?: boolean;
+  multiple?: boolean;
+  range?: boolean;
+  label?: boolean;
+  required?: boolean;
+  labelText?: string;
+  value?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  align = 'Left', open = true, multiple = false, range = false, label = true, required = true,
+  labelText = 'Date', value = '', live = false, ...rest
+} = Astro.props;
+
+const t = keyOf(today.y, today.m, today.d);
+// the DS marks today only, a range shows Jul 2 to Jul 8
+const start = range ? keyOf(today.y, today.m, 2) : null;
+const end = range ? t : null;
+const Root = live ? 'div' : 'span';
+const Control = live ? 'button' : 'span';
+---
+<Root
+  class="u-dp"
+  data-align={align.toLowerCase()}
+  data-open={open ? '' : undefined}
+  data-multiple={multiple ? '' : undefined}
+  data-live={live ? '' : undefined}
+  {...rest}
+>
+  <span class="u-field" data-size="medium" data-style="outline" data-state={open ? 'focus' : value ? 'filled' : 'placeholder'}>
+    <span class="u-field-label" data-part="label" hidden={!label}>
+      <span>{labelText}</span><span class="req" data-part="req" hidden={!required}>*</span>
+    </span>
+    <span class="u-field-box">
+      <Control class="u-field-control" type={live ? 'button' : undefined} aria-haspopup={live ? 'dialog' : undefined} aria-expanded={live ? String(open) : undefined} data-part="control">
+        <span class="u-field-value" data-ph={!value ? '' : undefined} data-part="value">{value || 'Select date'}</span>
+        <svg class="u-field-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={calIcon} /></svg>
+      </Control>
+    </span>
+  </span>
+  <Calendar type={multiple ? 'Multiple' : 'Single'} start={start} end={end} info={false} live={live} data-part="panel" hidden={!open} />
+</Root>

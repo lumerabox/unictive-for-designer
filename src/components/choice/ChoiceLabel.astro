@@ -1,0 +1,37 @@
+---
+// label, description, badge and link button around a control, mirrors the Checkbox-label, Radio-group-label and Switch-label sets
+import '../../styles/u-choice.css';
+
+interface Props {
+  position?: 'Right' | 'Left';
+  disabled?: boolean;
+  labelText?: string;
+  description?: boolean;
+  descriptionText?: string;
+  badge?: boolean;
+  badgeText?: string;
+  button?: boolean;
+  buttonText?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  position = 'Right', disabled = false, labelText = 'Label',
+  description = true, descriptionText = 'Short helper text that explains the option',
+  badge = true, badgeText = 'Badge', button = true, buttonText = 'Link Button', live = false, ...rest
+} = Astro.props;
+
+const Root = live ? 'label' : 'span';
+// an anchor, not a button, so the label still targets the input
+const Link = live ? 'a' : 'span';
+---
+<Root class="u-choice" data-position={position.toLowerCase()} data-disable={String(disabled)} data-live={live ? '' : undefined} {...rest}>
+  <span class="u-choice-text">
+    <span class="u-choice-main">
+      <span class="u-choice-title"><span data-part="label-text">{labelText}</span><span class="u-choice-badge" data-part="badge" hidden={!badge}>{badgeText}</span></span>
+      <span class="u-choice-desc" data-part="desc" hidden={!description}>{descriptionText}</span>
+    </span>
+    <Link class="u-choice-link" href={live ? '#' : undefined} data-part="button" hidden={!button}>{buttonText}</Link>
+  </span>
+  <span class="u-choice-control"><slot /></span>
+</Root>

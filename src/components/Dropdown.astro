@@ -1,0 +1,51 @@
+---
+// the Unictive DS dropdown item, mirrors the Dropdown-items component set (Type × State × Size)
+// every lead is rendered once and u-dropdown.css shows the one that matches data-type and data-size
+import '../styles/u-dropdown.css';
+import avatar20 from './dropdown/assets/avatar-20.png?url';
+import avatar32 from './dropdown/assets/avatar-32.png?url';
+import { paths } from './dropdown/icons';
+import { samples, type Size, type State, type Type } from '../data/dropdown';
+
+interface Props {
+  type?: Type;
+  size?: Size;
+  state?: State;
+  icon?: boolean;
+  description?: boolean;
+  title?: string;
+  desc?: string;
+  as?: 'span' | 'button';
+  [key: string]: any;
+}
+const {
+  type = 'Default', size = 'Small', state = 'Default', icon = true, description = true,
+  title = samples[type].title, desc = samples[type].desc, as = 'span', ...rest
+} = Astro.props;
+const Tag = as;
+const disabled = state === 'Disable';
+---
+<Tag
+  class="u-dd-item"
+  data-type={type.toLowerCase()}
+  data-size={size.toLowerCase()}
+  data-state={state.toLowerCase()}
+  type={as === 'button' ? 'button' : undefined}
+  aria-disabled={disabled ? 'true' : undefined}
+  {...rest}
+>
+  <span class="u-dd-icon" data-part="icon" hidden={!icon}>
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={paths.info} vector-effect="non-scaling-stroke" /></svg>
+  </span>
+  <span class="u-dd-avatar" aria-hidden="true">
+    <img class="s" src={avatar20} width="20" height="20" alt="" />
+    <img class="l" src={avatar32} width="32" height="32" alt="" />
+  </span>
+  <svg class="u-dd-flag" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d={paths.flagBase} fill="#F0F0F0" /><path d={paths.flagTop} fill="#FF0000" /></svg>
+  <svg class="u-dd-box" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={paths.checkbox} /></svg>
+  <span class="u-dd-text">
+    <span class="u-dd-title" data-part="title">{title}</span>
+    <span class="u-dd-desc" data-part="desc" hidden={!description}>{desc}</span>
+  </span>
+  <svg class="u-dd-check" viewBox="0 0 16 16" aria-hidden="true"><path d={paths.check} fill-rule="evenodd" clip-rule="evenodd" /></svg>
+</Tag>

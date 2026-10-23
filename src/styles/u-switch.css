@@ -1,0 +1,15 @@
+/* the Unictive DS switch, mirrors the Switch component set */
+.u-switch {
+  --track: #ebebeb; --knob: #ffffff; --knob-size: 16px; --travel: 16px;
+  position: relative; display: inline-flex; align-items: center; flex: none; width: 36px; height: 20px; padding: 2px;
+  border-radius: 999px; background: var(--track); transition: background-color 160ms var(--ease, ease);
+}
+.u-switch[data-size='small'] { width: 28px; height: 16px; --knob-size: 12px; --travel: 12px; }
+.u-switch[data-select='true'] { --track: #1868d0; }
+.u-switch[data-disable='true'] { --track: #ebebeb; --knob: #d1d1d1; }
+.u-switch-knob {
+  width: var(--knob-size); height: var(--knob-size); border-radius: 50%; background: var(--knob);
+  transition: transform 160ms var(--ease, ease), background-color 160ms var(--ease, ease);
+}
+.u-switch[data-select='true'] .u-switch-knob { transform: translateX(var(--travel)); }
+@media (prefers-reduced-motion: reduce) { .u-switch, .u-switch-knob { transition: none; } }

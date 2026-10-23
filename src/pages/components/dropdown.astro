@@ -1,0 +1,184 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Dropdown from '../../components/Dropdown.astro';
+import DropdownMenu from '../../components/dropdown/DropdownMenu.astro';
+import Btn from '../../components/Btn.astro';
+import { types, sizes, states, heightOf, menuSamples, samples, stateName, variantCount, rowCopy, menuCopy, type Type } from '../../data/dropdown';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['types', 'Types'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['menu', 'Open menu'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const pick = (t: keyof typeof menuSamples, picked: number, state: 'Selected' | 'Disable' = 'Selected') =>
+  menuSamples[t].rows.map((r, i) => ({ ...r, state: i === picked ? state : ('Default' as const) }));
+const single = [...pick('Default', 1), { title: 'PayLater', desc: 'Not available for this order', state: 'Disable' as const }];
+const multi = menuSamples.Checkbox.rows.map((r, i) => ({ ...r, state: i === 2 ? ('Default' as const) : ('Selected' as const) }));
+const row = (type: Type, size: 'Small' | 'Large', state: (typeof states)[number] = 'Default') =>
+  JSON.stringify(rowCopy({ type, size, state, title: samples[type].title, desc: samples[type].desc }));
+const menuAttr = (type: Type, items: { title: string; desc: string; state: (typeof states)[number] }[]) =>
+  JSON.stringify(menuCopy(items.map((i) => ({ type, size: 'Small', state: i.state, title: i.title, desc: i.desc }))));
+const specs: [string, string, string][] = [
+  ['Item width', '—', '320 Small, 360 Large'],
+  ['Item height', '—', '36 Small, 58 to 60 Large'],
+  ['Padding, Small', 'spacing-8', '8 px'],
+  ['Padding, Large', 'spacing-12 · spacing-10', '12 px sides, 10 px top and bottom'],
+  ['Gap', 'spacing-8 · spacing-12', '8 px Small, 12 px Large'],
+  ['Corner radius', 'radius-10 · radius-12', '10 px Small, 12 px Large'],
+  ['Fill', 'bg/white-0', '#FFFFFF'],
+  ['Hover and selected fill', 'bg/weak-50', '#F7F7F7'],
+  ['Title', 'text/strong-950', '#171717'],
+  ['Description', 'text/sub-600', '#5C5C5C'],
+  ['Disabled text and icon', 'text/disabled-300', '#D1D1D1'],
+  ['Icon box border', 'stroke/soft-200', '#EBEBEB'],
+  ['Lead size', '—', '20 px Small, 32 px Large'],
+  ['Selected mark', '—', 'check-solid, 16 px'],
+  ['Title style, Small', 'Paragraphs / Small', 'Inter Regular 14/20'],
+  ['Title style, Large', 'Label / Medium / Small', 'Inter Medium 14/20'],
+  ['Description style', 'Paragraphs / Extra Small', 'Inter Regular 12/16'],
+];
+---
+<DocPage
+  title="Dropdown"
+  description="Dropdowns let people pick one or more options from a list. Explore every type, size and state of the Unictive dropdown item."
+  intro="Dropdowns open a list of options under a field, so people can pick one or several without typing"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Types', types.length]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Section id="playground" label="Playground" desc="Pick a variant, then open the menu and choose a row">
+    <form class="pg" data-playground onsubmit="return false">
+      <div class="fields" data-cols="3">
+        {[['type', 'Type', types], ['size', 'Size', sizes], ['state', 'State', states]].map(([key, label, opts]) => (
+          <label class="field">
+            <span class="label muted">{label}</span>
+            <span class="select">
+              <select name={key as string}>
+                {(opts as readonly string[]).map((o) => <option value={o}>{stateName(o)}</option>)}
+              </select>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </label>
+        ))}
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="menu" checked /><span>In menu</span></label>
+        <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="description" checked /><span>Description</span></label>
+        <label class="text-field">
+          <span class="label muted">Title</span>
+          <input type="text" name="text" value={samples.Default.title} maxlength="40" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+      <div class="canvas canvas-dd" data-canvas>
+        <div class="spec spec-field" data-view="item" hidden>
+          <span class="measure-num" data-measure>36</span>
+          <span class="measure-line" aria-hidden="true"></span>
+          <div><Dropdown data-preview /></div>
+        </div>
+        <DropdownMenu live data-view="menu" labelText={menuSamples.Default.label} value="Select a method" items={menuSamples.Default.rows} />
+        <p class="chip" data-chip aria-live="polite">Type=Default · Size=Small · State=Default</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, the open menu copies as a panel of rows. Click the button or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="types" label="Types" desc="The lead tells people what kind of option they are picking, an icon, a person, a country or a checkbox for multi-select">
+    <div class="grid2">
+      {types.map((t) => (
+        <button type="button" class="tile tile-dd" data-copy={row(t, 'Large')} aria-label={`Copy ${t} dropdown item to Figma`}>
+          <span class="tile-top"><span class="label muted">{t}</span></span>
+          <span class="tile-body"><Dropdown type={t} size="Large" /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Small rows show the title only, Large rows add a description line and a bigger lead">
+    <div class="grid2">
+      {sizes.map((z) => (
+        <button type="button" class="tile tile-dd" data-copy={row('Default', z)} aria-label={`Copy ${z} dropdown item to Figma`}>
+          <span class="tile-top"><span class="big">{heightOf('Default', z)}</span><span class="label muted">{z}</span></span>
+          <span class="tile-body"><Dropdown size={z} /></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="states" label="States" desc="Hover and Selected fill the row, Selected adds a check at the end, Disabled greys out the text and lead">
+    <div class="grid2">
+      {states.map((s, i) => (
+        <button type="button" class="tile tile-dd" data-copy={row('Profile', 'Large', s)} aria-label={`Copy ${stateName(s)} dropdown item to Figma`}>
+          <span class="tile-top"><span class="big">{'ABCD'[i]}</span><span class="label muted">{stateName(s)}</span></span>
+          <span class="tile-body"><span class="u-dd-panel u-dd-stack" data-size="large"><Dropdown type="Profile" size="Large" state={s} /></span></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="menu" label="Menu" title="Open menu" desc="The DS ships the rows, the panel stacks them under the field. Use the same type and size for every row in one menu">
+    <div class="grid2">
+      <button type="button" class="tile tile-dd tile-menu" data-copy={menuAttr('Default', single)} aria-label="Copy single select menu to Figma">
+        <span class="tile-top"><span class="label muted">Single select</span></span>
+        <span class="tile-body"><DropdownMenu labelText={menuSamples.Default.label} items={single} /></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+      <button type="button" class="tile tile-dd tile-menu" data-copy={menuAttr('Checkbox', multi)} aria-label="Copy multi-select menu to Figma">
+        <span class="tile-top"><span class="label muted">Multi-select</span></span>
+        <span class="tile-body"><DropdownMenu type="Checkbox" labelText={menuSamples.Checkbox.label} value="2 selected" items={multi} /></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People pick from a known list of options, like a country, a person or a payment method', 'The list has more than five options or space is tight, so radio buttons would take too much room', 'People pick several options from a long list, use the Checkbox type and keep the menu open']}
+      avoid={['There are five options or fewer and all should be visible, use a Radio Group', 'The answer is free text or a number, use a Text Input', 'The value is a date, use a Date Picker']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep every row in one menu the same type and size, and mark the current choice"
+      dontText="Don’t mix types or sizes in one list, it breaks the scan line and hides which row is picked"
+    >
+      <Fragment slot="do"><div class="u-dd-panel u-dd-stack"><Dropdown type="Country" title="WIB, Jakarta" /><Dropdown type="Country" state="Selected" title="WITA, Makassar" /><Dropdown type="Country" title="WIT, Jayapura" /></div></Fragment>
+      <Fragment slot="dont"><div class="u-dd-panel u-dd-stack"><Dropdown title="WIB, Jakarta" /><Dropdown type="Profile" title="WITA, Makassar" /><Dropdown type="Checkbox" title="WIT, Jayapura" /></div></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Dropdown tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Text Input', 'Single-line text'],
+      ['Date Picker', 'Pick a date'],
+      ['Radio Group', 'One of a few options'],
+      ['Checkbox', 'Turn options on or off'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/dropdown-page';
+</script>

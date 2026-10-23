@@ -1,0 +1,12 @@
+/* the Unictive DS radio, mirrors the Radio-group component set: 1 px ring off, 4 px ring on */
+.u-radio {
+  --c: #a3a3a3; --on: #1868d0; --dot: 16px; --ring: 1px; --ring-on: 4px;
+  position: relative; display: inline-grid; place-items: center; flex: none; width: 20px; height: 20px; border-radius: 50%;
+}
+.u-radio[data-size='small'] { width: 16px; height: 16px; --dot: 12.8px; --ring: 0.8px; --ring-on: 3.2px; }
+.u-radio[data-disable='true'] { --c: #d1d1d1; --on: #d1d1d1; }
+.u-radio-dot {
+  width: var(--dot); height: var(--dot); border-radius: 50%; box-shadow: inset 0 0 0 var(--ring) var(--c);
+  transition: box-shadow 120ms var(--ease, ease);
+}
+.u-radio[data-select='true'] .u-radio-dot { box-shadow: inset 0 0 0 var(--ring-on) var(--on); }

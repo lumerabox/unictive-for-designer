@@ -1,0 +1,21 @@
+---
+// the Unictive DS switch, mirrors the Switch component set
+import '../styles/u-choice.css';
+import '../styles/u-switch.css';
+import type { Size } from '../data/switch';
+
+interface Props {
+  size?: Size;
+  selected?: boolean;
+  disabled?: boolean;
+  live?: boolean;
+  name?: string;
+  ariaLabel?: string;
+  [key: string]: any;
+}
+const { size = 'Medium', selected = false, disabled = false, live = false, name, ariaLabel, ...rest } = Astro.props;
+---
+<span class="u-switch" data-control="switch" data-size={size.toLowerCase()} data-select={String(selected)} data-disable={String(disabled)} {...rest}>
+  {live && <input type="checkbox" role="switch" class="u-choice-input" name={name} checked={selected} disabled={disabled} aria-label={ariaLabel} data-part="input" />}
+  <i class="u-switch-knob" aria-hidden="true"></i>
+</span>

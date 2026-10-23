@@ -1,0 +1,37 @@
+/* the Unictive DS rating, a row of Rating-items: star uses state/away, heart uses state/error */
+.u-rating {
+  --idle: #d1d1d1; --accent: #f6b51e; --item: 20px; --line-w: 1.4; --full-w: 1;
+  display: inline-flex; align-items: center; gap: 4px; flex: none; border-radius: 4px;
+}
+.u-rating[data-type='heart'] { --accent: #fb3748; }
+.u-rating[data-size='small'] { --item: 12px; --line-w: 2; --full-w: 1.333; gap: 2px; }
+.u-rating[data-size='large'] { --item: 28px; --line-w: 1.143; --full-w: 0.714; }
+.u-rating[data-live] { cursor: pointer; }
+.u-rating[data-live]:focus-visible { outline: 2px solid #1868d0; outline-offset: 4px; }
+.u-rating[data-disable='true'] { --accent: var(--idle); cursor: not-allowed; }
+
+.u-rating-item { display: block; width: var(--item); height: var(--item); color: var(--idle); transition: color 120ms var(--ease, ease); }
+.u-rating-item svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.u-rating-item path { transition: opacity 120ms var(--ease, ease); }
+.u-rating[data-type='star'] .r-heart, .u-rating[data-type='heart'] .r-star { display: none; }
+
+/* line is the empty outline, half the left fill for precision, full the selected shape */
+.r-star .r-line { fill: currentColor; }
+.r-heart .r-line { fill: none; stroke: currentColor; stroke-width: var(--line-w); }
+.r-half { fill: currentColor; opacity: 0; }
+.r-full { fill: currentColor; stroke: currentColor; stroke-width: var(--full-w); stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+
+.u-rating-item[data-state='precision'], .u-rating-item[data-state='select'] { color: var(--accent); }
+.u-rating-item[data-state='precision'] .r-half { opacity: 1; }
+.u-rating-item[data-state='select'] .r-line { opacity: 0; }
+.u-rating-item[data-state='select'] .r-full { opacity: 1; }
+
+/* disabled items are the filled grey shape whatever the value */
+.u-rating[data-disable='true'] .u-rating-item { color: var(--idle); }
+.u-rating[data-disable='true'] .r-line, .u-rating[data-disable='true'] .r-half { opacity: 0; }
+.u-rating[data-disable='true'] .r-full { opacity: 1; }
+
+/* doc example: score and review count next to a read only rating */
+.rating-score { gap: 8px; font-size: 14px; line-height: 20px; }
+.rating-score strong { font-weight: 600; }
+.rating-score span:last-child { color: var(--text-sub-600); }

@@ -1,0 +1,20 @@
+---
+// one playground select, same markup as the field pages
+interface Props {
+  name: string;
+  label: string;
+  options: readonly (string | [value: string, text: string])[];
+  value?: string;
+}
+const { name, label, options, value } = Astro.props;
+const opts = options.map((o) => (typeof o === 'string' ? [o, o] : o));
+---
+<label class="field">
+  <span class="label muted">{label}</span>
+  <span class="select">
+    <select name={name}>
+      {opts.map(([v, t]) => <option value={v} selected={v === value}>{t}</option>)}
+    </select>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span>
+</label>

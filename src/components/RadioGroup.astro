@@ -1,0 +1,22 @@
+---
+// one Unictive DS radio, mirrors the Radio-group component set (a group is several of these sharing a name)
+import '../styles/u-choice.css';
+import '../styles/u-radio-group.css';
+import type { Size } from '../data/radio-group';
+
+interface Props {
+  size?: Size;
+  selected?: boolean;
+  disabled?: boolean;
+  live?: boolean;
+  name?: string;
+  value?: string;
+  ariaLabel?: string;
+  [key: string]: any;
+}
+const { size = 'Medium', selected = false, disabled = false, live = false, name, value, ariaLabel, ...rest } = Astro.props;
+---
+<span class="u-radio" data-control="radio" data-size={size.toLowerCase()} data-select={String(selected)} data-disable={String(disabled)} {...rest}>
+  {live && <input type="radio" class="u-choice-input" name={name} value={value} checked={selected} disabled={disabled} aria-label={ariaLabel} data-part="input" />}
+  <i class="u-radio-dot" aria-hidden="true"></i>
+</span>

@@ -70,6 +70,8 @@
   --tile-sm: 144px;
   --tile-md: 160px;
   --tile-lg: 220px;
+  --tile-field: 200px;
+  --tile-area: 260px;
   --dd-h: 220px;
   --canvas-h: 400px;
 

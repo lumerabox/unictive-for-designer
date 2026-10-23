@@ -1,0 +1,26 @@
+---
+// the Unictive DS checkbox, mirrors the Checkbox component set
+import '../styles/u-choice.css';
+import '../styles/u-checkbox.css';
+import { paths, type Size, type State } from '../data/checkbox';
+
+interface Props {
+  size?: Size;
+  state?: State;
+  disabled?: boolean;
+  live?: boolean;
+  name?: string;
+  value?: string;
+  ariaLabel?: string;
+  [key: string]: any;
+}
+const { size = 'Medium', state = 'Default', disabled = false, live = false, name, value, ariaLabel, ...rest } = Astro.props;
+---
+<span class="u-check" data-control="checkbox" data-size={size.toLowerCase()} data-state={state.toLowerCase()} data-disable={String(disabled)} {...rest}>
+  {live && <input type="checkbox" class="u-choice-input" name={name} value={value} checked={state === 'Select'} disabled={disabled} aria-label={ariaLabel} data-part="input" />}
+  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path class="u-check-box" d={paths.box} />
+    <path class="u-check-on" d={paths.select} />
+    <path class="u-check-mixed" d={paths.indeterminate} />
+  </svg>
+</span>

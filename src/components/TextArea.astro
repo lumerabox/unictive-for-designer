@@ -1,0 +1,59 @@
+---
+// the Unictive DS text area, mirrors the Text-area (Outline) and (Contained) component sets
+import { resize } from './field/icons';
+import { maxLength, showsValue, type Size, type State, type Style } from '../data/text-area';
+
+interface Props {
+  variant?: Style;
+  size?: Size;
+  state?: State;
+  label?: boolean;
+  required?: boolean;
+  optional?: boolean;
+  caption?: boolean;
+  counter?: boolean;
+  text?: string;
+  labelText?: string;
+  captionText?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  variant = 'Outline', size = 'Large', state = 'Placeholder',
+  label = true, required = true, optional = true, caption = true, counter = true,
+  text = 'Placeholder text', labelText = 'Label', captionText = 'Input caption', live = false, ...rest
+} = Astro.props;
+
+const id = `ta-${Math.random().toString(36).slice(2, 8)}`;
+const hasValue = showsValue(state);
+const LabelTag = live ? 'label' : 'span';
+const Root = live ? 'div' : 'span';
+const count = live && hasValue ? [...text].length : 0;
+---
+<Root
+  class="u-field"
+  data-kind="area"
+  data-style={variant.toLowerCase()}
+  data-size={size.toLowerCase()}
+  data-state={state.toLowerCase()}
+  data-live={live ? '' : undefined}
+  {...rest}
+>
+  <LabelTag class="u-field-label" for={live ? id : undefined} data-part="label" hidden={!label}>
+    <span data-part="label-text">{labelText}</span><span class="req" data-part="req" hidden={!required}>*</span><span class="opt" data-part="opt" hidden={!optional}>(Optional)</span>
+  </LabelTag>
+  <span class="u-field-box">
+    <span class="u-field-control">
+      {live ? (
+        <textarea id={id} class="u-field-input" placeholder={text} maxlength={maxLength} disabled={state === 'Disable'} spellcheck="false" data-part="input">{hasValue ? text : ''}</textarea>
+      ) : (
+        <span class="u-field-value" data-ph={!hasValue ? '' : undefined} data-part="text">{text}{state === 'Typing' && <i class="u-caret"></i>}</span>
+      )}
+    </span>
+    <svg class="u-field-resize" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d={resize} /></svg>
+  </span>
+  <span class="u-field-foot" data-part="foot" hidden={!caption && !counter}>
+    <span class="u-field-caption" data-part="caption" hidden={!caption}>{captionText}</span>
+    <span class="u-field-counter" data-part="counter" hidden={!counter}>{count}/{maxLength} Characters</span>
+  </span>
+</Root>

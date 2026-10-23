@@ -1,0 +1,86 @@
+/* the Unictive DS dropdown item, mirrors the Dropdown-items component set */
+.u-dd-item {
+  --fg: #171717; --sub: #5c5c5c; --ic: #5c5c5c; --lead: 20px;
+
+  display: flex; align-items: center; gap: 8px; width: 320px; max-width: 100%; padding: 8px; border-radius: 10px;
+  background: #ffffff; color: var(--fg); text-align: left;
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em;
+  transition: background-color 120ms var(--ease, ease);
+}
+.u-dd-item [hidden] { display: none !important; }
+.u-dd-item[data-size='large'] { --lead: 32px; gap: 12px; width: 360px; padding: 10px 12px; border-radius: 12px; }
+.u-dd-item[data-state='hover'], .u-dd-item[data-state='selected'] { background: #f7f7f7; }
+.u-dd-item[data-state='disable'] { --fg: #d1d1d1; --sub: #d1d1d1; --ic: #d1d1d1; }
+
+/* leads, one per type */
+.u-dd-icon, .u-dd-avatar, .u-dd-flag, .u-dd-box { display: none; flex: none; }
+.u-dd-item[data-type='default'] .u-dd-icon:not([hidden]) { display: flex; }
+.u-dd-item[data-type='profile'] .u-dd-avatar,
+.u-dd-item[data-type='country'] .u-dd-flag,
+.u-dd-item[data-type='checkbox'] .u-dd-box { display: block; }
+
+.u-dd-icon svg { width: 20px; height: 20px; color: var(--ic); }
+.u-dd-icon path { stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.u-dd-item[data-size='large'] .u-dd-icon { padding: 8px; border-radius: 12px; background: #ffffff; box-shadow: inset 0 0 0 1px #ebebeb; }
+.u-dd-item[data-size='large'] .u-dd-icon svg { width: 24px; height: 24px; }
+
+.u-dd-avatar { width: var(--lead); height: var(--lead); border-radius: 999px; background: #f7f7f7; overflow: hidden; }
+.u-dd-avatar img { display: block; width: 100%; height: 100%; }
+.u-dd-item[data-size='small'] .u-dd-avatar .l, .u-dd-item[data-size='large'] .u-dd-avatar .s { display: none; }
+.u-dd-item[data-type='profile'][data-state='disable'] .u-dd-avatar { opacity: 0.5; }
+
+.u-dd-flag { width: var(--lead); height: var(--lead); }
+.u-dd-item[data-size='small'][data-state='disable'] .u-dd-flag { opacity: 0.5; }
+
+.u-dd-box { width: 20px; height: 20px; }
+.u-dd-box path { stroke: #a4a4a4; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.u-dd-item[data-size='small'][data-state='disable'] .u-dd-box path { fill: #f7f7f7; stroke: #d1d1d1; }
+
+/* title and description, small items show the title alone in regular */
+.u-dd-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.u-dd-title { color: var(--fg); overflow-wrap: anywhere; }
+.u-dd-desc { display: none; font-size: 12px; line-height: 16px; letter-spacing: 0; color: var(--sub); }
+.u-dd-item[data-size='large'] .u-dd-title { font-weight: 500; }
+.u-dd-item[data-size='large'] .u-dd-desc:not([hidden]) { display: block; }
+
+.u-dd-check { display: none; flex: none; width: 16px; height: 16px; fill: #5c5c5c; }
+.u-dd-item[data-state='selected'] .u-dd-check { display: block; }
+
+/* composed menu: a trigger built from the text input frame plus a panel of items */
+.u-dd-menu { display: grid; gap: 8px; width: 320px; max-width: 100%; }
+.u-dd-menu[data-size='large'] { width: 360px; }
+.u-dd-menu .u-field { width: 100%; }
+.u-dd-trigger .u-field-control { cursor: pointer; }
+.u-dd-trigger .u-field-chevron { width: 20px; height: 20px; flex: none; color: #5c5c5c; transition: transform 160ms var(--ease, ease); }
+.u-dd-menu[data-open] .u-field-chevron { transform: rotate(180deg); }
+.u-dd-panel {
+  display: grid; gap: 4px; padding: 8px; border-radius: 12px; background: #ffffff;
+  box-shadow: inset 0 0 0 1px #ebebeb, 0 16px 32px -12px rgb(14 18 27 / 0.1);
+}
+.u-dd-menu[data-size='large'] .u-dd-panel { border-radius: 16px; }
+.u-dd-panel .u-dd-item { width: 100%; }
+.u-dd-menu:not([data-open]) .u-dd-panel { display: none; }
+
+/* live items in the playground menu */
+.u-dd-panel button.u-dd-item { border: 0; cursor: pointer; }
+.u-dd-panel button.u-dd-item[data-state='default']:hover { background: #f7f7f7; }
+.u-dd-panel button.u-dd-item[data-state='disable'] { cursor: not-allowed; }
+.u-dd-panel button.u-dd-item:focus-visible { outline: 2px solid #1868d0; outline-offset: -2px; }
+
+/* doc page tiles, candidates for doc.css */
+.tile-dd { height: var(--tile-field); }
+.tile-dd .tile-body { grid-template-columns: minmax(0, 1fr); justify-items: center; padding-top: 12px; }
+.tile-menu { height: auto; min-height: 360px; }
+.tile-menu .tile-body { place-items: start center; padding-top: 24px; }
+.canvas-dd { height: auto; min-height: var(--canvas-h); padding: 32px 0 88px; }
+.canvas-dd .spec-field { width: auto; align-items: center; }
+.canvas-dd .spec-field .measure-num, .canvas-dd .spec-field .measure-line { margin-top: 0; }
+.canvas-dd .u-dd-menu { align-self: center; }
+@media (max-width: 767px) {
+  .canvas-dd .spec-field { max-width: calc(100% - 16px); }
+}
+.u-dd-trigger button.u-field-control { width: 100%; border: 0; font: inherit; letter-spacing: inherit; text-align: left; }
+.u-dd-trigger button.u-field-control:focus-visible { outline: 0; }
+.u-dd-stack { width: 320px; max-width: calc(100% - 32px); }
+.u-dd-stack[data-size='large'] { width: 376px; max-width: 100%; border-radius: 16px; }
+.canvas-dd [data-view][hidden] { display: none; }

@@ -1,0 +1,56 @@
+---
+// the Unictive DS file upload area, mirrors the File-upload-area component set
+import '../styles/u-file-upload.css';
+import { upload } from './file-upload/icons';
+import { maxFiles, maxSizeMB, type AreaSize } from '../data/file-upload';
+
+interface Props {
+  size?: AreaSize;
+  disabled?: boolean;
+  label?: boolean;
+  required?: boolean;
+  optional?: boolean;
+  caption?: boolean;
+  labelText?: string;
+  captionText?: string;
+  title?: string;
+  description?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  size = 'Large', disabled = false, label = true, required = true, optional = true, caption = true,
+  labelText = 'Label', captionText = 'Input caption', title = 'Drag & drop files here',
+  description = `Or click to browse (max ${maxFiles} files, up to ${maxSizeMB}MB each)`, live = false, ...rest
+} = Astro.props;
+
+const id = `fu-${Math.random().toString(36).slice(2, 8)}`;
+const Zone = live ? 'label' : 'div';
+---
+<div
+  class="u-upload"
+  data-size={size.toLowerCase()}
+  data-disabled={disabled ? '' : undefined}
+  data-live={live ? '' : undefined}
+  {...rest}
+>
+  <span class="u-upload-label" data-part="label" hidden={!label}>
+    <span data-part="label-text">{labelText}</span><span class="req" data-part="req" hidden={!required}>*</span><span class="opt" data-part="opt" hidden={!optional}>(Optional)</span>
+  </span>
+  <Zone class="u-upload-zone" for={live ? id : undefined} data-part="zone">
+    {live && <input id={id} class="u-upload-input" type="file" multiple disabled={disabled} data-part="input" />}
+    <span class="u-upload-badge" data-part="large" hidden={size !== 'Large'}>
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={upload[20]} /></svg>
+    </span>
+    <span class="u-upload-copy" data-part="large" hidden={size !== 'Large'}>
+      <span class="u-upload-title">{title}</span>
+      <span class="u-upload-desc">{description}</span>
+    </span>
+    <span class="u-upload-btn" data-part="large" hidden={size !== 'Large'}>Browse files</span>
+    <span class="u-upload-row" data-part="small" hidden={size !== 'Small'}>
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d={upload[16]} /></svg>
+      <span>Drag & drop or</span><span class="u-upload-link">choose files</span><span>to Upload</span>
+    </span>
+  </Zone>
+  <span class="u-upload-caption" data-part="caption" hidden={!caption}>{captionText}</span>
+</div>

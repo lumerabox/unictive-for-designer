@@ -1,0 +1,211 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import DatePicker from '../../components/DatePicker.astro';
+import Calendar from '../../components/date-picker/Calendar.astro';
+import Btn from '../../components/Btn.astro';
+import { aligns, bools, dateStates, variantCount, partCount, keyOf, today, years, chipPresets, railPresets, pickerCopy, calendarCopy } from '../../data/date-picker';
+import { chevronDown } from '../../components/date-picker/icons';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['alignment', 'Alignment'],
+  ['types', 'Single and multiple'],
+  ['calendar', 'Calendar'],
+  ['dates', 'Date states'],
+  ['parts', 'Presets and year'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const t = keyOf(today.y, today.m, today.d);
+const r0 = keyOf(today.y, today.m, 2);
+const pickerAttr = (align: 'Left' | 'Right', calendar: boolean, multiple: boolean) => JSON.stringify(pickerCopy({ align, calendar, multiple }));
+const specs: [string, string, string][] = [
+  ['Field', 'Text-input (Outline) / Medium', '300 × 40 px'],
+  ['Field to panel gap', 'spacing-4', '4 px'],
+  ['Panel width', '—', '320 single, 848 multiple'],
+  ['Panel radius', 'radius-12', '12 px'],
+  ['Panel border and dividers', 'stroke/soft-200', '#EBEBEB'],
+  ['Header padding', 'spacing-16 · spacing-12', '16 px sides, 12 px top and bottom'],
+  ['Date cell', 'radius-full', '40 × 40 px'],
+  ['Selected date', 'brand/core/base', '#1868D0, text white Medium'],
+  ['Today', 'brand/core/lighter', '#ECF0FE, text brand Medium'],
+  ['Hover date', 'bg/weak-50', '#F7F7F7'],
+  ['Outside the month', 'text/soft-400', '#A3A3A3'],
+  ['Range band', 'brand/core/alpha-10', '10% brand, radius-8 at row ends'],
+  ['Year select', 'stroke/soft-200 · radius-8', '10 px sides, 6 px top and bottom'],
+  ['Preset chip', 'radius-8 · bg/weak-50 when picked', '12 px sides, 8 px top and bottom'],
+  ['Range rail', 'spacing-12', '200 px wide'],
+  ['Month title', 'Label / Medium / Medium', 'Inter Medium 16/24'],
+  ['Date', 'Paragraphs / Small', 'Inter Regular 14/20'],
+  ['Weekday and chip', 'Paragraphs / Extra Small', 'Inter Regular 12/16'],
+];
+---
+<DocPage
+  title="Date Picker"
+  description="Date pickers let people pick a single date or a range from a calendar. Explore the alignments, calendars and date states of the Unictive date picker."
+  intro="Date pickers let people pick a date or a range of dates from a calendar that opens under the field"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Calendar parts', partCount]]}
+>
+  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Section id="playground" label="Playground" desc="Pick a variant, then open the field and click a date. Apply writes it into the field">
+    <form class="pg" data-dp-playground onsubmit="return false">
+      <div class="fields" data-cols="3">
+        {[['align', 'Alight', aligns], ['calendar', 'Calendar', bools], ['multiple', 'Multiple', bools]].map(([key, label, opts]) => (
+          <label class="field">
+            <span class="label muted">{label}</span>
+            <span class="select">
+              <select name={key as string}>
+                {(opts as readonly string[]).map((o) => <option value={o} selected={key === 'calendar' && o === 'true'}>{o}</option>)}
+              </select>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </label>
+        ))}
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="label" checked /><span>Label</span></label>
+        <label class="toggle"><input type="checkbox" name="required" checked /><span>Required</span></label>
+        <label class="toggle"><input type="checkbox" name="range" /><span>Date range</span></label>
+      </div>
+      <div class="canvas dp-canvas" data-canvas>
+        <div class="dp-fit" data-fit>
+          <DatePicker live data-preview="single" />
+          <DatePicker live multiple data-preview="multiple" hidden />
+        </div>
+        <p class="chip" data-chip aria-live="polite">Alight=Left · Calendar=true · Multiple=false</p>
+      </div>
+      <div class="pg-foot">
+        <p>Pastes into Figma as editable auto layout layers with Unictive values, the calendar comes as the DS variant. Click the button or press <kbd>⌘C</kbd> to copy</p>
+        <Btn label="Copy to Figma" data-copy-current />
+      </div>
+    </form>
+  </Section>
+
+  <Section id="alignment" label="Alignment" desc="Alight sets which edge of the field the calendar lines up with. Use Right when the field sits near the right edge of the layout">
+    <div class="grid2">
+      {aligns.map((a) => (
+        <button type="button" class="tile dp-tile" data-copy={pickerAttr(a, true, false)} aria-label={`Copy ${a} aligned date picker to Figma`}>
+          <span class="tile-top"><span class="label muted">Alight={a}</span></span>
+          <span class="tile-body"><span data-fit><DatePicker align={a} /></span></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="types" label="Types" title="Single and multiple" desc="Single shows one month. Multiple shows two months side by side with a rail of date range presets, for reports and bookings that span weeks">
+    <div class="grid2">
+      <button type="button" class="tile dp-tile" data-copy={pickerAttr('Left', false, false)} aria-label="Copy closed date picker to Figma">
+        <span class="tile-top"><span class="label muted">Calendar=false</span></span>
+        <span class="tile-body"><DatePicker open={false} /></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+      <button type="button" class="tile dp-tile" data-copy={pickerAttr('Left', true, false)} aria-label="Copy single date picker to Figma">
+        <span class="tile-top"><span class="label muted">Multiple=false</span></span>
+        <span class="tile-body"><span data-fit><DatePicker /></span></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+    </div>
+    <button type="button" class="tile dp-tile dp-gap" data-copy={pickerAttr('Left', true, true)} aria-label="Copy multiple date picker to Figma">
+      <span class="tile-top"><span class="label muted">Multiple=true</span></span>
+      <span class="tile-body"><span data-fit><DatePicker multiple /></span></span>
+      <span class="copy-hint">Copy</span>
+    </button>
+  </Section>
+
+  <Section id="calendar" label="Calendar" desc="The calendar panel on its own. Date Range marks a start and an end with a band between them. Time, action buttons and date presets switch on and off">
+    <div class="grid2">
+      {[false, true].map((range) => (
+        <button type="button" class="tile dp-tile" data-copy={JSON.stringify(calendarCopy('Single', range))} aria-label={`Copy single calendar${range ? ' with date range' : ''} to Figma`}>
+          <span class="tile-top"><span class="label muted">Single · Date Range={String(range)}</span></span>
+          <span class="tile-body"><span data-fit><Calendar time presets start={range ? r0 : null} end={range ? t : null} chip={range ? 'Last 7 Days' : null} /></span></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+    {[false, true].map((range) => (
+      <button type="button" class="tile dp-tile dp-gap" data-copy={JSON.stringify(calendarCopy('Multiple', range))} aria-label={`Copy multiple calendar${range ? ' with date range' : ''} to Figma`}>
+        <span class="tile-top"><span class="label muted">Multiple · Date Range={String(range)}</span></span>
+        <span class="tile-body"><span data-fit><Calendar type="Multiple" start={range ? r0 : null} end={range ? t : null} rail={range ? railPresets[0] : null} info={range} /></span></span>
+        <span class="copy-hint">Copy</span>
+      </button>
+    ))}
+  </Section>
+
+  <Section id="dates" label="Dates" title="Date states" desc="Today keeps a light brand fill so people can find it, the picked date takes the solid brand fill">
+    <div class="dp-row5">
+      {dateStates.map((s) => (
+        <div class="tile tile-static dp-tile">
+          <span class="tile-top"><span class="label muted">{s}</span></span>
+          <span class="tile-body"><span class="u-cal dp-solo"><span class="u-cal-cell" data-state={s.toLowerCase()}><span>10</span></span></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="parts" label="Parts" title="Presets and year" desc="Type 01 chips sit under the single calendar, Type 02 rows build the range rail. The year select opens a short list around the current year">
+    <div class="grid3 dp-parts">
+      <div class="tile tile-static dp-tile">
+        <span class="tile-top"><span class="label muted">Type=01</span></span>
+        <span class="tile-body"><span class="u-cal dp-solo"><span class="u-cal-chip">{chipPresets[0]}</span><span class="u-cal-chip" data-on>{chipPresets[0]}</span></span></span>
+      </div>
+      <div class="tile tile-static dp-tile">
+        <span class="tile-top"><span class="label muted">Type=02</span></span>
+        <span class="tile-body"><span class="u-cal dp-solo"><span class="u-cal-opt">This week</span><span class="u-cal-opt" data-on>This week</span></span></span>
+      </div>
+      <div class="tile tile-static dp-tile dp-year">
+        <span class="tile-top"><span class="label muted">Dropdown=true</span></span>
+        <span class="tile-body">
+          <span class="u-cal dp-solo">
+            <span class="u-cal-years" data-open>
+              <span class="u-cal-year"><span>{today.y}</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d={chevronDown} /></svg></span>
+              <span class="u-cal-yearlist">{years.map((y) => <span class="u-cal-yearopt" data-on={y === today.y ? '' : undefined}>{y}</span>)}</span>
+            </span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People pick a date close to today, like a delivery slot, a deadline or a meeting', 'The day of the week matters, the calendar shows it at a glance', 'People pick a start and an end, like a report period or a stay, turn on Date range or use Multiple']}
+      avoid={['The date is far in the past, like a birth date, let people type it in a Text Input', 'There are only a few valid dates, list them in a Dropdown or as radio options', 'People only need a month or a year, a Dropdown is faster']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Spell out the month in the field so the date reads the same in every locale"
+      dontText="Don’t show numeric dates like 07/08/26, people mix up the day and the month"
+    >
+      <Fragment slot="do"><DatePicker open={false} labelText="Check-in date" value="Wed, Jul 8, 2026" /></Fragment>
+      <Fragment slot="dont"><DatePicker open={false} labelText="Check-in date" value="07/08/26" /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Date Picker tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Text Input', 'Type a value'],
+      ['Dropdown', 'Pick from a list'],
+      ['Popover', 'Float content over a page'],
+      ['Stepper', 'Walk through steps'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/date-picker-page';
+</script>

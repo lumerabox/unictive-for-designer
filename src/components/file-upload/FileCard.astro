@@ -1,0 +1,44 @@
+---
+// the Unictive DS uploaded file card, mirrors the Card-upload component set
+import '../../styles/u-file-upload.css';
+import { stateIcon, close as closeIcon, refresh } from './icons';
+import { cardInfo, slug, type CardSize, type CardState } from '../../data/file-upload';
+
+interface Props {
+  size?: CardSize;
+  state?: CardState;
+  close?: boolean;
+  name?: string;
+  infoText?: string;
+  extraText?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const { size = 'Large', state = 'Ready to Upload', close = true, name = 'File name', infoText, extraText, live = false, ...rest } = Astro.props;
+
+const large = size === 'Large';
+const ic = large ? 20 : 16;
+const act = large ? 16 : 12;
+const info = infoText ?? cardInfo[state][0];
+const extra = extraText ?? cardInfo[state][1];
+const Act = live ? 'button' : 'span';
+---
+<div class="u-file" data-size={size.toLowerCase()} data-state={slug(state)} data-live={live ? '' : undefined} {...rest}>
+  <span class="u-file-icon">
+    <svg viewBox={`0 0 ${ic} ${ic}`} fill="none" aria-hidden="true" data-part="icon"><path d={stateIcon[state][ic]} data-solid={state === 'Finish' ? '' : undefined} /></svg>
+  </span>
+  <span class="u-file-text">
+    <span class="u-file-name" data-part="name">{name}</span>
+    <span class="u-file-info">
+      <span data-part="info">{info}</span>
+      <i class="u-file-dot" data-part="dot" hidden={!extra}></i>
+      <span data-part="extra" hidden={!extra}>{extra}</span>
+    </span>
+  </span>
+  <Act class="u-file-act" type={live ? 'button' : undefined} aria-label={live ? 'Retry upload' : undefined} data-part="retry" hidden={state !== 'Failed'}>
+    <svg viewBox={`0 0 ${act} ${act}`} fill="none" aria-hidden="true"><path d={refresh[act]} data-solid /></svg>
+  </Act>
+  <Act class="u-file-act" type={live ? 'button' : undefined} aria-label={live ? 'Remove file' : undefined} data-part="close" hidden={!close}>
+    <svg viewBox={`0 0 ${act} ${act}`} fill="none" aria-hidden="true"><path d={closeIcon[act]} /></svg>
+  </Act>
+</div>

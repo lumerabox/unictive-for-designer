@@ -1,38 +1,11 @@
 import { defaultVariant, metrics, variantName, type Variant } from '../data/button';
 import { showToast, pasteKey } from './toast';
+import { writeClipboard } from './figma-copy';
 
 type Clip = typeof import('../lib/figma/clipboard');
 let clip: Clip | null = null;
 const loadClip = () => import('../lib/figma/clipboard').then((m) => (clip = m));
 ('requestIdleCallback' in window ? requestIdleCallback : setTimeout)(() => loadClip());
-
-// copy event route keeps the write inside the click gesture, works in every browser
-function writeClipboard(html: string, text: string) {
-  let ok = false;
-  const onCopy = (e: ClipboardEvent) => {
-    e.clipboardData?.setData('text/html', html);
-    e.clipboardData?.setData('text/plain', text);
-    e.preventDefault();
-    ok = true;
-  };
-  document.addEventListener('copy', onCopy);
-  const sel = document.getSelection();
-  const saved = sel && sel.rangeCount ? sel.getRangeAt(0) : null;
-  const holder = document.createElement('span');
-  holder.textContent = text;
-  holder.style.cssText = 'position:fixed;left:-9999px;top:0;white-space:pre';
-  document.body.append(holder);
-  const range = document.createRange();
-  range.selectNodeContents(holder);
-  sel?.removeAllRanges();
-  sel?.addRange(range);
-  try { document.execCommand('copy'); } catch { ok = false; }
-  sel?.removeAllRanges();
-  if (saved) sel?.addRange(saved);
-  holder.remove();
-  document.removeEventListener('copy', onCopy);
-  return ok;
-}
 
 const readable = (v: Variant) => `${v.size} · ${v.style} · ${v.type}${v.state === 'Default' ? '' : ' · ' + (v.state === 'Disable' ? 'Disabled' : v.state)}`;
 

@@ -1,0 +1,52 @@
+---
+// an open dropdown: the text input frame as the trigger and a panel of Dropdown-items under it
+// the panel is composed on the site, the DS ships the items only
+import '../../styles/u-field.css';
+import Dropdown from '../Dropdown.astro';
+import { paths } from './icons';
+import type { Size, State, Type } from '../../data/dropdown';
+
+interface Item { title: string; desc?: string; state?: State }
+interface Props {
+  type?: Type;
+  size?: Size;
+  labelText?: string;
+  value?: string;
+  items: Item[];
+  icon?: boolean;
+  description?: boolean;
+  open?: boolean;
+  live?: boolean;
+  [key: string]: any;
+}
+const { type = 'Default', size = 'Small', labelText = 'Label', value, items, icon = true, description = true, open = true, live = false, ...rest } = Astro.props;
+const chosen = value ?? items.find((i) => i.state === 'Selected')?.title ?? 'Select an option';
+const Box = live ? 'button' : 'span';
+---
+<div class="u-dd-menu" data-size={size.toLowerCase()} data-open={open ? '' : undefined} {...rest}>
+  <span class="u-field u-dd-trigger" data-style="outline" data-size={size === 'Large' ? 'large' : 'medium'} data-state={open ? 'focus' : 'filled'}>
+    <span class="u-field-label" data-part="label">{labelText}</span>
+    <span class="u-field-box">
+      <Box class="u-field-control" type={live ? 'button' : undefined} aria-haspopup={live ? 'listbox' : undefined} aria-expanded={live ? String(open) : undefined} data-part="trigger">
+        <span class="u-field-value" data-part="value">{chosen}</span>
+        <svg class="u-field-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={paths.chevron} /></svg>
+      </Box>
+    </span>
+  </span>
+  <div class="u-dd-panel" role={live ? 'listbox' : undefined} data-part="panel">
+    {items.map((i) => (
+      <Dropdown
+        as={live ? 'button' : undefined}
+        type={type}
+        size={size}
+        state={i.state ?? 'Default'}
+        title={i.title}
+        desc={i.desc}
+        icon={icon}
+        description={description}
+        role={live ? 'option' : undefined}
+        aria-selected={live ? String(i.state === 'Selected') : undefined}
+      />
+    ))}
+  </div>
+</div>

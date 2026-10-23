@@ -1,0 +1,110 @@
+---
+// the Unictive DS calendar panel, mirrors the Calendar component set (Type × Date Range, with Time, Action button and Date preset toggles)
+import '../../styles/u-field.css';
+import '../../styles/u-date-picker.css';
+import Btn from '../Btn.astro';
+import { rowsHTML, todayKey } from './render';
+import { calendar as calIcon, clock, chevronLeft, chevronRight, chevronDown } from './icons';
+import { months, weekdays, years, railPresets, chipPresets, today, formatRange, type CalendarType } from '../../data/date-picker';
+
+interface Props {
+  type?: CalendarType;
+  y?: number;
+  m?: number;
+  start?: number | null;
+  end?: number | null;
+  hover?: number | null;
+  time?: boolean;
+  actions?: boolean;
+  presets?: boolean;
+  info?: boolean;
+  rail?: string | null;
+  chip?: string | null;
+  yearOpen?: boolean;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  type = 'Single', y = today.y, m = today.m, start = null, end = null, hover = null,
+  time = false, actions = true, presets = false, info = false, rail = null, chip = null, yearOpen = false, live = false, ...rest
+} = Astro.props;
+
+const multi = type === 'Multiple';
+const next = { y: m === 11 ? y + 1 : y, m: (m + 1) % 12 };
+const panes = multi ? [{ y, m }, next] : [{ y, m }];
+const Tag = live ? 'button' : 'span';
+const btn = live ? { type: 'button' } : {};
+const Root = live ? 'div' : 'span';
+const ctl = (k: string) => (live ? { 'data-act': k } : {});
+---
+<Root class="u-cal" data-type={type.toLowerCase()} data-live={live ? '' : undefined} {...rest}>
+  {multi && (
+    <span class="u-cal-rail">
+      <span class="u-cal-rail-label">Date Range</span>
+      <span class="u-cal-rail-list">
+        {railPresets.map((p) => <Tag class="u-cal-opt" data-on={p === rail ? '' : undefined} data-preset={live ? p : undefined} {...btn}>{p}</Tag>)}
+      </span>
+    </span>
+  )}
+  <span class="u-cal-main">
+    <span class="u-cal-panes">
+      {panes.map((p, i) => (
+        <span class="u-cal-month" data-pane={i}>
+          <span class="u-cal-top">
+            {multi ? (
+              <span class="u-cal-head">
+                {i === 0 && <Tag class="u-cal-nav" aria-label="Previous month" {...btn} {...ctl('prev')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={chevronLeft} /></svg></Tag>}
+                <span class="u-cal-title" data-part="title">{months[p.m]} {p.y}</span>
+                {i === 1 && <Tag class="u-cal-nav" aria-label="Next month" {...btn} {...ctl('next')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={chevronRight} /></svg></Tag>}
+              </span>
+            ) : (
+              <span class="u-cal-head">
+                <span class="u-cal-my">
+                  <span class="u-cal-title" data-part="title">{months[p.m]}</span>
+                  <span class="u-cal-years" data-open={yearOpen ? '' : undefined}>
+                    <Tag class="u-cal-year" aria-label="Choose year" {...btn} {...ctl('year')}><span data-part="year">{p.y}</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d={chevronDown} /></svg></Tag>
+                    <span class="u-cal-yearlist" data-part="yearlist">
+                      {years.map((yr) => <Tag class="u-cal-yearopt" data-on={yr === p.y ? '' : undefined} data-year={live ? yr : undefined} {...btn}>{yr}</Tag>)}
+                    </span>
+                  </span>
+                </span>
+                <span class="u-cal-navs">
+                  <Tag class="u-cal-nav" aria-label="Previous month" {...btn} {...ctl('prev')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={chevronLeft} /></svg></Tag>
+                  <Tag class="u-cal-nav" aria-label="Next month" {...btn} {...ctl('next')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={chevronRight} /></svg></Tag>
+                </span>
+              </span>
+            )}
+            <span class="u-cal-days">{weekdays.map((d) => <span>{d}</span>)}</span>
+          </span>
+          <span class="u-cal-line"></span>
+          <span class="u-cal-grid" data-part="grid" set:html={rowsHTML(p.y, p.m, { start, end, hover, today: todayKey, live })} />
+        </span>
+      ))}
+    </span>
+    {!multi && time && (
+      <span class="u-cal-sec u-cal-time">
+        <span class="u-field" data-size="medium" data-style="outline" data-state="filled">
+          <span class="u-field-label">Time</span>
+          <span class="u-field-box"><span class="u-field-control"><span class="u-field-value">00:00</span><svg class="u-field-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={clock} /></svg></span></span>
+        </span>
+      </span>
+    )}
+    {actions && (
+      <span class="u-cal-sec u-cal-actions">
+        {multi && (
+          <span class="u-cal-info" data-part="info" hidden={!info}>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={calIcon} /></svg>
+            <span data-part="info-text">{start && end ? formatRange(Math.min(start, end), Math.max(start, end)) : ''}</span>
+          </span>
+        )}
+        <Btn as={live ? 'button' : 'span'} variant="Tertiary" type="Neutral" label={multi ? 'Clear' : 'Cancel'} {...ctl(multi ? 'clear' : 'cancel')} />
+        <Btn as={live ? 'button' : 'span'} label="Apply" {...ctl('apply')} />
+      </span>
+    )}
+    {!multi && presets && (
+      <span class="u-cal-sec u-cal-chips">
+        {chipPresets.map((p) => <Tag class="u-cal-chip" data-on={p === chip ? '' : undefined} data-chip={live ? p : undefined} {...btn}>{p}</Tag>)}
+      </span>
+    )}
+  </span>
+</Root>

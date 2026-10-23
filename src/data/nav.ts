@@ -16,4 +16,15 @@ export const sideNav = [
 ];
 
 // pages that are live; everything else is listed as coming soon
-export const livePages: Record<string, string> = { Button: '/components/button/' };
+export const livePages: Record<string, string> = {
+  Button: '/components/button/',
+  'Text Input': '/components/text-input/',
+  'Text Area': '/components/text-area/',
+  Dropdown: '/components/dropdown/',
+  'Date Picker': '/components/date-picker/',
+  'File Upload': '/components/file-upload/',
+  Checkbox: '/components/checkbox/',
+  'Radio Group': '/components/radio-group/',
+  Switch: '/components/switch/',
+  Rating: '/components/rating/',
+};

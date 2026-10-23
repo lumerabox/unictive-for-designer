@@ -1,0 +1,88 @@
+---
+// the Unictive DS text input, mirrors the Text-input (Outline) and (Countained) component sets
+import { icon20, xClose } from './field/icons';
+import { hasLeadIcon, hasTrailIcon, showsValue, slug, type Size, type State, type Style, type Type } from '../data/text-input';
+
+interface Props {
+  variant?: Style;
+  size?: Size;
+  state?: State;
+  type?: Type;
+  label?: boolean;
+  required?: boolean;
+  optional?: boolean;
+  caption?: boolean;
+  leadIcon?: boolean;
+  trailIcon?: boolean;
+  text?: string;
+  labelText?: string;
+  captionText?: string;
+  live?: boolean;
+  [key: string]: any;
+}
+const {
+  variant = 'Outline', size = 'Medium', state = 'Placeholder', type = 'Default',
+  label = true, required = true, optional = true, caption = true, leadIcon = true, trailIcon = true,
+  text = 'Placeholder text', labelText = 'Label', captionText = 'Input caption', live = false, ...rest
+} = Astro.props;
+
+const id = `ti-${Math.random().toString(36).slice(2, 8)}`;
+const isPwd = type === 'Password';
+const isTag = type === 'Tag Input';
+const hasValue = showsValue(state);
+const tags = state === 'Filled' ? ['Tag', 'Tag-02'] : ['Tag'];
+const lead = type === 'Leading Text' ? 'text' : type === 'Leading Dropdown' ? 'drop' : null;
+const trail = type === 'Trailing Button' ? 'button' : type === 'File Upload' ? 'upload' : type === 'Trailing Dropdown' ? 'drop' : null;
+const caret = !live && (state === 'Typing' || (isTag && state === 'Focus'));
+const liveValue = !hasValue ? '' : isPwd ? 'password' : isTag ? (state === 'Typing' ? text : '') : text;
+const LabelTag = live ? 'label' : 'span';
+const Root = live ? 'div' : 'span';
+---
+<Root
+  class="u-field"
+  data-kind="input"
+  data-style={variant.toLowerCase()}
+  data-size={size.toLowerCase()}
+  data-state={state.toLowerCase()}
+  data-type={slug(type)}
+  data-live={live ? '' : undefined}
+  {...rest}
+>
+  <LabelTag class="u-field-label" for={live ? id : undefined} data-part="label" hidden={!label}>
+    <span data-part="label-text">{labelText}</span><span class="req" data-part="req" hidden={!required}>*</span><span class="opt" data-part="opt" hidden={!optional}>(Optional)</span>
+  </LabelTag>
+  <span class="u-field-box">
+    {lead === 'text' && <span class="u-field-addon">Text</span>}
+    {lead === 'drop' && <span class="u-field-drop">Dropdown<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={icon20.chevron} /></svg></span>}
+    <span class="u-field-control">
+      {hasLeadIcon(type) && <svg class="u-field-icon" data-part="lead-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden={!leadIcon}><path d={icon20.check} /></svg>}
+      {isTag && (
+        <span class="u-field-tags">
+          {tags.map((t) => <span class="u-tag">{t}<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d={xClose} /></svg></span>)}
+        </span>
+      )}
+      {live ? (
+        <input
+          id={id}
+          class="u-field-input"
+          type={isPwd ? 'password' : 'text'}
+          value={liveValue}
+          placeholder={isTag ? '' : text}
+          disabled={state === 'Disable'}
+          spellcheck="false"
+          autocomplete="off"
+          data-part="input"
+        />
+      ) : isPwd ? (
+        <span class="u-field-dots" aria-label="Password">{Array.from({ length: 8 }, () => <i></i>)}</span>
+      ) : (
+        <span class="u-field-value" data-ph={!hasValue ? '' : undefined} data-part="text">{(!isTag || state === 'Typing') && text}{caret && <i class="u-caret"></i>}</span>
+      )}
+      {hasTrailIcon(type) && <svg class="u-field-icon" data-part="trail-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden={!trailIcon}><path d={icon20.info} /></svg>}
+    </span>
+    {trail === 'button' && <span class="u-field-addon strong"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={icon20.copy} /></svg>Copy</span>}
+    {trail === 'upload' && <span class="u-field-addon strong">Upload</span>}
+    {trail === 'drop' && <span class="u-field-drop">Dropdown<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={icon20.chevron} /></svg></span>}
+  </span>
+  <span class="u-field-foot" data-part="caption" hidden={!caption}><span class="u-field-caption">{captionText}</span></span>
+</Root>

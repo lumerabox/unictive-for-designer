@@ -1,0 +1,55 @@
+---
+// a row of Unictive DS rating items, mirrors the Rating-items component set
+import '../styles/u-choice.css';
+import '../styles/u-rating.css';
+import { paths, count as defaultCount, itemState, types, type Size, type Type } from '../data/rating';
+
+interface Props {
+  type?: Type;
+  size?: Size;
+  value?: number;
+  count?: number;
+  disabled?: boolean;
+  half?: boolean;
+  live?: boolean;
+  label?: string;
+  [key: string]: any;
+}
+const { type = 'Star', size = 'Medium', value = 0, count = defaultCount, disabled = false, half = true, live = false, label = 'Rating', ...rest } = Astro.props;
+
+// live ratings draw both shapes so the playground can switch type without a re-render
+const shapes = live ? types : [type];
+const text = `${value} out of ${count}`;
+---
+<span
+  class="u-rating"
+  data-type={type.toLowerCase()}
+  data-size={size.toLowerCase()}
+  data-disable={String(disabled)}
+  data-value={value}
+  data-half={half ? '' : undefined}
+  data-live={live ? '' : undefined}
+  role={live ? 'slider' : 'img'}
+  tabindex={live && !disabled ? 0 : undefined}
+  aria-label={live ? label : `${label}: ${text}`}
+  aria-valuemin={live ? 0 : undefined}
+  aria-valuemax={live ? count : undefined}
+  aria-valuenow={live ? value : undefined}
+  aria-valuetext={live ? text : undefined}
+  aria-disabled={live && disabled ? 'true' : undefined}
+  {...rest}
+>
+  {Array.from({ length: count }, (_, i) => (
+    <span class="u-rating-item" data-state={itemState(i, value).toLowerCase()}>
+      <svg viewBox="0 0 20 20" aria-hidden="true">
+        {shapes.map((s) => (
+          <g class={`r-${s.toLowerCase()}`}>
+            <path class="r-line" d={paths[s].line} />
+            <path class="r-half" d={paths[s].half} />
+            <path class="r-full" d={paths[s].full} />
+          </g>
+        ))}
+      </svg>
+    </span>
+  ))}
+</span>

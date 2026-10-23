@@ -1,0 +1,118 @@
+/* the Unictive DS date picker and calendar, mirrors the Date-picker, Calendar, Date-number, Select and Select-years component sets */
+.u-dp { display: inline-grid; gap: 4px; justify-items: start; text-align: left; }
+.u-dp[data-align='right'] { justify-items: end; }
+.u-dp[hidden], .u-dp [hidden], .u-cal[hidden] { display: none !important; }
+.u-dp .u-field { width: 300px; }
+.u-dp button.u-field-control { width: 100%; border: 0; font: inherit; letter-spacing: inherit; text-align: left; cursor: pointer; }
+.u-dp button.u-field-control:focus-visible { outline: 2px solid #1868d0; outline-offset: 2px; }
+
+/* panel */
+.u-cal {
+  display: flex; width: 320px; background: #ffffff; border-radius: 12px; box-shadow: inset 0 0 0 1px #ebebeb;
+  font: 400 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; color: #171717; text-align: left;
+}
+.u-cal[data-type='multiple'] { width: 848px; }
+.u-cal [hidden] { display: none !important; }
+:where(.u-cal) :where(button) { margin: 0; padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer; }
+.u-cal button:focus-visible { outline: 2px solid #1868d0; outline-offset: 1px; }
+.u-cal svg { display: block; flex: none; }
+.u-cal-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
+.u-cal[data-type='multiple'] .u-cal-main { padding-bottom: 0; }
+.u-cal-panes { display: flex; gap: 8px; }
+.u-cal-month { width: 320px; display: flex; flex-direction: column; gap: 12px; flex: none; }
+.u-cal[data-type='multiple'] .u-cal-month { padding-bottom: 12px; }
+.u-cal-top { display: flex; flex-direction: column; gap: 4px; }
+
+/* header: month, year select, nav */
+.u-cal-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+.u-cal[data-type='multiple'] .u-cal-head { gap: 16px; padding: 16px; }
+.u-cal[data-type='multiple'] .u-cal-title { flex: 1; text-align: center; }
+.u-cal[data-type='multiple'] [data-pane='0'] .u-cal-title { padding-right: 24px; }
+.u-cal[data-type='multiple'] [data-pane='1'] .u-cal-title { padding-left: 24px; }
+.u-cal-my, .u-cal-navs { display: flex; align-items: center; gap: 8px; }
+.u-cal-title { font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: -0.011em; white-space: nowrap; }
+.u-cal-nav { display: flex; padding: 2px; border-radius: 6px; color: #5c5c5c; transition: background-color 120ms var(--ease, ease); }
+.u-cal-nav svg { width: 20px; height: 20px; }
+.u-cal-nav path { fill: currentColor; fill-rule: evenodd; }
+.u-cal-nav:hover { background: #f7f7f7; color: #171717; }
+
+/* select-years, Dropdown=true opens the list */
+.u-cal-years { position: relative; display: flex; }
+.u-cal-year { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; box-shadow: inset 0 0 0 1px #ebebeb; font-weight: 500; }
+.u-cal-year svg { width: 12px; height: 12px; color: #5c5c5c; }
+.u-cal-year path { stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.u-cal-years[data-open] .u-cal-year { box-shadow: inset 0 0 0 1px #dedede; }
+.u-cal-yearlist {
+  position: absolute; z-index: 2; top: 36px; left: 0; width: 100px; display: none; flex-direction: column; gap: 2px; padding: 2px;
+  background: #ffffff; border-radius: 8px; box-shadow: inset 0 0 0 1px #ebebeb;
+}
+.u-cal-years[data-open] .u-cal-yearlist { display: flex; }
+.u-cal-yearopt { display: block; width: 100%; padding: 4px 6px; border-radius: 6px; text-align: left; }
+.u-cal-yearopt[data-on], button.u-cal-yearopt:hover { background: #f7f7f7; }
+
+/* weekdays and dates */
+.u-cal-days, .u-cal-grid { padding: 0 12px; }
+.u-cal-days, .u-cal-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.u-cal-days span { height: 40px; display: grid; place-items: center; font-size: 12px; line-height: 16px; letter-spacing: 0; color: #a3a3a3; }
+.u-cal-line { height: 1px; background: #ebebeb; }
+.u-cal-grid { display: flex; flex-direction: column; }
+
+/* date-number: Default, Hover, Select, Today, Off. the band is brand/core/alpha-10, rounded at row ends */
+.u-cal-cell { position: relative; height: 40px; display: grid; place-items: center; }
+.u-cal-cell > span {
+  position: relative; z-index: 1; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 999px; text-align: center;
+  transition: background-color 120ms var(--ease, ease), color 120ms var(--ease, ease);
+}
+.u-cal-cell[data-state='hover'] > span, .u-cal[data-live] button.u-cal-cell[data-state='default']:hover > span { background: #f7f7f7; }
+.u-cal-cell[data-state='select'] > span { background: #1868d0; color: #ffffff; font-weight: 500; }
+.u-cal-cell[data-state='today'] > span { background: #ecf0fe; color: #1868d0; font-weight: 500; }
+.u-cal-cell[data-state='off'] > span { color: #a3a3a3; }
+.u-cal-cell[data-band]::before { content: ''; position: absolute; inset: 0; background: rgb(24 104 208 / 0.1); }
+.u-cal-cell[data-band='start']::before { left: 50%; }
+.u-cal-cell[data-band='end']::before { right: 50%; }
+.u-cal-row > [data-band]:first-child::before { border-radius: 8px 0 0 8px; }
+.u-cal-row > [data-band]:last-child::before { border-radius: 0 8px 8px 0; }
+.u-cal-row > [data-band='end']:first-child::before { border-radius: 8px 0 0 8px; }
+.u-cal-row > [data-band='start']:last-child::before { border-radius: 0 8px 8px 0; }
+.u-cal button.u-cal-cell { width: 100%; }
+.u-cal button.u-cal-cell:focus-visible { outline: 0; }
+.u-cal button.u-cal-cell:focus-visible > span { box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #1868d0; }
+
+/* sections under the dates: time, action buttons, date presets */
+.u-cal-sec { display: flex; gap: 8px; padding: 12px 12px 0; box-shadow: inset 0 1px #ebebeb; }
+.u-cal-time .u-field { width: 100%; }
+.u-cal-actions .u-btn { flex: 1; }
+.u-cal[data-type='multiple'] .u-cal-actions { justify-content: flex-end; align-items: center; padding: 12px; }
+.u-cal[data-type='multiple'] .u-cal-actions .u-btn { flex: none; }
+.u-cal-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 8px; white-space: nowrap; }
+.u-cal-info svg { width: 20px; height: 20px; color: #5c5c5c; }
+.u-cal-info path { stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.u-cal-chips { flex-wrap: wrap; justify-content: center; }
+
+/* select Type=01, the date preset chip */
+.u-cal-chip { padding: 8px 12px; border-radius: 8px; box-shadow: inset 0 0 0 1px #ebebeb; font-size: 12px; line-height: 16px; letter-spacing: 0; white-space: nowrap; }
+.u-cal-chip[data-on] { background: #f7f7f7; box-shadow: none; }
+
+/* select Type=02, the date range rail */
+.u-cal-rail { width: 200px; flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px; box-shadow: inset -1px 0 #ebebeb; }
+.u-cal-rail-label { padding: 8px; color: #5c5c5c; }
+.u-cal-rail-list { display: flex; flex-direction: column; gap: 8px; }
+.u-cal-opt { display: block; width: 100%; padding: 8px 12px; border-radius: 8px; text-align: left; transition: background-color 120ms var(--ease, ease); }
+.u-cal-opt[data-on], button.u-cal-opt:hover { background: #f7f7f7; }
+.u-cal-chip, .u-cal-opt, .u-cal-yearopt { transition: background-color 120ms var(--ease, ease); }
+button.u-cal-chip:hover { background: #f7f7f7; }
+
+/* doc page patterns for this page, candidates for doc.css */
+.dp-canvas.canvas { height: auto; min-height: 640px; place-items: start center; padding: 48px 24px 88px; }
+[data-fit] { display: inline-block; }
+.dp-tile .tile-body { padding-top: 20px; }
+.dp-row5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap-tile); }
+.dp-row5 .tile, .dp-parts .tile { height: var(--tile-md); }
+@media (max-width: 767px) {
+  .dp-row5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dp-canvas.canvas { min-height: 0; padding: 24px 16px 72px; }
+}
+.dp-gap { margin-top: var(--gap-tile); }
+.u-cal.dp-solo { width: auto; gap: 8px; box-shadow: none; background: none; }
+.dp-year .tile-body { place-items: start center; padding-bottom: 168px; }
+.dp-parts .tile.dp-year { height: auto; min-height: var(--tile-md); }
