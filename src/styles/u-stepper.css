@@ -1,0 +1,85 @@
+/* the Unictive DS stepper: Step-variant indicators in Stepper-horizontal 01–04 and Stepper-vertical 01–02 */
+.u-stepper {
+  --label-fs: 12px; --label-lh: 16px; --name-fs: 14px; --name-lh: 20px; --ind: 40px;
+  list-style: none; margin: 0; padding: 0; display: flex; width: 100%;
+  font: 400 var(--name-fs) / var(--name-lh) 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; color: #171717;
+}
+.u-stepper[data-size='small'] { --label-fs: 10px; --label-lh: 12px; --name-fs: 12px; --name-lh: 16px; --ind: 32px; }
+.u-step-li { display: contents; }
+button.u-step { border: 0; background: none; padding: 0; font: inherit; color: inherit; text-align: inherit; cursor: pointer; }
+button.u-step:hover .u-step-name { text-decoration: underline; text-underline-offset: 3px; }
+button.u-step:focus-visible { outline: 2px solid #1868d0; outline-offset: 4px; }
+.u-step { display: flex; min-width: 0; }
+
+/* Step-variant: default bg/sub-300, active state/information/base, finish state/success/base */
+.u-step-ind {
+  --c: #d1d1d1; --dot: 24px; --dot-r: 6px;
+  display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 999px; color: #fff;
+  font: 500 16px / 24px 'Inter', system-ui, sans-serif; transition: background-color 160ms var(--ease, ease), box-shadow 160ms var(--ease, ease), color 160ms var(--ease, ease);
+}
+.u-step-ind[data-size='small'] { --dot: 20px; --dot-r: 5px; width: 32px; height: 32px; font-size: 14px; line-height: 20px; }
+.u-step-ind[data-rounded='false'] { border-radius: 12px; }
+.u-step-ind[data-rounded='false'][data-size='small'] { border-radius: 8px; }
+.u-step-ind[data-state='active'] { --c: #335cff; }
+.u-step-ind[data-state='finish'] { --c: #1fc16b; }
+.u-step-ind[data-type='filled'], .u-step-ind[data-type='shape-02'], .u-step-ind[data-state='finish']:not([data-type='shape-01']) { background: var(--c); }
+.u-step-ind[data-type='stroke']:not([data-state='finish']), .u-step-ind[data-type='shape-01'] { box-shadow: inset 0 0 0 1px var(--c); color: var(--c); }
+.u-step-ind[data-type='stroke'][data-state='default'] { color: #a3a3a3; }
+.u-step-check { width: 24px; height: 24px; }
+.u-step-ind[data-size='small'] .u-step-check { width: 20px; height: 20px; }
+.u-step-dot { width: var(--dot); height: var(--dot); border-radius: 999px; background: var(--c); }
+.u-step-ind[data-type='shape-02'] .u-step-dot { --dot: 16px; --dot-r: 4px; background: #fff; }
+.u-step-ind[data-type='shape-02'][data-size='small'] .u-step-dot { --dot: 12px; --dot-r: 3px; }
+.u-step-ind[data-rounded='false'] .u-step-dot { border-radius: var(--dot-r); }
+
+/* label, name and badge: 2 between label and name, 8 above the badge */
+.u-step-text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.u-step-label { font-size: var(--label-fs); line-height: var(--label-lh); color: #5c5c5c; }
+.u-step-name { margin-top: 2px; font-weight: 500; }
+.u-step[data-state='default'] .u-step-name { color: #5c5c5c; }
+.u-step-badge { margin-top: 8px; display: inline-flex; align-items: center; height: 16px; padding: 2px 8px; border-radius: 999px; background: #ecf0fe; color: #1868d0; font-size: 10px; line-height: 12px; font-weight: 500; letter-spacing: 0; white-space: nowrap; }
+
+/* progress bars: bg/soft-200 track, success fill once a step is done, information fill on the active one */
+.u-step-bar { position: relative; flex: 1; min-width: 16px; height: 2px; border-radius: 999px; background: #ebebeb; overflow: hidden; }
+.u-step-bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: #1fc16b; transition: width 260ms var(--ease, ease), height 260ms var(--ease, ease); }
+.u-step[data-state='finish'] .u-step-bar i { width: 100%; }
+.u-step[data-state='active'] .u-step-bar i { width: 70%; background: #335cff; }
+.u-step-bar.is-off { visibility: hidden; }
+
+/* horizontal 01: indicator and bar on top, text below */
+.u-stepper[data-orient='h'] { gap: 8px; }
+.u-stepper[data-orient='h'] .u-step { flex: 1 1 0; }
+.u-step-head { display: flex; align-items: center; gap: 8px; width: 100%; }
+.u-stepper[data-layout='h01'] .u-step, .u-stepper[data-layout='h03'] .u-step { flex-direction: column; gap: 12px; }
+
+/* horizontal 02: indicator beside the text, a short bar to the next step */
+.u-stepper[data-layout='h02'] { gap: 12px; }
+.u-stepper[data-layout='h02'] .u-step { gap: 12px; align-items: flex-start; }
+.u-step-row { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
+.u-stepper[data-layout='h02'] .u-step-bar { margin-top: calc(var(--ind) / 2 - 1px); }
+
+/* horizontal 03: bars on both sides of a centered indicator, centered text */
+.u-stepper[data-layout='h03'] { gap: 0; }
+.u-stepper[data-layout='h03'] .u-step-text { align-items: center; text-align: center; width: 100%; }
+.u-stepper[data-layout='h03'] .u-step[data-state='active'] .is-in i { width: 100%; background: #1fc16b; }
+.u-stepper[data-layout='h03'] .u-step[data-state='active'] .is-out i { width: 0; }
+
+/* horizontal 04: a 4 px bar on top of each step */
+.u-stepper[data-layout='h04'] .u-step { flex-direction: column; gap: 16px; }
+.u-stepper[data-layout='h04'] .u-step-bar { flex: none; width: 100%; height: 4px; }
+.u-stepper[data-layout='h04'] .u-step[data-state='active'] .u-step-bar i { width: 62%; }
+
+/* vertical 01: a 2 px line under the indicator */
+.u-stepper[data-orient='v'] { flex-direction: column; width: auto; }
+.u-stepper[data-layout='v01'] .u-step { gap: 12px; }
+.u-stepper[data-layout='v01'] .u-step-head { flex-direction: column; width: auto; }
+.u-stepper[data-layout='v01'] .u-step-bar { flex: none; width: 2px; min-width: 0; height: 52px; }
+.u-stepper[data-layout='v01'] .u-step-bar i { inset: 0 0 auto 0; width: 100%; height: 0; }
+.u-stepper[data-layout='v01'] .u-step[data-state='finish'] .u-step-bar i { height: 100%; }
+.u-stepper[data-layout='v01'] .u-step[data-state='active'] .u-step-bar i { height: 62%; }
+
+/* vertical 02: cards, the active one on bg/weak-50 with a stroke/soft-200 outline */
+.u-stepper[data-layout='v02'] { gap: 4px; }
+.u-stepper[data-layout='v02'] .u-step { gap: 12px; width: 240px; max-width: 100%; padding: 16px; border-radius: 16px; transition: background-color 160ms var(--ease, ease); }
+.u-stepper[data-layout='v02'][data-size='small'] .u-step { padding: 12px; border-radius: 10px; }
+.u-stepper[data-layout='v02'] .u-step[data-state='active'] { background: #f7f7f7; box-shadow: inset 0 0 0 1px #ebebeb; }

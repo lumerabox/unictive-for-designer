@@ -1,0 +1,49 @@
+/* the Unictive DS tab menus: line, segmented, pill and vertical */
+.u-tabs { font: 500 14px / 20px 'Inter', system-ui, sans-serif; letter-spacing: -0.006em; max-width: 100%; }
+.u-tabs[data-kind='line'] { width: 100%; }
+.u-tabs-list { display: flex; align-items: center; }
+.u-tab {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  border: 0; background: none; font: inherit; color: #5c5c5c; white-space: nowrap; cursor: pointer;
+  transition: color 120ms var(--ease, ease), background-color 160ms var(--ease, ease), box-shadow 160ms var(--ease, ease);
+}
+.u-tab:focus-visible { outline: 2px solid #1868d0; outline-offset: 2px; }
+.u-tab svg { flex: none; }
+.u-tab-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 16px; padding: 2px; border-radius: 999px; background: #1868d0; color: #fff; font-size: 10px; line-height: 12px; }
+
+/* line: 16 gap, 10 below the items, stroke/sub-300 base line, 3 px brand underline on the active tab */
+.u-tabs[data-kind='line'] .u-tabs-list { gap: 16px; padding-bottom: 10px; box-shadow: inset 0 -1px 0 #dedede; }
+.u-tabs[data-kind='line'] .u-tab { height: 28px; gap: 6px; padding: 4px; border-radius: 10px; }
+.u-tabs[data-kind='line'] .u-tab:hover, .u-tabs[data-kind='line'] .u-tab[data-state='hover'] { color: #171717; }
+.u-tabs[data-kind='line'] .u-tab[aria-selected='true'] { color: #1868d0; }
+.u-tabs[data-kind='line'] .u-tab::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 3px; border-radius: 8px 8px 0 0; background: #1868d0; transform: scaleX(0); transition: transform 160ms var(--ease, ease); }
+.u-tabs[data-kind='line'] .u-tab[aria-selected='true']::after { transform: none; }
+
+/* segmented: bg/weak-50 track, 4 padding, white active item with Reguler-shadows/Medium */
+.u-tabs[data-kind='segmented'] .u-tabs-list { display: inline-flex; padding: 4px; border-radius: 999px; background: #f7f7f7; }
+.u-tabs[data-kind='segmented'][data-rounded='false'] .u-tabs-list { border-radius: 16px; }
+.u-tabs[data-kind='segmented'] .u-tab, .u-tabs[data-kind='pill'] .u-tab { height: 36px; padding: 8px 12px; border-radius: 999px; }
+.u-tabs[data-kind='segmented'][data-rounded='false'] .u-tab, .u-tabs[data-kind='pill'][data-rounded='false'] .u-tab { border-radius: 12px; }
+.u-tabs[data-kind='segmented'] .u-tab-text, .u-tabs[data-kind='pill'] .u-tab-text { padding: 0 8px; }
+.u-tabs[data-kind='segmented'] .u-tab:hover, .u-tabs[data-kind='segmented'] .u-tab[data-state='hover'] { color: #171717; }
+.u-tabs[data-kind='segmented'] .u-tab[aria-selected='true'] { background: #fff; color: #171717; box-shadow: 0 16px 32px -12px rgb(14 18 27 / 0.1); }
+
+/* pill: 8 gap. filled: bg/surface-800 active, stroke/soft-200 outline when inactive. stroke: the outline marks the active one */
+.u-tabs[data-kind='pill'] .u-tabs-list { gap: 8px; }
+.u-tabs[data-kind='pill'] .u-tab { background: #fff; }
+.u-tabs[data-kind='pill'] .u-tab:hover, .u-tabs[data-kind='pill'] .u-tab[data-state='hover'] { color: #171717; }
+.u-tabs[data-kind='pill'][data-style='filled'] .u-tab { box-shadow: inset 0 0 0 1px #ebebeb; }
+.u-tabs[data-kind='pill'][data-style='filled'] .u-tab[aria-selected='true'] { background: #262626; color: #fff; box-shadow: none; }
+.u-tabs[data-kind='pill'][data-style='filled'] .u-tab-badge { background: #ecf0fe; color: #1868d0; }
+.u-tabs[data-kind='pill'][data-style='stroke'] .u-tab[aria-selected='true'] { color: #171717; box-shadow: inset 0 0 0 1px #ebebeb; }
+
+/* vertical: 217 wide. card has a stroke/soft-200 frame and a line under the title, list drops both */
+.u-tabs[data-kind='vertical'] { width: 217px; display: flex; flex-direction: column; gap: 8px; padding: 8px 0; border-radius: 8px; }
+.u-tabs[data-kind='vertical'][data-list='card'] { box-shadow: inset 0 0 0 1px #ebebeb; background: #fff; }
+.u-tabs-title { margin: 0; padding: 4px 12px; font-size: 12px; line-height: 16px; color: #5c5c5c; }
+.u-tabs[data-kind='vertical'][data-list='card'] .u-tabs-title { padding-bottom: 12px; box-shadow: 0 1px 0 #ebebeb; }
+.u-tabs[data-kind='vertical'] .u-tabs-list { flex-direction: column; align-items: stretch; gap: 4px; padding: 0 8px; }
+.u-tabs[data-kind='vertical'] .u-tab { height: 36px; gap: 4px; padding: 8px; border-radius: 10px; justify-content: flex-start; }
+.u-tabs[data-kind='vertical'] .u-tab-text { flex: 1; padding: 0 4px; text-align: left; }
+.u-tabs[data-kind='vertical'] .u-tab:hover, .u-tabs[data-kind='vertical'] .u-tab[data-state='hover'] { background: #f7f7f7; }
+.u-tabs[data-kind='vertical'] .u-tab[aria-selected='true'] { background: #f7f7f7; color: #171717; box-shadow: inset 0 0 0 1px #ebebeb; }

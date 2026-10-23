@@ -1,0 +1,147 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-tabs.css';
+import { kinds, pillStyles, listTypes, render, chip, setName, variantCount, baseCount } from '../../data/tab-menu';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['types', 'Types'],
+  ['states', 'States'],
+  ['parts', 'Icon and badge'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const typeNotes: Record<string, string> = {
+  Line: 'Page sections and settings, 2–6 tabs on a stroke/sub-300 base line',
+  Segmented: 'Switch views of the same data, like a list and a grid',
+  Pill: 'Filters and categories that sit above content',
+  Vertical: 'Side navigation for settings and long forms, Card or List',
+};
+const specs: [string, string, string][] = [
+  ['Tab text', '—', 'Inter Medium 14/20, −0.6%'],
+  ['Text, default', 'text/sub-600', '#5C5C5C'],
+  ['Text, hover', 'text/strong-950', '#171717'],
+  ['Line, active text and underline', 'brand/core/base', '#1868D0'],
+  ['Line, base line', 'stroke/sub-300', '#DEDEDE'],
+  ['Line, underline', '—', '3 px, 10 px below the tab'],
+  ['Line, gap and item padding', '—', '16 / 4 px'],
+  ['Segmented, track', 'bg/weak-50', '#F7F7F7'],
+  ['Segmented, active tab', 'bg/white-0', '#FFFFFF'],
+  ['Segmented, active shadow', 'Reguler-shadows/Medium', '0 16 32 −12, #0E121B 10%'],
+  ['Segmented and Pill, tab height', '—', '36 px, 8 / 12 padding'],
+  ['Pill, filled active', 'bg/surface-800', '#262626'],
+  ['Pill, outline', 'stroke/soft-200', '#EBEBEB'],
+  ['Pill, gap', 'spacing-8', '8 px'],
+  ['Rounded radius', 'radius-full', '999 px, 12 px when false'],
+  ['Vertical, width', '—', '217 px'],
+  ['Vertical, active', 'bg/weak-50 + stroke/soft-200', '#F7F7F7 / #EBEBEB'],
+  ['Vertical, title', 'text/sub-600', 'Inter Medium 12/16'],
+  ['Badge', 'brand/core/base', 'Inter Medium 10/12, 16 px high'],
+];
+const stateKinds = ['Line', 'Segmented', 'Pill', 'Vertical'] as const;
+---
+<DocPage
+  title="Tab Menu"
+  description="Tab menus switch between views or sections without leaving the page. Explore the line, segmented, pill and vertical tabs of Unictive."
+  intro="Tab menus switch between related views or sections of a page, without sending people somewhere else"
+  toc={toc}
+  meta={[['Variants', variantCount], ['Base items', baseCount], ['Types', kinds.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a type, then click the tabs or use the arrow keys to move between them">
+    <form class="pg" data-playground data-kind="tabs" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="kind" label="Type" options={kinds} />
+        <PgSelect name="count" label="Tabs" options={['2', '3', '4', '5', '6']} value="4" />
+        <PgSelect name="style" label="Pill style" options={pillStyles} />
+        <PgSelect name="list" label="Vertical type" options={listTypes} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="rounded" checked /><span>Rounded</span></label>
+        <label class="toggle"><input type="checkbox" name="icon" /><span>Icon</span></label>
+        <label class="toggle"><input type="checkbox" name="badge" /><span>Badge</span></label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div class="canvas-fill"><div class="surface" data-host><Fragment set:html={render({ count: 4, live: true })} /></div></div>
+        <p class="chip" data-chip aria-live="polite">{chip({ kind: 'Line', count: 4, rounded: true, style: 'Filled', list: 'Card' })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="types" label="Types" desc="Four sets, one job each. Pick by where the tabs sit and how much they need to stand out">
+    <div class="grid2">
+      {kinds.map((k) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{setName[k]}</span></span>
+          <span class="tile-body"><span class="surface"><Fragment set:html={render({ kind: k, count: 3 })} /></span></span>
+          <span class="label muted">{typeNotes[k]}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="states" label="States" desc="Every type has Default, Hover and Active. The second tab shows hover, the first is active">
+    <div class="grid2">
+      {stateKinds.map((k) => (
+        <div class="tile tile-static tile-auto">
+          <span class="tile-top"><span class="label muted">{k}</span></span>
+          <span class="tile-body"><span class="surface"><Fragment set:html={render({ kind: k, count: 3, force: { 1: 'hover' }, style: k === 'Pill' ? 'Stroke' : 'Filled', list: 'List' })} /></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="parts" label="Icon and badge" desc="Each base item can show a leading icon and a count badge. Use the icon for every tab or none, and the badge only for counts that need attention">
+    <div class="grid2">
+      <div class="tile tile-static tile-v">
+        <span class="tile-top"><span class="label muted">Icon</span></span>
+        <span class="tile-body"><span class="surface"><Fragment set:html={render({ kind: 'Segmented', count: 3, icon: true })} /></span></span>
+      </div>
+      <div class="tile tile-static tile-v">
+        <span class="tile-top"><span class="label muted">Badge</span></span>
+        <span class="tile-body"><span class="surface"><Fragment set:html={render({ kind: 'Line', count: 3, badge: true })} /></span></span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Content splits into a few peer views that people switch between', 'People stay on the same page, only the panel below changes', 'Labels are short and the views make sense in any order']}
+      avoid={['The views must happen in order, use a Stepper', 'The sections are separate pages with their own address, use the side navigation', 'There are more than six options, use a Dropdown']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep labels to one or two words and the same kind of word, so tabs scan as a set"
+      dontText="Don’t mix tab types in one place or nest tabs inside tabs"
+    >
+      <Fragment slot="do"><span class="surface"><Fragment set:html={render({ kind: 'Segmented', count: 3, labels: ['Day', 'Week', 'Month'] })} /></span></Fragment>
+      <Fragment slot="dont"><span class="surface"><span class="tile-stack center"><Fragment set:html={render({ kind: 'Pill', count: 2, labels: ['All', 'Unread'] })} /><Fragment set:html={render({ kind: 'Line', count: 2, labels: ['Inbox', 'Archive'] })} /></span></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Tab menu tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Breadcrumbs', 'Show where a page sits'],
+      ['Stepper', 'Move through steps in order'],
+      ['Dropdown', 'Pick from many options'],
+      ['Radio Group', 'Pick one in a form'],
+    ]} />
+  </Section>
+</DocPage>
+
+<script>
+  import '../../scripts/nav-page';
+</script>

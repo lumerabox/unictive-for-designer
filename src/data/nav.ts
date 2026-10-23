@@ -27,4 +27,8 @@ export const livePages: Record<string, string> = {
   'Radio Group': '/components/radio-group/',
   Switch: '/components/switch/',
   Rating: '/components/rating/',
+  Breadcrumbs: '/components/breadcrumbs/',
+  'Tab Menu': '/components/tab-menu/',
+  Pagination: '/components/pagination/',
+  Stepper: '/components/stepper/',
 };

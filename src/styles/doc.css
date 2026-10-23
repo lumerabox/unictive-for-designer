@@ -199,3 +199,21 @@
   .grid4 { grid-template-columns: 1fr 1fr; gap: 8px; }
   .tile-v .tile-top .label { font-size: 9px; }
 }
+
+/* navigation pages: wide live previews fill the canvas, tiles stack several examples */
+.canvas-fill { width: calc(100% - 2 * var(--gutter)); display: flex; justify-content: center; }
+.canvas-tools { position: absolute; right: var(--gutter); bottom: var(--gutter); display: flex; gap: 8px; }
+.tile-wide { height: auto; min-height: var(--tile-sm); }
+.tile-wide .tile-body { padding: 24px 0 8px; justify-items: start; place-items: center start; }
+.tile-stack { display: grid; gap: 16px; justify-items: start; width: 100%; min-width: 0; }
+.tile-stack.center { justify-items: center; }
+.tile-auto { height: auto; min-height: var(--tile-lg); }
+.tile-auto .tile-body { padding: 20px 0; }
+/* a white panel inside a tile or canvas, for components whose own fills are bg/weak-50 */
+.surface { display: flex; justify-content: center; width: 100%; padding: 20px 16px; background: var(--bg-white-0); }
+.dd-canvas > .surface { width: calc(100% - 2 * var(--gutter)); }
+.tile-stack > .tile { justify-self: stretch; }
+.canvas-fill .u-pg { justify-content: center; }
+.tile-row { display: flex; align-items: center; gap: 16px; }
+.canvas-tall { height: auto; min-height: var(--canvas-h); padding: 48px 0 96px; }
+@media (max-width: 767px) { .canvas-tools { top: var(--gutter); bottom: auto; } .canvas-tall { padding-top: 80px; } }
