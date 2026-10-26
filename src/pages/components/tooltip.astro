@@ -11,17 +11,6 @@ import '../../styles/u-tooltip.css';
 import { types, arrows, sizes, render, chip, variantCount } from '../../data/tooltip';
 import { iconBtn, btn } from '../../data/markup';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['arrows', 'Arrows'],
-  ['themes', 'Dark and light'],
-  ['behavior', 'Behavior'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 // live triggers for the behavior section: the tooltip opens away from where it has room
 const live = [
   { name: 'Icon button', trigger: iconBtn('copy-04-line', 'Copy link', { attrs: 'data-tip-trigger aria-describedby="tip-copy"' }), tip: render({ id: 'tip-copy', text: 'Copy link', arrow: 'Bottom Center', live: true }) },
@@ -52,7 +41,6 @@ const specs: [string, string, string][] = [
   title="Tooltip"
   description="Tooltips name an icon or add a short hint when people hover or focus an element. Explore every type, arrow and theme of the Unictive tooltip."
   intro="Tooltips put a name or a short hint next to an element, only when people hover or focus it"
-  toc={toc}
   meta={[['Variants', variantCount], ['Types', types.length], ['Arrows', arrows.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a type and an arrow. The arrow always points at the trigger, so the tooltip opens on the other side">

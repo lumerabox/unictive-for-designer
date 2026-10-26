@@ -30,12 +30,9 @@
   /* content keeps this distance from the guide lines */
   --inset: 14px;
 
-  /* doc page shell: sidebar 2 cols, center 960 = main 792 + gutter + toc 144 */
+  /* doc page shell: sidebar 2 cols, center fills the rest with equal padding to both guide lines */
   --sidebar: 180px;
-  --shell-gap: 60px;
-  --center: 960px;
-  --main: 792px;
-  --toc: 144px;
+  --content-pad: 64px;
   --topbar: 72px;
   --drawer: min(320px, 86vw);
 
@@ -96,10 +93,10 @@
 }
 
 /* breakpoints (css vars can't drive media queries, keep these four in sync with DESIGN.md):
-   1439 margin, 1279 toc hides, 1023 drawer nav, 767 mobile, 639 narrow margin */
+   1439 margin, 1279 shell narrows, 1023 drawer nav, 767 mobile, 639 narrow margin */
 @media (max-width: 1439px) { :root { --margin: 64px; } }
-@media (max-width: 1279px) { :root { --shell-gap: 40px; } }
-@media (max-width: 1023px) { :root { --margin: 32px; --topbar: 64px; --inset: 0px; } }
+@media (max-width: 1279px) { :root { --content-pad: 48px; } }
+@media (max-width: 1023px) { :root { --margin: 32px; --topbar: 64px; --inset: 0px; --content-pad: 0px; } }
 @media (max-width: 767px) {
   :root {
     --space-page-top: 32px;

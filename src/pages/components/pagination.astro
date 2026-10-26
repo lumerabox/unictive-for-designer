@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-pagination.css';
 import { types, sizes, typeName, metrics, render, part, chip, variantCount, partCount } from '../../data/pagination';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const typeNotes: Record<string, string> = {
   '01': 'Tables where people set how many rows they see',
   '02': 'Lists where the total count matters',
@@ -55,7 +45,6 @@ const specs: [string, string, string][] = [
   title="Pagination"
   description="Pagination splits long lists and tables into pages and lets people move between them. Explore every type, size and state of the Unictive pagination."
   intro="Pagination splits a long list or table into pages, and shows people where they are and how much is left"
-  toc={toc}
   meta={[['Variants', variantCount], ['Parts', partCount], ['Sizes', sizes.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a variant, then page through 120 results or change the rows per page">

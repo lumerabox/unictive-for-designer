@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-breadcrumbs.css';
 import { types, counts, render, chip, variantCount, baseCount } from '../../data/breadcrumbs';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Separators'],
-  ['styles', 'Styles'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const states: [name: string, note: string][] = [
   ['Default', 'Parent pages, text/sub-600'],
   ['Hover', 'Pointer over a parent, text/strong-950'],
@@ -48,7 +38,6 @@ const specs: [string, string, string][] = [
   title="Breadcrumbs"
   description="Breadcrumbs show where a page sits in the hierarchy and link back to its parents. Explore every separator, style and state of the Unictive breadcrumbs."
   intro="Breadcrumbs show where a page sits in the site and let people jump back to any parent in one click"
-  toc={toc}
   meta={[['Variants', variantCount], ['Base items', baseCount], ['Items', '2–5']]}
 >
   <Section id="playground" label="Playground" desc="Pick a variant, then click a parent crumb to go back up the trail">

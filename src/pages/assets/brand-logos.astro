@@ -8,11 +8,6 @@ import data from '../../data/assets.json';
 
 const groups = data.filter((g) => g.kind === 'logos');
 const count = groups.reduce((n, g) => n + g.items.length, 0);
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['usage', 'When to use'],
-  ['related', 'Related'],
-];
 ---
 <DocPage
   title="Brand Logos"
@@ -20,7 +15,6 @@ const toc: [string, string][] = [
   script="assets"
   description="Search and copy bank, payment, wallet and app logos from the Unictive design system. Click a logo to copy its SVG and paste it into Figma."
   intro="Banks, card networks, wallets and the apps people sign in with. Click a logo to copy its SVG, then paste it into Figma or code"
-  toc={toc}
   meta={[['Logos', count.toLocaleString('en')], ['Categories', groups.length], ['Format', 'SVG']]}
 >
   <Section id="library" label="Library" desc="Logos paste as vectors at 32 px. Major brands come in original, black and white">

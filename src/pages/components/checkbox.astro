@@ -12,17 +12,6 @@ import Btn from '../../components/Btn.astro';
 import { bare, labeled, group, copyAttr } from '../../lib/figma/choice-copy';
 import { sizes, states, positions, metrics, variantCount } from '../../data/checkbox';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['label', 'With label'],
-  ['select-all', 'Select all'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const stateName = { Default: 'Unchecked', Select: 'Checked', Indeterminate: 'Indeterminate' } as const;
 const specs: [string, string, string][] = [
   ['Control size', '—', '20 / 16'],
@@ -47,7 +36,6 @@ const specs: [string, string, string][] = [
   title="Checkbox"
   description="Checkboxes let people turn options on or off, alone or as several picks from a list. Explore every size and state of the Unictive checkbox."
   intro="Checkboxes let people pick any number of options from a list, or confirm a single choice like agreeing to terms"
-  toc={toc}
   meta={[['Variants', variantCount], ['Component sets', 2]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

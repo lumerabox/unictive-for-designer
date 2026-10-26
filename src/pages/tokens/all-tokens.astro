@@ -4,10 +4,6 @@ import Section from '../../components/doc/Section.astro';
 import Related from '../../components/doc/Related.astro';
 import { tokens, collections, countOf, refOf, display, cssName } from '../../data/tokens';
 
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['related', 'Related'],
-];
 const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const slateCount = tokens.filter((x) => display(x, 'gray') !== display(x, 'slate')).length;
 ---
@@ -17,7 +13,6 @@ const slateCount = tokens.filter((x) => display(x, 'gray') !== display(x, 'slate
   script="tokens"
   description="Search every Unictive design token: semantic colors, neutral and brand themes, radius, spacing, opacity and the primitive ramps, with their values in Gray and Slate."
   intro="Every variable in the DS library, with what it points to and its value. Click a name to copy it, or a value to copy the value"
-  toc={toc}
   meta={[['Tokens', tokens.length], ['Collections', collections.length], ['Change in Slate', slateCount]]}
 >
   <Section id="library" label="Library" desc="Search by name or value. Slate shows the values a Slate frame gets; only tokens built on 02-Neutral change">

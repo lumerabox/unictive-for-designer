@@ -10,16 +10,6 @@ import FileCard from '../../components/file-upload/FileCard.astro';
 import Btn from '../../components/Btn.astro';
 import { areaSizes, disables, cardSizes, cardStates, areaMetrics, cardMetrics, maxSizeMB, variantCount } from '../../data/file-upload';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['area', 'Upload area'],
-  ['card-sizes', 'File card sizes'],
-  ['card-states', 'File card states'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const selects: [string, string, readonly string[]][] = [
   ['areaSize', 'Area size', areaSizes],
   ['disable', 'Area disable', disables],
@@ -64,7 +54,6 @@ const specs: [string, string, string][] = [
   title="File Upload"
   description="File upload lets people attach files by dropping them or browsing. Explore the Unictive upload area and every file card size and state."
   intro="File upload lets people attach documents or images by dropping them on an area or browsing their device, then shows each file’s progress in its own card"
-  toc={toc}
   meta={[['Variants', variantCount], ['Limit', `${maxSizeMB}MB per file`]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

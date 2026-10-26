@@ -11,16 +11,6 @@ import '../../styles/u-feedback.css';
 import '../../styles/u-banner.css';
 import { types, statuses, aligns, render, chip, variantCount } from '../../data/banner';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['statuses', 'Statuses'],
-  ['types', 'Types'],
-  ['align', 'Alignment'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const specs: [string, string, string][] = [
   ['Width', '—', 'Fill, full page width'],
   ['Height', '—', '44 px'],
@@ -44,7 +34,6 @@ const specs: [string, string, string][] = [
   title="Banner"
   description="Banners announce something that affects the whole product, from maintenance to a trial ending. Explore every type, status and alignment of the Unictive banner."
   intro="Banners run across the top of the page for news that touches the whole product or account"
-  toc={toc}
   meta={[['Variants', variantCount], ['Statuses', statuses.length], ['Types', types.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a type, status and alignment. Close it to see it go, then bring it back">

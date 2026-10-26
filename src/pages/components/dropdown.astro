@@ -10,17 +10,6 @@ import DropdownMenu from '../../components/dropdown/DropdownMenu.astro';
 import Btn from '../../components/Btn.astro';
 import { types, sizes, states, heightOf, menuSamples, samples, stateName, variantCount, rowCopy, menuCopy, type Type } from '../../data/dropdown';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['menu', 'Open menu'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const pick = (t: keyof typeof menuSamples, picked: number, state: 'Selected' | 'Disable' = 'Selected') =>
   menuSamples[t].rows.map((r, i) => ({ ...r, state: i === picked ? state : ('Default' as const) }));
 const single = [...pick('Default', 1), { title: 'PayLater', desc: 'Not available for this order', state: 'Disable' as const }];
@@ -54,7 +43,6 @@ const specs: [string, string, string][] = [
   title="Dropdown"
   description="Dropdowns let people pick one or more options from a list. Explore every type, size and state of the Unictive dropdown item."
   intro="Dropdowns open a list of options under a field, so people can pick one or several without typing"
-  toc={toc}
   meta={[['Variants', variantCount], ['Types', types.length]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

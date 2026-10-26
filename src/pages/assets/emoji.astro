@@ -8,11 +8,6 @@ import data from '../../data/assets.json';
 
 const groups = data.filter((g) => g.kind === 'emoji');
 const count = groups.reduce((n, g) => n + g.items.length, 0);
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['usage', 'When to use'],
-  ['related', 'Related'],
-];
 ---
 <DocPage
   title="Emoji"
@@ -20,7 +15,6 @@ const toc: [string, string][] = [
   script="assets"
   description="Search and copy the 3D emoji from the Unictive design system. Click one to copy it, then paste it into Figma at 24 px."
   intro="3D emoji for reactions, ratings and friendly moments. Click one to copy it, then paste it into Figma"
-  toc={toc}
   meta={[['Emoji', count], ['Categories', groups.length], ['Paste size', '24 px']]}
 >
   <Section id="library" label="Library" desc="Pastes into Figma as a 24 × 24 image. Use the arrow to download the PNG at 3x">

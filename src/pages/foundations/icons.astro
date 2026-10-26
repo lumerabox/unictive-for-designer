@@ -7,14 +7,6 @@ import Related from '../../components/doc/Related.astro';
 import data from '../../../public/icons/icons.json';
 
 const { categories, icons } = data as { categories: string[]; icons: [string, number, string, string][] };
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['styles', 'Line and solid'],
-  ['sizes', 'Sizes'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const find = (n: string) => icons.find(([name]) => name === n)!;
 const draw = (n: string, solid: boolean, size: number) => {
   const i = find(n);
@@ -28,7 +20,6 @@ const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" ari
   script="foundations"
   description="Search and copy all 1,171 Unictive icons in line and solid styles. Click an icon to copy its SVG and paste it into Figma or code."
   intro="Every icon comes in line and solid, on a 24 px grid. Click one to copy its SVG, then paste it into Figma or your code"
-  toc={toc}
   meta={[['Icons', icons.length.toLocaleString('en')], ['Styles', 2], ['Categories', categories.length]]}
 >
   <Section id="library" label="Library" desc="Search by name or category. Copied icons paste into Figma as vectors in neutral 950">

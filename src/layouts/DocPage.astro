@@ -1,5 +1,5 @@
 ---
-// template for every doc page: sidebar, header, sections, pager, on-this-page
+// template for every doc page: sidebar, header, sections, pager
 import Base from './Base.astro';
 import Link from '../components/doc/Link.astro';
 import { sideNav, livePages, topNav } from '../data/nav';
@@ -9,12 +9,11 @@ interface Props {
   description: string;
   intro: string;
   section?: string;
-  toc: [id: string, label: string][];
   meta?: [label: string, value: string | number][];
   // name of the scripts/<name>-page.ts module that runs this page
   script?: string;
 }
-const { title, description, intro, section = 'Components', toc, meta = [], script } = Astro.props;
+const { title, description, intro, section = 'Components', meta = [], script } = Astro.props;
 
 const group = sideNav.find((g) => g.items.includes(title))?.group ?? '';
 // each sidebar group belongs to one top-nav section; groups without their own section are components
@@ -64,8 +63,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
         )}
       </header>
 
-      <div class="main-row">
-        <main class="main">
+      <main class="main">
           <slot />
           <nav class="pager" aria-label="Pagination">
             {prev
@@ -73,15 +71,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
               : <span></span>}
             {next && <Link class="pager-item next" href={livePages[next]} name={next}><span class="label muted">Next →</span><span class="pager-title">{next}</span></Link>}
           </nav>
-        </main>
-
-        <aside class="toc" aria-label="On this page">
-          <p class="label">On this page</p>
-          <ul>
-            {toc.map(([id, label]) => <li><a href={`#${id}`} data-toc={id}>{label}</a></li>)}
-          </ul>
-        </aside>
-      </div>
+      </main>
     </div>
   </div>
 </Base>

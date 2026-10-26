@@ -10,16 +10,6 @@ import Btn from '../../components/Btn.astro';
 import '../../styles/u-stepper.css';
 import { indicators, sizes, states, layouts, steps, render, indicator, chip, variantCount } from '../../data/stepper';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['indicators', 'Indicators'],
-  ['layouts', 'Layouts'],
-  ['sizes', 'Sizes'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const three = steps.slice(0, 3);
 const specs: [string, string, string][] = [
   ['Indicator size', '—', '40 / 32 px'],
@@ -46,7 +36,6 @@ const specs: [string, string, string][] = [
   title="Stepper"
   description="Steppers show progress through a task split into steps, like onboarding or checkout. Explore every indicator, layout and size of the Unictive stepper."
   intro="Steppers break a long task into steps and show people what’s done, where they are and what’s left"
-  toc={toc}
   meta={[['Variants', variantCount], ['Indicators', indicators.length], ['Layouts', layouts.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a layout and indicator, then step through with Back and Next, or click a finished step to go back to it">

@@ -11,16 +11,6 @@ import '../../styles/u-feedback.css';
 import '../../styles/u-progress.css';
 import { states, circleSizes, render, bar, circle, chip, variantCount } from '../../data/progress-bar';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['bar', 'Bar indicator'],
-  ['states', 'States'],
-  ['circular', 'Circular'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const pcts = [0, 25, 50, 75, 100];
 const specs: [string, string, string][] = [
   ['Track', 'bg/soft-200', '#EBEBEB, 6 px high, fully rounded'],
@@ -44,7 +34,6 @@ const specs: [string, string, string][] = [
   title="Progress Bar"
   description="Progress bars show how far an upload, download or process has gone. Explore the bar, the labelled progress bar and the circular progress of Unictive."
   intro="Progress bars show how much of a task is done, so people know it’s working and roughly how long is left"
-  toc={toc}
   meta={[['Variants', variantCount], ['Sets', 3], ['States', states.length]]}
 >
   <Section id="playground" label="Playground" desc="Drag the value or start a fake upload, it runs to 100% and lands on Success">

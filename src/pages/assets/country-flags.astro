@@ -7,11 +7,6 @@ import AssetLibrary from '../../components/AssetLibrary.astro';
 import data from '../../data/assets.json';
 
 const count = data.filter((g) => g.kind === 'flags').reduce((n, g) => n + g.items.length, 0);
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['usage', 'When to use'],
-  ['related', 'Related'],
-];
 ---
 <DocPage
   title="Country Flags"
@@ -19,7 +14,6 @@ const toc: [string, string][] = [
   script="assets"
   description="Search and copy round country and region flags from the Unictive design system. Click a flag to copy its SVG and paste it into Figma."
   intro="Round flags for countries, regions and organizations. Click one to copy its SVG, then paste it into Figma or code"
-  toc={toc}
   meta={[['Flags', count], ['Shape', 'Circle'], ['Format', 'SVG']]}
 >
   <Section id="library" label="Library" desc="Flags paste as vectors at 24 px, the size used in phone and currency fields">

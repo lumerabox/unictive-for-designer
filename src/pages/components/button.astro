@@ -8,16 +8,6 @@ import Related from '../../components/doc/Related.astro';
 import Btn from '../../components/Btn.astro';
 import { sizes, styles, types, states, variantCount, metrics } from '../../data/button';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['variants', 'Variants'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const copyAttr = (v: Record<string, unknown>) => JSON.stringify(v);
 const specs: [string, string, string][] = [
   ['Container fill', 'brand/core/base', '#1868D0'],
@@ -34,7 +24,6 @@ const specs: [string, string, string][] = [
   title="Button"
   description="Buttons let people take an action with a single click. Explore every variant and copy it straight into Figma."
   intro="Buttons let people take an action with a single click, use them for the most important actions in forms, dialogs and pages"
-  toc={toc}
   meta={[['Updated', 'Sep 18, 2026'], ['Variants', variantCount]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

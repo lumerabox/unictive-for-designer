@@ -7,14 +7,6 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import { shadows } from '../../data/foundations';
 
-const toc: [string, string][] = [
-  ['styles', 'Shadow styles'],
-  ['elevation', 'Elevation'],
-  ['specs', 'Styles and layers'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const groups = ['Regular', 'Card', 'Custom'];
 const desc: Record<string, string> = {
   Regular: 'One soft layer. The default for anything that floats over the page',
@@ -29,7 +21,6 @@ const short = (n: string) => n.split('/')[1];
   script="foundations"
   description="Unictive shadow effect styles: regular, card and custom layered shadows, with the CSS for each and where components use them."
   intro="Shadows say what floats. Keep them soft and few: most surfaces sit flat with a 1 px stroke, and only menus, popovers and modals lift"
-  toc={toc}
   meta={[['Styles', shadows.length], ['Groups', groups.length], ['Max layers', Math.max(...shadows.map((s) => s.layers))]]}
 >
   <Section id="styles" label="Styles" title="Shadow styles" desc="Seven effect styles in three groups. Click a tile to copy its CSS">

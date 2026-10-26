@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-actions.css';
 import { linkSizes, linkStyles, linkStates, linkColors, linkButton, linkChip } from '../../data/actions';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['styles', 'Styles'],
-  ['sizes', 'Sizes and icons'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const styleNotes: Record<string, string> = { Gray: 'Skip for now', Neutral: 'Learn more', Primary: 'View all', Error: 'Remove' };
 const specs: [string, string, string][] = [
   ['Height', '—', '20 px, 16 px at Small, no padding'],
@@ -35,7 +25,6 @@ const specs: [string, string, string][] = [
   title="Link Button"
   description="Link Buttons are text-only actions that sit inline with content. Explore every style, size and state of the Unictive link button."
   intro="Link Buttons are text-only actions for navigation and low-emphasis actions, inline with content or on their own"
-  toc={toc}
   meta={[['Variants', 48], ['Styles', linkStyles.length], ['Sizes', linkSizes.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a variant and turn the chevrons on or off">

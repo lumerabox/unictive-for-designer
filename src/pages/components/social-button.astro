@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-actions.css';
 import { socialStyles, socialStates, brands, socialButton, socialChip } from '../../data/actions';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['styles', 'Styles'],
-  ['brands', 'Providers'],
-  ['states', 'States and shape'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const specs: [string, string, string][] = [
   ['Height', '—', '44 px, 44 × 44 when icon only'],
   ['Padding', 'spacing-12 · 16', '12 / 16 / 12 / 12 px, 12 px when icon only'],
@@ -38,7 +28,6 @@ const specs: [string, string, string][] = [
   title="Social Button"
   description="Social Buttons let people sign in with a provider like Google or Apple. Explore every style, state and shape of the Unictive social button."
   intro="Social Buttons let people sign in or sign up with an account they already have, like Google, Apple or GitHub"
-  toc={toc}
   meta={[['Variants', 24], ['Styles', socialStyles.length], ['Providers', brands.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a style and a provider, then hover and click the preview">

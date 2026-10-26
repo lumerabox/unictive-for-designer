@@ -31,20 +31,6 @@ function init(signal: AbortSignal) {
   document.querySelectorAll<HTMLElement>('#sidebar [data-section]').forEach((g) => {
     g.hidden = g.dataset.section !== part(location.pathname);
   });
-
-  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
-  const sections = links.map((a) => document.getElementById(a.dataset.toc!)).filter((s): s is HTMLElement => !!s);
-  const spy = () => {
-    if (!sections.length) return;
-    const y = innerHeight * 0.3;
-    let active = sections[0];
-    for (const s of sections) if (s.getBoundingClientRect().top <= y) active = s;
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) active = sections[sections.length - 1];
-    links.forEach((a) => a.classList.toggle('active', a.dataset.toc === active.id));
-  };
-  addEventListener('scroll', spy, { passive: true, signal });
-  addEventListener('resize', spy, { signal });
-  spy();
 }
 
 document.addEventListener('astro:page-load', async () => {

@@ -8,17 +8,6 @@ import Related from '../../components/doc/Related.astro';
 import Ramp from '../../components/foundations/Ramp.astro';
 import { brands, brandTokens, neutrals, stateScales, semantic, states, alphas, opacity, contrast } from '../../data/foundations';
 
-const toc: [string, string][] = [
-  ['brand', 'Brand'],
-  ['neutrals', 'Neutrals'],
-  ['palette', 'State palette'],
-  ['semantic', 'Semantic tokens'],
-  ['states', 'State colors'],
-  ['alpha', 'Alpha and opacity'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const primitiveCount = brands.length * 11 + 24 + Object.keys(stateScales).length * 11;
 const semanticCount = semantic.reduce((n, g) => n + g.tokens.length, 0) + states.length * 4 + brands.length * 8;
 const grade = (r: number) => (r >= 7 ? 'AAA' : r >= 4.5 ? 'AA' : r >= 3 ? 'AA large' : 'Decorative');
@@ -35,7 +24,6 @@ const rows = (group: (typeof semantic)[number]) =>
   script="foundations"
   description="The Unictive color system: brand ramps for every product, neutrals, state colors and the semantic tokens designers should pick from."
   intro="Primitives hold the values, semantic tokens say where each one goes. Design with the semantic tokens and the brand can change underneath"
-  toc={toc}
   meta={[['Primitives', primitiveCount], ['Semantic', semanticCount], ['Brands', brands.length]]}
 >
   <Section id="brand" label="Brand" desc="Unictive blue leads. Each product keeps its own ramp with the same steps, so a component switches brand by swapping one collection">

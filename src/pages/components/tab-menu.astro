@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-tabs.css';
 import { kinds, pillStyles, listTypes, render, chip, setName, variantCount, baseCount } from '../../data/tab-menu';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['states', 'States'],
-  ['parts', 'Icon and badge'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const typeNotes: Record<string, string> = {
   Line: 'Page sections and settings, 2–6 tabs on a stroke/sub-300 base line',
   Segmented: 'Switch views of the same data, like a list and a grid',
@@ -53,7 +43,6 @@ const stateKinds = ['Line', 'Segmented', 'Pill', 'Vertical'] as const;
   title="Tab Menu"
   description="Tab menus switch between views or sections without leaving the page. Explore the line, segmented, pill and vertical tabs of Unictive."
   intro="Tab menus switch between related views or sections of a page, without sending people somewhere else"
-  toc={toc}
   meta={[['Variants', variantCount], ['Base items', baseCount], ['Types', kinds.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a type, then click the tabs or use the arrow keys to move between them">

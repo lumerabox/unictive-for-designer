@@ -11,18 +11,6 @@ import Btn from '../../components/Btn.astro';
 import { aligns, bools, dateStates, variantCount, partCount, keyOf, today, years, chipPresets, railPresets, pickerCopy, calendarCopy } from '../../data/date-picker';
 import { chevronDown } from '../../components/date-picker/icons';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['alignment', 'Alignment'],
-  ['types', 'Single and multiple'],
-  ['calendar', 'Calendar'],
-  ['dates', 'Date states'],
-  ['parts', 'Presets and year'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const t = keyOf(today.y, today.m, today.d);
 const r0 = keyOf(today.y, today.m, 2);
 const pickerAttr = (align: 'Left' | 'Right', calendar: boolean, multiple: boolean) => JSON.stringify(pickerCopy({ align, calendar, multiple }));
@@ -52,7 +40,6 @@ const specs: [string, string, string][] = [
   title="Date Picker"
   description="Date pickers let people pick a single date or a range from a calendar. Explore the alignments, calendars and date states of the Unictive date picker."
   intro="Date pickers let people pick a date or a range of dates from a calendar that opens under the field"
-  toc={toc}
   meta={[['Variants', variantCount], ['Calendar parts', partCount]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

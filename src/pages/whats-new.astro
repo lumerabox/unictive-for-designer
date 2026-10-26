@@ -5,7 +5,6 @@ import Link from '../components/doc/Link.astro';
 import { livePages } from '../data/nav';
 import { releases, kinds, idOf, dateOf, countOf } from '../data/changelog';
 
-const toc = releases.map((r): [string, string] => [idOf(r), dateOf(r)]);
 const total = releases.reduce((n, r) => n + r.changes.length, 0);
 ---
 <DocPage
@@ -14,7 +13,6 @@ const total = releases.reduce((n, r) => n + r.changes.length, 0);
   script="whats-new"
   description="What changed on Unictive for Designer: new pages, improvements and removals, newest first."
   intro="New pages, improvements and removals on the site, newest first"
-  toc={toc}
   meta={[['Last update', dateOf(releases[0])], ['Releases', releases.length], ['Live pages', Object.keys(livePages).length]]}
 >
   <div class="options log-filter" slot="action" role="radiogroup" aria-label="Show changes">

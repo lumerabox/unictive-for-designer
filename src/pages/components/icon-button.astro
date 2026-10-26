@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-actions.css';
 import { iconSizes, iconStyles, iconTypes, iconStates, iconMetrics, glyphs, iconButton, iconChip } from '../../data/actions';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['variants', 'Variants'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const specs: [string, string, string][] = [
   ['Size', '—', '48 / 40 / 28 px, always square'],
   ['Padding', 'spacing-12 · 10 · 6', '12 / 10 / 6 px'],
@@ -38,7 +28,6 @@ const specs: [string, string, string][] = [
   title="Icon Button"
   description="Icon Buttons run an action from an icon alone. Explore every style, type, size and state of the Unictive icon button."
   intro="Icon Buttons run an action from an icon alone, for toolbars, rows and headers where a label would not fit"
-  toc={toc}
   meta={[['Variants', 216], ['Styles', iconStyles.length], ['Sizes', iconSizes.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a variant and an icon, then hover and click the preview">

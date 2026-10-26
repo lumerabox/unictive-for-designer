@@ -12,16 +12,6 @@ import Btn from '../../components/Btn.astro';
 import { bare, labeled, group, copyAttr } from '../../lib/figma/choice-copy';
 import { sizes, positions, metrics, variantCount } from '../../data/switch';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['label', 'With label'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const states: [name: string, selected: boolean, disabled: boolean][] = [
   ['Off', false, false],
   ['On', true, false],
@@ -50,7 +40,6 @@ const specs: [string, string, string][] = [
   title="Switch"
   description="Switches turn a single setting on or off, and the change applies right away. Explore every size and state of the Unictive switch."
   intro="Switches turn a single setting on or off, and the change takes effect the moment people flip it"
-  toc={toc}
   meta={[['Variants', variantCount], ['Component sets', 2]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

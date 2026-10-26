@@ -7,14 +7,6 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import { radii, spacing, radiusUse } from '../../data/foundations';
 
-const toc: [string, string][] = [
-  ['radius', 'Corner radius'],
-  ['radius-use', 'Radius in components'],
-  ['spacing', 'Spacing'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const rName = (r: number) => (r === 999 ? 'radius-full' : `radius-${r}`);
 const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, t, t === 'radius-full' ? '999 px' : `${t.slice(7)} px`]);
 ---
@@ -24,7 +16,6 @@ const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, 
   script="foundations"
   description="Corner radius and spacing tokens of the Unictive design system, from radius-0 to radius-full and spacing-0 to spacing-64."
   intro="Two small scales keep every component in step. Radius grows with the size of the thing it rounds, spacing moves in steps of 2, 4 and 8"
-  toc={toc}
   meta={[['Radius', radii.length], ['Spacing', spacing.length], ['Base unit', '4 px']]}
 >
   <Section id="radius" label="Radius" title="Corner radius" desc="Sixteen steps. Small controls take 4 to 8, menus and cards 12 to 16, sheets and large panels 20 and up. Click a tile to copy the token">

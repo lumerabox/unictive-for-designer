@@ -12,16 +12,6 @@ import Btn from '../../components/Btn.astro';
 import { bare, labeled, group, copyAttr } from '../../lib/figma/choice-copy';
 import { sizes, positions, metrics, variantCount } from '../../data/radio-group';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['label', 'With label'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const states: [name: string, selected: boolean, disabled: boolean][] = [
   ['Unselected', false, false],
   ['Selected', true, false],
@@ -51,7 +41,6 @@ const specs: [string, string, string][] = [
   title="Radio Group"
   description="Radio groups let people pick exactly one option from a short list. Explore every size and state of the Unictive radio."
   intro="Radio groups let people pick exactly one option from a short list where every choice should stay visible"
-  toc={toc}
   meta={[['Variants', variantCount], ['Component sets', 2]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

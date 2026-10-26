@@ -10,16 +10,6 @@ import '../../styles/u-feedback.css';
 import '../../styles/u-badge.css';
 import { sizes, types, colors, styles, colorTokens, render, chip, variantCount } from '../../data/badge';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['colors', 'Colors and styles'],
-  ['types', 'Types'],
-  ['sizes', 'Sizes and shape'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const colorNotes: Record<string, string> = { Main: 'Brand', Neutral: 'Default', Green: 'Success', Orange: 'Warning', Blue: 'Info', Red: 'Error' };
 const typeTiles: [string, Parameters<typeof render>[0]][] = [
   ['Basic', { type: 'Basic', text: 'Draft' }],
@@ -47,7 +37,6 @@ const specs: [string, string, string][] = [
   title="Badge"
   description="Badges label status, categories and counts in a compact pill. Explore every type, color, style and size of the Unictive badge."
   intro="Badges are small labels for a status, a category or a count, next to the thing they describe"
-  toc={toc}
   meta={[['Variants', variantCount], ['Colors', colors.length], ['Styles', styles.length]]}
 >
   <Section id="playground" label="Playground" desc="Build a badge, then change its text. Numbers work on Basic and Dot, icons on the Icon type">

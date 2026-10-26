@@ -6,13 +6,6 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import { typeGroups, typeCount, type TypeStyle } from '../../data/foundations';
 
-const toc: [string, string][] = [
-  ['typeface', 'Typeface'],
-  ...typeGroups.map((g): [string, string] => [g.key, g.name]),
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const sample: Record<string, string> = {
   title: 'Design once',
   label: 'Save changes',
@@ -32,7 +25,6 @@ const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
   script="foundations"
   description="Inter and the Unictive type scale: titles, labels, paragraphs, subheadings, uppercase and italic styles with sizes, line heights and tracking."
   intro="One family, Inter, in six style groups. Titles for headings, labels for UI, paragraphs for reading"
-  toc={toc}
   meta={[['Family', 'Inter'], ['Styles', typeCount], ['Weights', 4]]}
 >
   <Section id="typeface" label="Typeface" desc="Inter is drawn for screens: tall x-height, open shapes and tabular numbers. It ships with Figma, so every style works out of the box">

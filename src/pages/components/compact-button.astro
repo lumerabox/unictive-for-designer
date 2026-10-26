@@ -9,16 +9,6 @@ import PgSelect from '../../components/choice/PgSelect.astro';
 import '../../styles/u-actions.css';
 import { compactSizes, compactStyles, compactStates, glyphs, compactButton, compactChip } from '../../data/actions';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['styles', 'Styles'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const compactGlyphs: [string, string][] = [['x-close-line', 'Close'], ...glyphs];
 const specs: [string, string, string][] = [
   ['Size', '—', '24 px, 20 px at Small'],
@@ -38,7 +28,6 @@ const specs: [string, string, string][] = [
   title="Compact Button"
   description="Compact Buttons are 24 and 20 px icon buttons for dense spots. Explore every style, size and state of the Unictive compact button."
   intro="Compact Buttons are small icon buttons for dense spots, like closing a modal, a tag or a toast, or a toolbar inside an editor"
-  toc={toc}
   meta={[['Variants', 48], ['Styles', compactStyles.length], ['Sizes', compactSizes.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a variant and an icon. Active is a toggle, click the preview to turn it off and on">

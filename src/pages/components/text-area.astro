@@ -9,16 +9,6 @@ import TextArea from '../../components/TextArea.astro';
 import Btn from '../../components/Btn.astro';
 import { styles, sizes, states, metrics, maxLength, variantCount } from '../../data/text-area';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['styles', 'Styles'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const stateName = (s: string) => (s === 'Disable' ? 'Disabled' : s);
 const copyAttr = (v: Record<string, unknown>) => JSON.stringify({ style: 'Outline', size: 'Large', state: 'Placeholder', ...v });
 const specs: [string, string, string][] = [
@@ -43,7 +33,6 @@ const specs: [string, string, string][] = [
   title="Text Area"
   description="Text areas let people write longer, multi-line text. Explore every size and state of the Unictive text area."
   intro="Text areas let people write longer text across several lines, like a note, a description or feedback"
-  toc={toc}
   meta={[['Variants', variantCount], ['Limit', `${maxLength} characters`]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

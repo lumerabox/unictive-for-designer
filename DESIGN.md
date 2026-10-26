@@ -10,7 +10,7 @@ Every value lives in one file, [src/styles/tokens.css](src/styles/tokens.css). P
 |---|---|---|
 | Page side margin | `--margin` (plus the overrides in the media queries below it) | topbar, shell and guides on every page |
 | Content width | `--container` | every page |
-| Sidebar, TOC or main column width | `--sidebar`, `--toc`, `--main`, `--center`, `--shell-gap` | every doc page |
+| Sidebar width or content padding | `--sidebar`, `--content-pad` | every doc page |
 | Space between sections | `--space-section` | every section on every page |
 | Heading sizes | `--fs-display`, `--fs-h2`, `--fs-title`, … | every page |
 | Colors | `--brand`, `--text-*`, `--bg-*`, `--stroke-*` | everything |
@@ -38,7 +38,7 @@ The look is editorial and brutalist, the opposite of a generic card UI. The firs
 - One strict 12-column grid, which is visible: 0.5 px brand-alpha-16 guide lines at the container edges only.
 - Horizontal lines (0.5 px, stroke-soft-200) only at the bottom of a section. Lines never cut through content.
 - Content sits on white or `bg-weak-50` blocks. Corners use `--radius` 12 for boxes (tiles, canvas, pager, palette), `--radius-sm` 8 for controls (selects, toggles, fields, chips, table rows) and `--radius-xs` 4 for small marks. DS components keep their own radius.
-- Content keeps `--inset` 14 from the guide lines: topbar padding, sidebar labels/items and the right edge of the center column (0 below 1024, where guides are hidden).
+- Content keeps `--inset` 14 from the guide lines: topbar padding, sidebar labels/items and (0 below 1024, where guides are hidden).
 - State tiles carry only the uppercase state label top-left, no A/B/C letters.
 - No light green or red tinted backgrounds. Status is shown with a 4 px top border (brand for do, error for don't) and colored labels.
 - Labels are uppercase, 10/12, 500 weight, 8% tracking, in brand blue (or `muted` grey). Numbered labels such as "01 — Playground" are allowed.
@@ -62,8 +62,8 @@ The look is editorial and brutalist, the opposite of a generic card UI. The firs
 Doc page shell inside the container:
 
 ```
-| sidebar 180 | gap 60 | main 792 | 24 | toc 144 |
-               |------- center 960 ---------------|
+| sidebar 180 | pad 64 | main 892 | pad 64 |
+               |------- center 1020 ---------|
 ```
 
 ## Breakpoints
@@ -71,8 +71,8 @@ Doc page shell inside the container:
 | Width | Change |
 |---|---|
 | ≤ 1439 | `--margin` 64 |
-| ≤ 1279 | TOC hidden, `--shell-gap` 40, main fills the center, topnav gap 24, search 160 |
-| ≤ 1023 | `--margin` 32, `--topbar` 64, sidebar becomes a drawer (with top nav links), guides hidden |
+| ≤ 1279 | `--content-pad` 48, topnav gap 24, search 160 |
+| ≤ 1023 | `--margin` 32, `--topbar` 64, `--content-pad` 0, sidebar becomes a drawer (with top nav links), guides hidden |
 | ≤ 767 | mobile: section 48, h2 28/36, lead 18/28, 2-column tiles, stacked intro, table rows stacked |
 | ≤ 639 | `--margin` 20 |
 | ≤ 399 | tile padding 14, tighter tile grid |

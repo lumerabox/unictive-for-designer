@@ -10,16 +10,6 @@ import '../../styles/u-feedback.css';
 import '../../styles/u-popover.css';
 import { arrows, sizes, footers, render, chip, variantCount } from '../../data/popover';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['footers', 'Footers'],
-  ['placement', 'Placement'],
-  ['sizes', 'Sizes'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const footerNotes: Record<string, string> = {
   'Button Hug': 'Back and Next on the right',
   'Button Fill': 'Buttons share the width',
@@ -50,7 +40,6 @@ const specs: [string, string, string][] = [
   title="Popover"
   description="Popovers open next to a control to show extra content and actions, from a short form to a product tour. Explore every arrow, footer and size of the Unictive popover."
   intro="Popovers open next to the control that triggered them, with room for a title, content and actions"
-  toc={toc}
   meta={[['Variants', variantCount], ['Arrows', arrows.length], ['Footers', footers.length]]}
 >
   <Section id="playground" label="Playground" desc="Step through the tour with the footer, close it, then open it again from its trigger">

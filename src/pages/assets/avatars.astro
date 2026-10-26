@@ -7,11 +7,6 @@ import AssetLibrary from '../../components/AssetLibrary.astro';
 import data from '../../data/assets.json';
 
 const count = data.filter((g) => g.kind === 'avatars').reduce((n, g) => n + g.items.length, 0);
-const toc: [string, string][] = [
-  ['library', 'Library'],
-  ['usage', 'When to use'],
-  ['related', 'Related'],
-];
 ---
 <DocPage
   title="Avatars"
@@ -19,7 +14,6 @@ const toc: [string, string][] = [
   script="assets"
   description="Preview and copy the Unictive avatar characters. Click one to copy it, then paste it into Figma at 64 px."
   intro="Ten illustrated characters, plain or on a colored background. Click one to copy it, then paste it into Figma"
-  toc={toc}
   meta={[['Characters', count / 2], ['Styles', 2], ['Paste size', '64 px']]}
 >
   <Section id="library" label="Library" desc="Pastes into Figma as a 64 × 64 image. Use the arrow to download the PNG at 2x">

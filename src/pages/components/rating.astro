@@ -11,16 +11,6 @@ import Btn from '../../components/Btn.astro';
 import { ratingRow, group, copyAttr } from '../../lib/figma/choice-copy';
 import { types, sizes, metrics, count, variantCount } from '../../data/rating';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const values = Array.from({ length: count * 2 + 1 }, (_, i) => String(i / 2));
 const states: [name: string, value: number, disabled: boolean][] = [
   ['Default', 0, false],
@@ -45,7 +35,6 @@ const specs: [string, string, string][] = [
   title="Rating"
   description="Ratings let people score an experience on a short scale, or show an average score. Explore every type, size and state of the Unictive rating."
   intro="Ratings let people score an experience on a scale of five, or show the average score others gave"
-  toc={toc}
   meta={[['Variants', variantCount], ['Scale', `${count} items`]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

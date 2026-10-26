@@ -9,17 +9,6 @@ import TextInput from '../../components/TextInput.astro';
 import Btn from '../../components/Btn.astro';
 import { styles, sizes, states, types, metrics, variantCount } from '../../data/text-input';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['types', 'Types'],
-  ['styles', 'Styles'],
-  ['sizes', 'Sizes'],
-  ['states', 'States'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const stateName = (s: string) => (s === 'Disable' ? 'Disabled' : s);
 const copyAttr = (v: Record<string, unknown>) => JSON.stringify({ style: 'Outline', size: 'Medium', state: 'Placeholder', type: 'Default', ...v });
 const specs: [string, string, string][] = [
@@ -45,7 +34,6 @@ const specs: [string, string, string][] = [
   title="Text Input"
   description="Text inputs let people enter a single line of text. Explore every type, size and state of the Unictive text input."
   intro="Text inputs let people enter and edit a single line of text, like a name, an email or an amount"
-  toc={toc}
   meta={[['Variants', variantCount], ['Types', types.length]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />

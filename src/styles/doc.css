@@ -4,7 +4,7 @@
 .shell {
   position: relative; z-index: 1;
   max-width: calc(var(--container) + 2 * var(--margin)); margin: 0 auto; padding: 0 var(--margin);
-  display: grid; grid-template-columns: var(--sidebar) minmax(0, var(--center)); column-gap: var(--shell-gap);
+  display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr);
 }
 
 /* sidebar */
@@ -20,7 +20,7 @@
 .scrim { display: none; }
 .drawer-nav { display: none; }
 
-.center { padding-right: var(--inset); }
+.center { padding-inline: var(--content-pad); }
 
 /* page header */
 .page-head { padding: var(--space-page-top) 0 var(--space-head); border-bottom: var(--line); }
@@ -33,7 +33,6 @@
 .meta div { width: var(--sidebar); display: grid; gap: 6px; }
 .meta dd { margin: 0; font-size: 18px; line-height: 22px; font-weight: 500; }
 
-.main-row { display: grid; grid-template-columns: minmax(0, var(--main)) var(--toc); column-gap: var(--gutter); }
 .main { min-width: 0; }
 
 /* sections */
@@ -151,20 +150,7 @@
 .pager-item:hover { background: var(--bg-soft-200); }
 .pager-title { font-size: var(--fs-title); line-height: var(--lh-title); font-weight: 600; letter-spacing: var(--ls-h2); }
 
-/* on this page */
-.toc { position: sticky; top: var(--topbar); align-self: start; padding-top: var(--space-section); }
-.toc > .label { margin-bottom: 16px; }
-.toc ul { list-style: none; margin: 0; padding: 0; }
-.toc a { display: flex; align-items: center; height: 28px; padding-left: 12px; font-size: var(--fs-small); color: var(--text-sub-600); box-shadow: inset 2px 0 0 transparent; transition: color var(--fast) var(--ease), box-shadow var(--base) var(--ease); }
-.toc a:hover { color: var(--text-strong-950); }
-.toc a.active { color: var(--brand); font-weight: 600; box-shadow: inset 2px 0 0 var(--brand); }
-
 /* responsive, breakpoints listed in tokens.css */
-@media (max-width: 1279px) {
-  .shell { grid-template-columns: var(--sidebar) minmax(0, 1fr); }
-  .main-row { grid-template-columns: minmax(0, 1fr); }
-  .toc { display: none; }
-}
 @media (max-width: 1023px) {
   .shell { display: block; }
   .sidebar { position: fixed; z-index: 30; top: 0; left: 0; height: 100dvh; width: var(--drawer); max-height: none; padding: calc(var(--topbar) + 24px) var(--margin) 48px; background: var(--bg-white-0); overscroll-behavior: contain; border-right: var(--line); transform: translateX(-100%); visibility: hidden; transition: transform var(--slow) var(--ease), visibility 0s var(--slow); }

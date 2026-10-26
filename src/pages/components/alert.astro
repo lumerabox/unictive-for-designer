@@ -11,16 +11,6 @@ import '../../styles/u-feedback.css';
 import '../../styles/u-alert.css';
 import { sizes, statuses, styles, render, chip, variantCount } from '../../data/alert';
 
-const toc: [string, string][] = [
-  ['playground', 'Playground'],
-  ['statuses', 'Statuses'],
-  ['styles', 'Styles'],
-  ['sizes', 'Sizes'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['specs', 'Tokens and specs'],
-  ['related', 'Related'],
-];
 const statusNotes: Record<string, string> = {
   Error: 'Something failed and needs action',
   Warning: 'Something may go wrong soon',
@@ -56,7 +46,6 @@ const specs: [string, string, string][] = [
   title="Alert"
   description="Alerts tell people about something that happened or needs attention, right where they are. Explore every status, style and size of the Unictive alert."
   intro="Alerts give short, timely feedback inside a page, from a saved change to a failed payment"
-  toc={toc}
   meta={[['Variants', variantCount], ['Statuses', statuses.length], ['Styles', styles.length]]}
 >
   <Section id="playground" label="Playground" desc="Pick a size, status and style, then dismiss it to see how it leaves">

@@ -7,16 +7,6 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import { tokens, collections, countOf, chain, collectionOf, display, get, resolve, type Mode } from '../../data/tokens';
 
-const toc: [string, string][] = [
-  ['layers', 'Three layers'],
-  ['collections', 'Collections'],
-  ['naming', 'Naming'],
-  ['themes', 'Gray and Slate'],
-  ['brand', 'Brand'],
-  ['usage', 'When to use'],
-  ['guidance', 'Do and don’t'],
-  ['related', 'Related'],
-];
 const layers = [
   { name: 'Semantic', count: countOf('tokens'), text: 'Names that say where a color goes, like text/sub-600 or bg/weak-50. Design with these' },
   { name: 'Theme', count: countOf('neutral') + countOf('brand'), text: 'A switch between the two. 02-Neutral swaps Gray for Slate, 03-Brand points the primary roles at a brand' },
@@ -53,7 +43,6 @@ const brandRows = tokens.filter((x) => x.collection === 'brand').map((x): [strin
   script="tokens"
   description="How the Unictive design tokens are built: primitive values, a theme layer for Gray, Slate and brand, and the semantic names to design with."
   intro="Every value has a name. Primitives hold the values, the theme layer picks Gray or Slate and a brand, and semantic tokens say where each one goes"
-  toc={toc}
   meta={[['Tokens', tokens.length], ['Collections', collections.length], ['Neutral modes', 2]]}
 >
   <Section id="layers" label="Layers" title="Three layers" desc="A semantic token points to a theme token, which points to a primitive. Change a layer and everything above it follows">
