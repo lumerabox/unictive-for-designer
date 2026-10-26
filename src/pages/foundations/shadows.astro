@@ -1,0 +1,86 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import { shadows } from '../../data/foundations';
+
+const toc: [string, string][] = [
+  ['styles', 'Shadow styles'],
+  ['elevation', 'Elevation'],
+  ['specs', 'Styles and layers'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const groups = ['Regular', 'Card', 'Custom'];
+const desc: Record<string, string> = {
+  Regular: 'One soft layer. The default for anything that floats over the page',
+  Card: 'One wider layer for cards that lift',
+  Custom: 'Stacked layers with a hairline ring and an inner highlight, for surfaces that need a crisp edge',
+};
+const short = (n: string) => n.split('/')[1];
+---
+<DocPage
+  title="Shadows"
+  section="Foundations"
+  script="foundations"
+  description="Unictive shadow effect styles: regular, card and custom layered shadows, with the CSS for each and where components use them."
+  intro="Shadows say what floats. Keep them soft and few: most surfaces sit flat with a 1 px stroke, and only menus, popovers and modals lift"
+  toc={toc}
+  meta={[['Styles', shadows.length], ['Groups', groups.length], ['Max layers', Math.max(...shadows.map((s) => s.layers))]]}
+>
+  <Section id="styles" label="Styles" title="Shadow styles" desc="Seven effect styles in three groups. Click a tile to copy its CSS">
+    {groups.map((g) => (
+      <div class="block">
+        <p class="subhead">{g}</p>
+        <p class="desc">{desc[g]}</p>
+        <div class="grid3">
+          {shadows.filter((s) => s.group === g).map((s) => (
+            <button type="button" class="tile shadow-tile" data-copy={`box-shadow: ${s.css};`} data-copy-label={`${s.name} CSS`}>
+              <span class="tile-top"><span class="label muted">{short(s.name)}</span><span class="label muted">{s.layers} {s.layers === 1 ? 'layer' : 'layers'}</span></span>
+              <span class="tile-body"><i class="shadow-card" style={`box-shadow:${s.css}`}></i></span>
+              <span class="copy-hint">Copy CSS</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
+  </Section>
+
+  <Section id="elevation" label="Elevation" desc="Pick the shadow by how far a surface sits above the page, not by how important it is">
+    <SpecsTable label="Elevation" head={['Use for', 'Style', 'Layers']} rows={shadows.map((s): [string, string, string] => [s.use, s.name, String(s.layers)])} />
+  </Section>
+
+  <Section id="specs" label="Specs" title="Styles and layers" desc="Colors are neutral 950 and slate 950 at 1 to 16 % opacity. Custom X-Small and Small hold the same layers in the DS today">
+    <SpecsTable label="Shadow CSS" head={['Style', 'Token', 'CSS']} rows={shadows.filter((s) => s.layers === 1).map((s): [string, string, string] => [short(s.name) + ' · ' + s.group, s.name, s.css])} />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['A surface opens over content: menu, popover, date picker, modal', 'A card lifts on hover to show it can be clicked', 'Content scrolls under a sticky bar']}
+      avoid={['Separating sections on a page, use a stroke or spacing', 'Showing focus or selection, use the focus ring', 'Stacking two shadowed surfaces on top of each other']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Lift the one surface that opens over the page and keep the page itself flat"
+      dontText="Don’t shadow every card. When everything floats, nothing does"
+    >
+      <Fragment slot="do"><i class="shadow-card" style="box-shadow:0 16px 32px -12px rgb(14 18 27 / 0.1)"></i></Fragment>
+      <Fragment slot="dont"><i class="shadow-card" style="box-shadow:0 8px 24px rgb(0 0 0 / 0.35)"></i></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Radius & spacing', 'Corners for raised surfaces'],
+      ['Dropdown', 'Regular Medium in use'],
+      ['Popover', 'Floating surfaces'],
+      ['Modal', 'The highest layer'],
+    ]} />
+  </Section>
+</DocPage>

@@ -1,0 +1,112 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import data from '../../../public/icons/icons.json';
+
+const { categories, icons } = data as { categories: string[]; icons: [string, number, string, string][] };
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['styles', 'Line and solid'],
+  ['sizes', 'Sizes'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const find = (n: string) => icons.find(([name]) => name === n)!;
+const draw = (n: string, solid: boolean, size: number) => {
+  const i = find(n);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"${solid ? '' : ' stroke-width="2"'} aria-hidden="true">${solid ? i[3] : i[2]}</svg>`;
+};
+const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+---
+<DocPage
+  title="Icons"
+  section="Foundations"
+  script="foundations"
+  description="Search and copy all 1,171 Unictive icons in line and solid styles. Click an icon to copy its SVG and paste it into Figma or code."
+  intro="Every icon comes in line and solid, on a 24 px grid. Click one to copy its SVG, then paste it into Figma or your code"
+  toc={toc}
+  meta={[['Icons', icons.length.toLocaleString('en')], ['Styles', 2], ['Categories', categories.length]]}
+>
+  <Section id="library" label="Library" desc="Search by name or category. Copied icons paste into Figma as vectors in neutral 950">
+    <div data-icons>
+      <form class="icon-tools" role="search">
+        <label class="text-field">
+          <span class="label muted">Search</span>
+          <input type="search" name="q" placeholder="arrow, file, user…" spellcheck="false" autocomplete="off" />
+        </label>
+        <div class="options" role="radiogroup" aria-label="Style">
+          <label class="toggle"><input type="radio" name="style" value="line" checked /><span>Line</span></label>
+          <label class="toggle"><input type="radio" name="style" value="solid" /><span>Solid</span></label>
+        </div>
+        <label class="select">
+          <span class="visually-hidden">Category</span>
+          <select name="cat">
+            <option value="all">All categories</option>
+            {categories.map((c, i) => <option value={i}>{c}</option>)}
+          </select>
+          <Fragment set:html={chevron} />
+        </label>
+        <label class="select">
+          <span class="visually-hidden">Size</span>
+          <select name="size">
+            {[16, 20, 24, 32].map((s) => <option value={s} selected={s === 24}>{s} px</option>)}
+          </select>
+          <Fragment set:html={chevron} />
+        </label>
+      </form>
+      <p class="icon-count label muted" data-icon-count aria-live="polite">{icons.length.toLocaleString('en')} icons</p>
+      <div class="icon-grid" data-icon-grid><p class="icon-empty">Loading icons…</p></div>
+    </div>
+  </Section>
+
+  <Section id="styles" label="Styles" title="Line and solid" desc="Line is the default. Solid marks a selected or active state, like the current tab, and the status icons in alerts">
+    <div class="grid4">
+      {['home-02', 'bell-01', 'heart', 'settings-01'].map((n) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{n}</span></span>
+          <span class="tile-body"><span class="tile-row"><Fragment set:html={draw(n, false, 24)} /><Fragment set:html={draw(n, true, 24)} /></span></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes" desc="Drawn at 24 with a 2 px stroke. Scale down to 20 and 16 inside components; the stroke scales with the icon">
+    <div class="canvas canvas-short">
+      <div class="icon-sizes">
+        {[32, 24, 20, 16].map((s) => (
+          <figure><Fragment set:html={draw('calendar', false, s)} /><figcaption class="label muted">{s} px</figcaption></figure>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['An action is common enough that the icon is known: search, close, edit', 'An icon sits next to a label to help people scan', 'Status needs a shape as well as a color, like the alert icons']}
+      avoid={['The icon is the only label for an uncommon action, add text or a tooltip', 'Mixing line and solid icons in the same row', 'Decorating headings with icons that add no meaning']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep one style per group and size icons with the text next to them: 20 px with 14 px labels"
+      dontText="Don’t mix line and solid in one toolbar. It reads as if one item is selected"
+    >
+      <Fragment slot="do"><span class="tile-row"><Fragment set:html={draw('edit-02', false, 20)} /><Fragment set:html={draw('copy-01', false, 20)} /><Fragment set:html={draw('trash-01', false, 20)} /></span></Fragment>
+      <Fragment slot="dont"><span class="tile-row"><Fragment set:html={draw('edit-02', false, 20)} /><Fragment set:html={draw('copy-01', true, 20)} /><Fragment set:html={draw('trash-01', false, 20)} /></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Color', 'Icon color tokens'],
+      ['Button', 'Icons inside buttons'],
+      ['Alert', 'Status icons'],
+      ['Tab Menu', 'Icons with tabs'],
+    ]} />
+  </Section>
+</DocPage>

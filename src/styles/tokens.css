@@ -81,6 +81,9 @@
   --tile-area: 260px;
   --dd-h: 220px;
   --canvas-h: 400px;
+  --ramp-h: 168px;
+  --ramp-sm: 72px;
+  --icon-tile: 104px;
 
   /* motion */
   --ease: cubic-bezier(0.2, 0, 0, 1);
@@ -106,6 +109,9 @@
     --lh-lead: 28px;
     --tile-lg: 180px;
     --canvas-h: 320px;
+    --ramp-h: 48px;
+    --ramp-sm: 44px;
+    --icon-tile: 88px;
   }
 }
 @media (max-width: 639px) { :root { --margin: 20px; } }

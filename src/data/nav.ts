@@ -1,5 +1,5 @@
 export const topNav = [
-  { label: 'Foundations', href: null },
+  { label: 'Foundations', href: '/foundations/color/' },
   { label: 'Components', href: '/components/button/' },
   { label: 'Tokens', href: null },
   { label: 'Assets', href: null },
@@ -17,6 +17,11 @@ export const sideNav = [
 
 // pages that are live; everything else is listed as coming soon
 export const livePages: Record<string, string> = {
+  Color: '/foundations/color/',
+  Typography: '/foundations/typography/',
+  'Radius & spacing': '/foundations/radius-and-spacing/',
+  Shadows: '/foundations/shadows/',
+  Icons: '/foundations/icons/',
   Button: '/components/button/',
   'Text Input': '/components/text-input/',
   'Text Area': '/components/text-area/',

@@ -1,0 +1,145 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Ramp from '../../components/foundations/Ramp.astro';
+import { brands, brandTokens, neutrals, stateScales, semantic, states, alphas, opacity, contrast } from '../../data/foundations';
+
+const toc: [string, string][] = [
+  ['brand', 'Brand'],
+  ['neutrals', 'Neutrals'],
+  ['palette', 'State palette'],
+  ['semantic', 'Semantic tokens'],
+  ['states', 'State colors'],
+  ['alpha', 'Alpha and opacity'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const primitiveCount = brands.length * 11 + 24 + Object.keys(stateScales).length * 11;
+const semanticCount = semantic.reduce((n, g) => n + g.tokens.length, 0) + states.length * 4 + brands.length * 8;
+const grade = (r: number) => (r >= 7 ? 'AAA' : r >= 4.5 ? 'AA' : r >= 3 ? 'AA large' : 'Decorative');
+const rows = (group: (typeof semantic)[number]) =>
+  group.tokens.map(([t, alias, hex]): [string, string, string] => {
+    const text = group.group === 'Text' || group.group === 'Icon';
+    const r = contrast(hex);
+    return [text && hex !== '#FFFFFF' ? `${alias} · ${r.toFixed(1)}:1 ${grade(r)}` : alias, t, hex];
+  });
+---
+<DocPage
+  title="Color"
+  section="Foundations"
+  script="foundations"
+  description="The Unictive color system: brand ramps for every product, neutrals, state colors and the semantic tokens designers should pick from."
+  intro="Primitives hold the values, semantic tokens say where each one goes. Design with the semantic tokens and the brand can change underneath"
+  toc={toc}
+  meta={[['Primitives', primitiveCount], ['Semantic', semanticCount], ['Brands', brands.length]]}
+>
+  <Section id="brand" label="Brand" desc="Unictive blue leads. Each product keeps its own ramp with the same steps, so a component switches brand by swapping one collection">
+    <div class="brand-pick">
+      <div class="options" role="radiogroup" aria-label="Brand">
+        {brands.map((b, i) => (
+          <label class="toggle"><input type="radio" name="brand" value={b.key} data-pick="brand" checked={i === 0} /><span>{b.name}</span></label>
+        ))}
+      </div>
+    </div>
+    {brands.map((b, i) => (
+      <div data-pick-block={`brand:${b.key}`} hidden={i > 0}>
+        <Ramp name={b.key} steps={b.scale} base={b.base} />
+        <div class="chips">
+          {brandTokens(b).map(([t, alias, hex]) => (
+            <button type="button" class="chip-sw" style={`--c:${hex}`} data-copy={t} title={`${alias}, ${hex}`}>
+              <i></i><span><b>{t.replace(`brand/${b.key}/`, '')}</b><em>{hex}</em></span>
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
+  </Section>
+
+  <Section id="neutrals" label="Neutrals" desc="Gray carries the interface: text, borders and surfaces. Slate is a cooler gray for charts, illustrations and shadows">
+    {Object.entries(neutrals).map(([name, steps]) => (
+      <div class="ramp-stack">
+        <p class="ramp-head"><span class="subhead">{name[0].toUpperCase() + name.slice(1)}</span><span class="label muted">neutral/{name}</span></p>
+        <Ramp name={`neutral/${name}`} steps={steps} />
+      </div>
+    ))}
+  </Section>
+
+  <Section id="palette" label="State palette" title="State palette" desc="Five hues behind the state colors. Pick from them only for data, like a chart series, and use the state tokens for UI">
+    <div class="ramp-stack">
+      {Object.entries(stateScales).map(([name, steps]) => (
+        <div class="ramp-row">
+          <span class="label muted">{name}</span>
+          <Ramp name={name} steps={steps} small />
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="semantic" label="Semantic" title="Semantic tokens" desc="The names to use in designs. Click a token to copy it; text and icon colors list their contrast on white">
+    {semantic.map((g) => (
+      <div class="block">
+        <p class="subhead">{g.group}</p>
+        <p class="desc">{g.note}</p>
+        <SpecsTable label={`${g.group} tokens`} head={['Alias', 'Token', 'Value']} rows={rows(g)} />
+      </div>
+    ))}
+  </Section>
+
+  <Section id="states" label="States" title="State colors" desc="Six states, four levels each. Base for icons and fills, dark for text on lighter, light for borders, lighter for backgrounds">
+    <div class="state-grid">
+      {states.map((s) => (
+        <div class="state-card">
+          <p class="subhead">{s.name}</p>
+          <p class="desc">{s.use}</p>
+          <Ramp name={`state/${s.key}`} steps={s.tokens.map(([l, , h]) => [l, h])} base="base" />
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="alpha" label="Alpha" title="Alpha and opacity" desc="See-through colors for text on photos, overlays behind modals and shadow tints. Brand alphas are listed with each brand above">
+    <SpecsTable label="Alpha tokens" head={['Alias', 'Token', 'Value']} rows={alphas.map(([t, a, h]) => [a, t, h])} />
+    <div class="block">
+      <p class="subhead">Opacity</p>
+      <p class="desc">Twelve steps of 8 %, for disabled layers and image scrims</p>
+      <div class="ramp ramp-sm" style={`--n:${opacity.length}`}>
+        {opacity.map((o) => (
+          <button type="button" class="sw" style={`--c:rgb(23 23 23 / ${o / 100});--ink:${o >= 48 ? '#FFFFFF' : '#171717'}`} data-copy={`opacity-${o}`}>
+            <span class="label">opacity</span><span class="sw-hex">{o} %</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Use semantic tokens like text/sub-600 or bg/weak-50 in every design', 'Use the state colors only for status: success, warning, error, information', 'Use the brand base for the main action and the current item']}
+      avoid={['Picking a primitive such as gray/600 for text, it skips the theme', 'Using brand blue for an error or red for a link', 'Putting text/soft-400 on body copy, it is under 3:1 on white']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep body text on text/strong-950 or text/sub-600. Both pass AA on white and on bg/weak-50"
+      dontText="Don’t set paragraphs in text/soft-400. At 2.5:1 it fails contrast and people skip it"
+    >
+      <Fragment slot="do"><p class="demo-text" style="color: #5C5C5C">Your payment is confirmed. We sent the receipt to your email.</p></Fragment>
+      <Fragment slot="dont"><p class="demo-text" style="color: #A3A3A3">Your payment is confirmed. We sent the receipt to your email.</p></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Typography', 'Type styles that use these colors'],
+      ['Shadows', 'Shadow tints'],
+      ['Badge', 'State colors in use'],
+      ['Alert', 'Lighter backgrounds and base icons'],
+    ]} />
+  </Section>
+</DocPage>

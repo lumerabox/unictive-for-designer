@@ -47,7 +47,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
 
     <div class="center" id="content" data-script={script}>
       <header class="page-head">
-        <p class="crumbs"><span class="label">{section}</span>{group && <><span class="slash">/</span><span class="label">{group}</span></>}</p>
+        <p class="crumbs"><span class="label">{section}</span>{group && group !== section && <><span class="slash">/</span><span class="label">{group}</span></>}</p>
         <h1>{title}</h1>
         <div class="intro">
           <p>{intro}</p>

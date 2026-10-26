@@ -1,0 +1,112 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import { typeGroups, typeCount, type TypeStyle } from '../../data/foundations';
+
+const toc: [string, string][] = [
+  ['typeface', 'Typeface'],
+  ...typeGroups.map((g): [string, string] => [g.key, g.name]),
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const sample: Record<string, string> = {
+  title: 'Design once',
+  label: 'Save changes',
+  paragraph: 'Every component starts from the same tokens, so a change in Figma reaches each product.',
+  subheading: 'Account settings',
+  uppercase: 'New feature',
+  italic: 'Built with the team, for the team.',
+};
+const meta = ([, , size, line, tr]: TypeStyle) => `${size} / ${line} · ${tr === 0 ? '0' : (tr > 0 ? '+' : '−') + Math.abs(+tr.toFixed(2))} %`;
+const css = ([, w, size, line, tr]: TypeStyle, g: (typeof typeGroups)[number]) =>
+  `font-size:${size}px;line-height:${line}px;font-weight:${w};letter-spacing:${tr / 100}em${g.italic ? ';font-style:italic' : ''}${g.upper ? ';text-transform:uppercase' : ''}`;
+const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 !?&@#%(),.:;→';
+---
+<DocPage
+  title="Typography"
+  section="Foundations"
+  script="foundations"
+  description="Inter and the Unictive type scale: titles, labels, paragraphs, subheadings, uppercase and italic styles with sizes, line heights and tracking."
+  intro="One family, Inter, in six style groups. Titles for headings, labels for UI, paragraphs for reading"
+  toc={toc}
+  meta={[['Family', 'Inter'], ['Styles', typeCount], ['Weights', 4]]}
+>
+  <Section id="typeface" label="Typeface" desc="Inter is drawn for screens: tall x-height, open shapes and tabular numbers. It ships with Figma, so every style works out of the box">
+    <div class="specimen">
+      <div class="specimen-aa">
+        <span class="label">Inter</span>
+        <strong aria-hidden="true">Aa</strong>
+        <span class="label">Google Fonts · OFL</span>
+      </div>
+      <div class="weights">
+        {[[400, 'Regular'], [500, 'Medium'], [600, 'Semi Bold'], [700, 'Bold']].map(([w, n]) => (
+          <p style={`font-weight:${w}`}>{n}<span class="label muted">{w}</span></p>
+        ))}
+        <p class="glyphs">{glyphs}</p>
+      </div>
+    </div>
+  </Section>
+
+  {typeGroups.map((g, gi) => (
+    <Section id={g.key} label={g.name} desc={g.use}>
+      <div class="type-tools">
+        {g.weights.length > 1 && (
+          <div class="options" role="radiogroup" aria-label={`${g.name} weight`}>
+            {g.weights.map((w, i) => (
+              <label class="toggle"><input type="radio" name={`w-${g.key}`} value={w} data-pick={`w-${g.key}`} checked={i === 0} /><span>{w}</span></label>
+            ))}
+          </div>
+        )}
+        {gi === 0 && (
+          <label class="text-field">
+            <span class="label muted">Preview</span>
+            <input type="text" data-type-text placeholder="Type to preview every style" maxlength="60" spellcheck="false" autocomplete="off" />
+          </label>
+        )}
+      </div>
+      {g.weights.map((w, i) => (
+        <div class="type-rows" data-pick-block={`w-${g.key}:${w}`} hidden={i > 0}>
+          {g.rows(w).map((s) => (
+            <div class="type-row">
+              <div class="type-meta">
+                <button type="button" class="token" data-token={s[0]} title="Copy style name">{s[0].split('/').slice(1).join(' / ')}</button>
+                <span>{meta(s)}</span>
+              </div>
+              <p class:list={['type-sample', { wrap: g.key === 'paragraph' || g.key === 'italic' }]} style={css(s, g)} data-default={sample[g.key]}>{sample[g.key]}</p>
+            </div>
+          ))}
+        </div>
+      ))}
+    </Section>
+  ))}
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Titles for page and section headings, one H1 per page', 'Labels for text on one line inside components: buttons, tabs, fields', 'Paragraphs for anything that wraps, at Medium (16/24) by default']}
+      avoid={['Paragraph styles inside buttons, the line height breaks the height', 'Uppercase for whole sentences, it is slow to read', 'Italic for warnings or errors, use a state color and an icon instead']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Step down the scale between levels, like H4 over Paragraph Medium, so the order reads at a glance"
+      dontText="Don’t pair sizes that are close, like H6 over Paragraph Large. The heading stops reading as one"
+    >
+      <Fragment slot="do"><div class="demo-text"><p style="font-size:32px;line-height:40px;font-weight:600;letter-spacing:-0.005em">Payments</p><p style="font-size:16px;line-height:24px;color:#5C5C5C;margin-top:8px">Track every invoice in one place.</p></div></Fragment>
+      <Fragment slot="dont"><div class="demo-text"><p style="font-size:20px;line-height:28px;font-weight:500">Payments</p><p style="font-size:18px;line-height:24px;color:#5C5C5C;margin-top:4px;letter-spacing:-0.015em">Track every invoice in one place.</p></div></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Color', 'Text color tokens'],
+      ['Radius & spacing', 'Spacing between text blocks'],
+      ['Button', 'Labels in use'],
+      ['Text Input', 'Labels and hints'],
+    ]} />
+  </Section>
+</DocPage>

@@ -1,0 +1,27 @@
+---
+// a color ramp, one swatch per step. click copies the hex
+import { ink } from '../../data/foundations';
+
+interface Props {
+  name: string;
+  steps: [step: string, hex: string][];
+  base?: string;
+  small?: boolean;
+}
+const { name, steps, base, small = false } = Astro.props;
+---
+<div class="ramp-box"><div class:list={['ramp', { 'ramp-sm': small }]} style={`--n:${steps.length}`}>
+  {steps.map(([step, hex]) => (
+    <button
+      type="button"
+      class:list={['sw', { 'is-base': step === base, light: ink(hex) !== '#FFFFFF' && parseInt(hex.slice(1, 3), 16) > 240 }]}
+      style={`--c:${hex};--ink:${ink(hex)}`}
+      data-copy={hex}
+      data-copy-label={`${name}/${step} ${hex}`}
+      aria-label={`${name} ${step}, ${hex}, copy`}
+    >
+      <span class="label">{step}</span>
+      <span class="sw-hex">{hex.slice(1)}</span>
+    </button>
+  ))}
+</div></div>

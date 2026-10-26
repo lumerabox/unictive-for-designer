@@ -1,0 +1,82 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import { radii, spacing, radiusUse } from '../../data/foundations';
+
+const toc: [string, string][] = [
+  ['radius', 'Corner radius'],
+  ['radius-use', 'Radius in components'],
+  ['spacing', 'Spacing'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const rName = (r: number) => (r === 999 ? 'radius-full' : `radius-${r}`);
+const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, t, t === 'radius-full' ? '999 px' : `${t.slice(7)} px`]);
+---
+<DocPage
+  title="Radius & spacing"
+  section="Foundations"
+  script="foundations"
+  description="Corner radius and spacing tokens of the Unictive design system, from radius-0 to radius-full and spacing-0 to spacing-64."
+  intro="Two small scales keep every component in step. Radius grows with the size of the thing it rounds, spacing moves in steps of 2, 4 and 8"
+  toc={toc}
+  meta={[['Radius', radii.length], ['Spacing', spacing.length], ['Base unit', '4 px']]}
+>
+  <Section id="radius" label="Radius" title="Corner radius" desc="Sixteen steps. Small controls take 4 to 8, menus and cards 12 to 16, sheets and large panels 20 and up. Click a tile to copy the token">
+    <div class="radius-grid">
+      {radii.map((r) => (
+        <button type="button" class="tile tile-v" data-copy={rName(r)}>
+          <span class="tile-top"><span class="label muted">{r === 999 ? "full" : r}</span><span class="label muted">{r === 999 ? "" : "px"}</span></span>
+          <span class="tile-body"><i class="radius-shape" style={r === 999 ? "border-radius:50%" : `border-top-left-radius:${r}px`}></i></span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="radius-use" label="In components" title="Radius in components" desc="The radius each component uses, so new parts match the ones next to them">
+    <SpecsTable label="Radius in components" head={['Used by', 'Token', 'Value']} rows={useRows} />
+  </Section>
+
+  <Section id="spacing" label="Spacing" desc="Sixteen steps for padding and gaps. Use 4 and 8 inside components, 16 to 24 between groups, 32 and up between sections">
+    <div class="space-rows">
+      {spacing.map((v) => (
+        <div class="space-row">
+          <button type="button" class="token" data-token={`spacing-${v}`}>spacing-{v}</button>
+          <span>{v} px</span>
+          <i class="space-bar" style={`--v:${v}`}></i>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Use the spacing tokens for every padding and gap, even 2 px', 'Match the radius of nested shapes: inner radius = outer radius − padding', 'Use radius-full for pills, switches and avatars']}
+      avoid={['Values off the scale like 5, 15 or 18 px', 'The same radius on a small chip and a large modal', 'Spacing that shrinks between sections and grows inside groups']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Inside a 16 px card with 8 px padding, round the inner block to 8 px so the curves stay parallel"
+      dontText="Don’t reuse the outer radius inside. The gap swells at the corners and the shapes look pinched"
+    >
+      <Fragment slot="do"><div class="nest" style="--o:16px;--i:8px"><i></i></div></Fragment>
+      <Fragment slot="dont"><div class="nest" style="--o:16px;--i:16px"><i></i></div></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Shadows', 'Elevation for rounded surfaces'],
+      ['Typography', 'Line heights on the same 4 px grid'],
+      ['Button', 'Radius by size'],
+      ['Modal', 'radius-16 surfaces'],
+    ]} />
+  </Section>
+</DocPage>
