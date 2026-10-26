@@ -1,0 +1,134 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-actions.css';
+import { linkSizes, linkStyles, linkStates, linkColors, linkButton, linkChip } from '../../data/actions';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['styles', 'Styles'],
+  ['sizes', 'Sizes and icons'],
+  ['states', 'States'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const styleNotes: Record<string, string> = { Gray: 'Skip for now', Neutral: 'Learn more', Primary: 'View all', Error: 'Remove' };
+const specs: [string, string, string][] = [
+  ['Height', '—', '20 px, 16 px at Small, no padding'],
+  ['Text', 'Label / Small · X-Small', 'Inter Medium 14/20 · 12/16'],
+  ['Icon', '—', '20 px, 16 px at Small, chevrons by default'],
+  ['Icon to text gap', 'spacing-4', '4 px'],
+  ...linkStyles.map((s): [string, string, string] => [s, linkColors[s][0], linkColors[s][1]]),
+  ['Disabled', 'text/disabled-300', '#D1D1D1'],
+  ['Hover', '—', 'Underline, same color'],
+];
+---
+<DocPage
+  script="actions"
+  title="Link Button"
+  description="Link Buttons are text-only actions that sit inline with content. Explore every style, size and state of the Unictive link button."
+  intro="Link Buttons are text-only actions for navigation and low-emphasis actions, inline with content or on their own"
+  toc={toc}
+  meta={[['Variants', 48], ['Styles', linkStyles.length], ['Sizes', linkSizes.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a variant and turn the chevrons on or off">
+    <form class="pg" data-playground data-kind="link" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="style" label="Style" options={linkStyles} value="Primary" />
+        <PgSelect name="size" label="Size" options={linkSizes} />
+        <PgSelect name="state" label="State" options={linkStates.map((s) => [s, s === 'Disable' ? 'Disabled' : s] as [string, string])} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="underline" /><span>Underline</span></label>
+        <label class="toggle"><input type="checkbox" name="left" /><span>Left icon</span></label>
+        <label class="toggle"><input type="checkbox" name="right" checked /><span>Right icon</span></label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div data-host><Fragment set:html={linkButton({ right: true, live: true })} /></div>
+        <p class="chip" data-chip aria-live="polite">{linkChip({ size: 'Medium', style: 'Primary', state: 'Default', underline: false })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="styles" label="Styles" desc="Four colors. Primary is the default, Gray and Neutral follow the text around them">
+    <div class="grid4">
+      {linkStyles.map((s) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{s}</span></span>
+          <span class="tile-body"><Fragment set:html={linkButton({ style: s, text: styleNotes[s] })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes and icons" desc="Medium next to 14 px text, Small next to 12 px. A chevron shows direction, back or forward">
+    <div class="grid4">
+      {linkSizes.map((z) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{z}</span><span class="label muted">{z === 'Medium' ? 20 : 16} px</span></span>
+          <span class="tile-body"><Fragment set:html={linkButton({ size: z, text: 'View all', right: true })} /></span>
+        </div>
+      ))}
+      <div class="tile tile-static tile-v">
+        <span class="tile-top"><span class="label muted">Left icon</span></span>
+        <span class="tile-body"><Fragment set:html={linkButton({ style: 'Gray', text: 'Back', left: true })} /></span>
+      </div>
+      <div class="tile tile-static tile-v">
+        <span class="tile-top"><span class="label muted">Underline</span></span>
+        <span class="tile-body"><Fragment set:html={linkButton({ underline: true, text: 'Terms of service' })} /></span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="states" label="States">
+    <div class="grid-states">
+      {[['Default', 'Default'], ['Hover', 'Hover'], ['Disabled', 'Disable']].map(([name, st]) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="label muted">{name}</span></span>
+          <span class="tile-body"><Fragment set:html={linkButton({ state: st as any, text: 'Forgot password?' })} /></span>
+        </div>
+      ))}
+      <div class="note">
+        <p class="label muted">Note</p>
+        <p>Hover adds the underline. Turn Underline on when the link sits inside a paragraph, so it does not rely on color alone</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['The action moves to another page, like View all or Back', 'A low-emphasis action sits next to a Button, like Forgot password?', 'The link is part of a sentence']}
+      avoid={['It is the main action of a form, use a Button', 'There is no room for text, use an Icon Button', 'Many links stack into a menu, use a Dropdown']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Say where the link goes in two or three words, and use a chevron only when it points somewhere"
+      dontText="Don’t write Click here, people scanning the page can’t tell where it leads"
+    >
+      <Fragment slot="do"><Fragment set:html={linkButton({ text: 'View invoice', right: true })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={linkButton({ text: 'Click here', left: true, right: true })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Link Button tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Button', 'Actions with more weight'],
+      ['Breadcrumbs', 'Where you are'],
+      ['Icon Button', 'Icon-only actions'],
+      ['Compact Button', 'Dense toolbars'],
+    ]} />
+  </Section>
+</DocPage>

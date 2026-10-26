@@ -8,7 +8,7 @@ export const topNav = [
 
 export const sideNav = [
   { group: 'Foundations', items: ['Color', 'Typography', 'Radius & spacing', 'Shadows', 'Icons'] },
-  { group: 'Actions', items: ['Button'] },
+  { group: 'Actions', items: ['Button', 'Icon Button', 'Link Button', 'Compact Button', 'Social Button'] },
   { group: 'Inputs', items: ['Text Input', 'Text Area', 'Dropdown', 'Date Picker', 'File Upload', 'Checkbox', 'Radio Group', 'Switch', 'Rating'] },
   { group: 'Navigation', items: ['Breadcrumbs', 'Tab Menu', 'Pagination', 'Stepper'] },
   { group: 'Feedback', items: ['Alert', 'Banner', 'Badge', 'Progress Bar', 'Tooltip'] },
@@ -32,6 +32,10 @@ export const livePages: Record<string, string> = {
   'Country Flags': '/assets/country-flags/',
   Emoji: '/assets/emoji/',
   Button: '/components/button/',
+  'Icon Button': '/components/icon-button/',
+  'Link Button': '/components/link-button/',
+  'Compact Button': '/components/compact-button/',
+  'Social Button': '/components/social-button/',
   'Text Input': '/components/text-input/',
   'Text Area': '/components/text-area/',
   Dropdown: '/components/dropdown/',

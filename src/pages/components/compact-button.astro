@@ -1,0 +1,128 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-actions.css';
+import { compactSizes, compactStyles, compactStates, glyphs, compactButton, compactChip } from '../../data/actions';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['styles', 'Styles'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const compactGlyphs: [string, string][] = [['x-close-line', 'Close'], ...glyphs];
+const specs: [string, string, string][] = [
+  ['Size', '—', '24 px, 20 px at Small'],
+  ['Padding', 'spacing-2', '2 px'],
+  ['Icon', '—', '20 px, 16 px at Small, swap it with Select Icon'],
+  ['Corner radius', 'radius-6', '6 px, 999 px when rounded'],
+  ['Fill', 'bg/white-0', '#FFFFFF on Stroke and White, none on Ghost'],
+  ['Stroke', 'stroke/soft-200', '1 px outside, Stroke only'],
+  ['Shadow', '—', '0 1 2 #0A0D14 at 3%, Stroke and White'],
+  ['Hover', 'bg/weak-50', '#F7F7F7'],
+  ['Active', 'bg/surface-800', '#262626, white icon'],
+  ['Disabled', 'bg/weak-50 · text/disabled-300', '#F7F7F7 · #D1D1D1'],
+];
+---
+<DocPage
+  script="actions"
+  title="Compact Button"
+  description="Compact Buttons are 24 and 20 px icon buttons for dense spots. Explore every style, size and state of the Unictive compact button."
+  intro="Compact Buttons are small icon buttons for dense spots, like closing a modal, a tag or a toast, or a toolbar inside an editor"
+  toc={toc}
+  meta={[['Variants', 48], ['Styles', compactStyles.length], ['Sizes', compactSizes.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a variant and an icon. Active is a toggle, click the preview to turn it off and on">
+    <form class="pg" data-playground data-kind="compact" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="style" label="Style" options={compactStyles} />
+        <PgSelect name="size" label="Size" options={compactSizes} />
+        <PgSelect name="state" label="State" options={compactStates.map((s) => [s, s === 'Disable' ? 'Disabled' : s] as [string, string])} />
+        <PgSelect name="glyph" label="Icon" options={compactGlyphs} />
+      </div>
+      <div class="options">
+        <label class="toggle"><input type="checkbox" name="rounded" /><span>Rounded</span></label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div data-host><Fragment set:html={compactButton({ live: true })} /></div>
+        <p class="chip" data-chip aria-live="polite">{compactChip({ size: 'Large (24)', style: 'Stroke', state: 'Default', rounded: false })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="styles" label="Styles" desc="Stroke stands out on white, White lifts off a grey surface, Ghost blends into the component around it">
+    <div class="grid3">
+      {compactStyles.map((s) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{s}</span></span>
+          <span class="tile-body"><Fragment set:html={compactButton({ style: s })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes">
+    <div class="grid4">
+      {compactSizes.map((z) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="big">{z.startsWith('Large') ? 24 : 20}</span><span class="label muted">{z.split(' ')[0]}</span></span>
+          <span class="tile-body"><Fragment set:html={compactButton({ size: z })} /></span>
+        </div>
+      ))}
+      <div class="tile tile-static tile-big">
+        <span class="tile-top"><span class="big">R</span><span class="label muted">Rounded</span></span>
+        <span class="tile-body"><Fragment set:html={compactButton({ rounded: true })} /></span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="states" label="States">
+    <div class="grid4">
+      {[['Default', 'Default'], ['Hover', 'Hover'], ['Active', 'Active'], ['Disabled', 'Disable']].map(([name, st]) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="label muted">{name}</span></span>
+          <span class="tile-body"><Fragment set:html={compactButton({ state: st as any, glyph: 'edit-02-line', label: 'Edit' })} /></span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['A component needs a close or dismiss action, like a modal, popover or toast', 'A toolbar has many small toggles, like bold or italic in an editor', 'Space is under 32 px high']}
+      avoid={['It is a standalone action on a page, use an Icon Button', 'People tap it on a phone as the main way in, 20 px is too small to hit', 'The action needs a label, use a Link Button']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Use Active to show a toggle that is on, and keep the rest of the group on Ghost"
+      dontText="Don’t use Compact Buttons as the main actions of a card, they are too small to find"
+    >
+      <Fragment slot="do"><Fragment set:html={compactButton({ style: 'Ghost', state: 'Active', glyph: 'edit-02-line', label: 'Edit' })} /><Fragment set:html={compactButton({ style: 'Ghost', glyph: 'share-07-line', label: 'Share' })} /><Fragment set:html={compactButton({ style: 'Ghost', glyph: 'trash-01-line', label: 'Delete' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={compactButton({ size: 'Small (20)', glyph: 'plus-line', label: 'Add' })} /><Fragment set:html={compactButton({ size: 'Small (20)', glyph: 'check-line', label: 'Save' })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Compact Button tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Icon Button', 'Larger icon-only actions'],
+      ['Modal', 'Uses it to close'],
+      ['Popover', 'Uses it to close'],
+      ['Badge', 'Removable filters'],
+    ]} />
+  </Section>
+</DocPage>

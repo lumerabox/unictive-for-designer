@@ -1,0 +1,133 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import '../../styles/u-actions.css';
+import { iconSizes, iconStyles, iconTypes, iconStates, iconMetrics, glyphs, iconButton, iconChip } from '../../data/actions';
+
+const toc: [string, string][] = [
+  ['playground', 'Playground'],
+  ['variants', 'Variants'],
+  ['sizes', 'Sizes'],
+  ['states', 'States'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['specs', 'Tokens and specs'],
+  ['related', 'Related'],
+];
+const specs: [string, string, string][] = [
+  ['Size', '—', '48 / 40 / 28 px, always square'],
+  ['Padding', 'spacing-12 · 10 · 6', '12 / 10 / 6 px'],
+  ['Icon', '—', '24 / 20 / 16 px, swap it with Select Icon'],
+  ['Corner radius', 'radius-8 · radius-6', '8 px, 6 px at Small, 999 px when rounded'],
+  ['Primary fill', 'brand/core/base', '#1868D0'],
+  ['Primary hover', 'brand/core/dark', '#0D4690'],
+  ['Secondary fill', 'brand/core/lighter', '#ECF0FE'],
+  ['Tertiary stroke', 'brand/core/base', '1 px inside, stroke/soft-200 on Neutral'],
+  ['Neutral fill', 'bg/surface-800', '#262626'],
+  ['Error fill', 'state/error/base', '#FB3748'],
+  ['Disabled', 'bg/weak-50 · text/disabled-300', '#F7F7F7 · #D1D1D1'],
+];
+---
+<DocPage
+  script="actions"
+  title="Icon Button"
+  description="Icon Buttons run an action from an icon alone. Explore every style, type, size and state of the Unictive icon button."
+  intro="Icon Buttons run an action from an icon alone, for toolbars, rows and headers where a label would not fit"
+  toc={toc}
+  meta={[['Variants', 216], ['Styles', iconStyles.length], ['Sizes', iconSizes.length]]}
+>
+  <Section id="playground" label="Playground" desc="Pick a variant and an icon, then hover and click the preview">
+    <form class="pg" data-playground data-kind="icon" onsubmit="return false">
+      <div class="fields">
+        <PgSelect name="style" label="Style" options={iconStyles} />
+        <PgSelect name="type" label="Type" options={iconTypes} />
+        <PgSelect name="size" label="Size" options={iconSizes} value="Medium" />
+        <PgSelect name="state" label="State" options={iconStates.map((s) => [s, s === 'Disable' ? 'Disabled' : s] as [string, string])} />
+      </div>
+      <div class="options">
+        <PgSelect name="glyph" label="Icon" options={glyphs} />
+        <label class="toggle"><input type="checkbox" name="rounded" /><span>Rounded</span></label>
+      </div>
+      <div class="canvas" data-canvas>
+        <div data-host><Fragment set:html={iconButton({ live: true })} /></div>
+        <p class="chip" data-chip aria-live="polite">{iconChip({ size: 'Medium', style: 'Primary', type: 'Main', state: 'Default', rounded: false })}</p>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="variants" label="Variants" desc="The same four styles and three types as Button. Primary carries the most emphasis, Ghost the least">
+    <div class="grid4">
+      {iconTypes.map((t) => iconStyles.map((s) => (
+        <div class="tile tile-static tile-v">
+          <span class="tile-top"><span class="label muted">{t} / {s}</span></span>
+          <span class="tile-body"><Fragment set:html={iconButton({ style: s, type: t, glyph: t === 'Error' ? 'trash-01-line' : 'plus-line' })} /></span>
+        </div>
+      )))}
+    </div>
+  </Section>
+
+  <Section id="sizes" label="Sizes">
+    <div class="grid4">
+      {iconSizes.map((z) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="big">{iconMetrics[z].size}</span><span class="label muted">{z}</span></span>
+          <span class="tile-body"><Fragment set:html={iconButton({ size: z, style: 'Tertiary', type: 'Neutral', glyph: 'settings-01-line' })} /></span>
+        </div>
+      ))}
+      <div class="tile tile-static tile-big">
+        <span class="tile-top"><span class="big">R</span><span class="label muted">Rounded</span></span>
+        <span class="tile-body"><Fragment set:html={iconButton({ rounded: true, glyph: 'heart-line' })} /></span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="states" label="States">
+    <div class="grid-states">
+      {[['Default', 'Default'], ['Hover', 'Hover'], ['Disabled', 'Disable']].map(([name, st]) => (
+        <div class="tile tile-static tile-big">
+          <span class="tile-top"><span class="label muted">{name}</span></span>
+          <span class="tile-body"><Fragment set:html={iconButton({ state: st as any, style: 'Secondary', glyph: 'edit-02-line' })} /></span>
+        </div>
+      ))}
+      <div class="note">
+        <p class="label muted">Note</p>
+        <p>Every Icon Button needs an accessible name, the Edit icon reads as “Edit” to a screen reader</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['The icon is widely understood, like close, edit, delete or more', 'Space is tight, in a toolbar, a table row or a card header', 'The same action repeats on many items']}
+      avoid={['The meaning is not obvious from the icon, use a Button with a label', 'It is the main action of a page or dialog, use a Button', 'It sits inside a small component like a tag or alert, use a Compact Button']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Group related icon actions in one style, and give each a tooltip and an accessible name"
+      dontText="Don’t mix styles in one toolbar, it looks like the actions have different weight"
+    >
+      <Fragment slot="do"><Fragment set:html={iconButton({ style: 'Tertiary', type: 'Neutral', glyph: 'edit-02-line' })} /><Fragment set:html={iconButton({ style: 'Tertiary', type: 'Neutral', glyph: 'share-07-line' })} /><Fragment set:html={iconButton({ style: 'Tertiary', type: 'Neutral', glyph: 'trash-01-line' })} /></Fragment>
+      <Fragment slot="dont"><Fragment set:html={iconButton({ glyph: 'edit-02-line' })} /><Fragment set:html={iconButton({ style: 'Ghost', type: 'Neutral', glyph: 'share-07-line' })} /><Fragment set:html={iconButton({ style: 'Secondary', type: 'Error', glyph: 'trash-01-line' })} /></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="specs" label="Specs" title="Tokens and specs">
+    <SpecsTable label="Icon Button tokens and specs" rows={specs} />
+  </Section>
+
+  <Section id="related" label="Related" title="Related components">
+    <Related items={[
+      ['Button', 'Actions with a label'],
+      ['Compact Button', 'Dense toolbars'],
+      ['Tooltip', 'Name the icon on hover'],
+      ['Link Button', 'Inline navigation'],
+    ]} />
+  </Section>
+</DocPage>
