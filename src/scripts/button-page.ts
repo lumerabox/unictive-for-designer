@@ -53,7 +53,7 @@ export default function init(signal: AbortSignal) {
       rounded: f.has('rounded'),
       leftIcon: f.has('leftIcon'),
       rightIcon: f.has('rightIcon'),
-      label: (f.get('label') as string).trim() || 'Button',
+      label: 'Button',
     };
   }
 

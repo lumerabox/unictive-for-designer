@@ -17,7 +17,7 @@ export default function init(signal: AbortSignal) {
 
   const get = (k: string) => (form.elements.namedItem(k) as HTMLSelectElement | null)?.value ?? '';
   const on = (k: string) => (form.elements.namedItem(k) as HTMLInputElement | null)?.checked ?? false;
-  const text = () => get('text').trim() || 'Placeholder text';
+  const text = () => 'Placeholder text';
 
   // password ships Filled and Error only, the other states are disabled while it is picked
   function syncStates() {

@@ -20,7 +20,7 @@ export default function init(signal: AbortSignal) {
   const partsAll = (root: Element, n: string) => root.querySelectorAll<HTMLElement>(`[data-part="${n}"]`);
 
   // the real file in play, if any
-  let file: { size: number } | null = null;
+  let file: { size: number; name: string } | null = null;
   let pct = 0;
   let timer = 0;
 
@@ -64,7 +64,7 @@ export default function init(signal: AbortSignal) {
     }
     part(card, 'retry').hidden = state !== 'Failed';
     part(card, 'close').hidden = !on('close');
-    part(card, 'name').textContent = get('name').trim() || 'File name';
+    part(card, 'name').textContent = file?.name || 'File name';
     const [a, b] = info(state);
     part(card, 'info').textContent = a;
     part(card, 'extra').textContent = b ?? '';
@@ -102,8 +102,7 @@ export default function init(signal: AbortSignal) {
   function pick(files: FileList | null) {
     const f = files?.[0];
     if (!f || input.disabled) return;
-    file = { size: f.size };
-    field<HTMLInputElement>('name').value = f.name;
+    file = { size: f.size, name: f.name };
     upload();
   }
 
@@ -159,7 +158,7 @@ export default function init(signal: AbortSignal) {
 
     const cardSize = get('cardSize');
     const state = get('cardState') as CardState;
-    const texts: Record<string, string> = { 'File name': get('name').trim() || 'File name' };
+    const texts: Record<string, string> = { 'File name': file?.name || 'File name' };
     // a real file swaps the sample numbers for its own
     const [a, b] = info(state);
     if (file && state === 'Loading' && b) texts['10%'] = b;

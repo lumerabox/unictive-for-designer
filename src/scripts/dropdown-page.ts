@@ -14,7 +14,6 @@ export default function init(signal: AbortSignal) {
   const field = menu.querySelector<HTMLElement>('.u-dd-trigger')!;
   const valueEl = menu.querySelector<HTMLElement>('[data-part="value"]')!;
   const rows = [...menu.querySelectorAll<HTMLButtonElement>('.u-dd-item')];
-  const textInput = form.elements.namedItem('text') as HTMLInputElement;
   const selects = ['type', 'size', 'state'];
 
   const get = (k: string) => (form.elements.namedItem(k) as HTMLSelectElement).value;
@@ -48,15 +47,11 @@ export default function init(signal: AbortSignal) {
 
   const chipText = () => (chip.textContent = selects.map((k) => `${k[0].toUpperCase() + k.slice(1)}=${stateName(get(k))}`).join(' · '));
 
-  let lastType = '';
   function render() {
     const type = get('type') as Type;
     const size = get('size') as Size;
     const state = get('state') as State;
-    // a new type brings its own sample title
-    if (type !== lastType && lastType) textInput.value = samples[type].title;
-    lastType = type;
-    const title = textInput.value.trim() || samples[type].title;
+    const title = samples[type].title;
 
     paint(preview, type, size, state, title, samples[type].desc);
     const sample = menuSamples[type];
@@ -90,8 +85,6 @@ export default function init(signal: AbortSignal) {
     const match = [...sel.options].find((o) => slug(o.value) === fromUrl[i]);
     if (match) sel.value = match.value;
   });
-  textInput.value = samples[get('type') as Type].title;
-  lastType = get('type');
 
   form.addEventListener('change', render);
   form.addEventListener('input', render);

@@ -140,8 +140,6 @@ export default function init(signal: AbortSignal) {
         else input.checked = get('select') === 'true';
         syncControl(c);
       });
-      const label = get('text').trim() || 'Label';
-      form!.querySelectorAll<HTMLElement>('[data-canvas] [data-part="label-text"]').forEach((t, i) => (t.textContent = kind === 'radio' ? `${label} ${i + 1}` : label));
 
       const head = labeled ? `${sets[kind]}-label · Position=${get('position')}` : `${sets[kind]} · Size=${size}`;
       const value = kind === 'checkbox' ? `State=${get('state')}` : kind === 'radio' ? `Selected=${get('selected') === 'none' ? 'None' : `Option ${get('selected')}`}` : `Select=${get('select')}`;
@@ -231,9 +229,6 @@ export default function init(signal: AbortSignal) {
       return { label: part('label-text').textContent!.trim(), desc: text('desc'), badge: text('badge'), button: text('button') };
     };
     setupCopy(copyPage[kind as ChoiceKind | 'rating'], { signal, current, canvas, chip, restoreChip: render });
-    form.addEventListener('input', (e) => {
-      if ((e.target as HTMLElement).matches('input[type="text"]')) render();
-    });
     render();
   }
 }
