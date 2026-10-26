@@ -1,0 +1,110 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { formats } from '../../lib/tokens-export';
+import { tokens } from '../../data/tokens';
+
+const toc: [string, string][] = [
+  ['files', 'Files'],
+  ['code', 'Use in code'],
+  ['figma', 'Use in Figma'],
+  ['usage', 'When to use'],
+  ['related', 'Related'],
+];
+const files = formats.map((f) => {
+  const text = f.build();
+  return { ...f, text, lines: text.split('\n').length, kb: (new TextEncoder().encode(text).length / 1024).toFixed(1) };
+});
+const snippets: [string, string, string][] = [
+  ['CSS', 'Link the file once, then use the semantic variables', `<link rel="stylesheet" href="unictive-tokens.css" />
+
+.card {
+  background: var(--bg-white-0);
+  border: 1px solid var(--stroke-soft-200);
+  border-radius: var(--radius-16);
+  padding: var(--spacing-24);
+  color: var(--text-strong-950);
+}
+.card p { color: var(--text-sub-600); }`],
+  ['Slate', 'Every token built on 02-Neutral follows the attribute, the rest stays the same', `<section data-neutral="slate">
+  <!-- bg, text, stroke and icon tokens turn Slate here -->
+</section>`],
+  ['Tailwind', 'Import the theme after Tailwind in your main CSS file', `@import "tailwindcss";
+@import "./unictive-tailwind.css";
+
+<div class="bg-bg-white-0 border border-stroke-soft-200 rounded-16 p-24">
+  <p class="text-text-sub-600">Sent to PT Sinar Jaya</p>
+</div>`],
+];
+---
+<DocPage
+  title="Export"
+  section="Tokens"
+  script="tokens"
+  description="Download the Unictive design tokens as CSS variables, a Tailwind v4 theme or W3C design tokens JSON, generated from the DS library."
+  intro="The same tokens as the Figma library, ready for code. Pick a format, then copy it or download the file"
+  toc={toc}
+  meta={[['Tokens', tokens.length], ['Formats', files.length], ['Version', 'DS 1.0']]}
+>
+  <Section id="files" label="Files" desc="Built from the DS values every time the site deploys, so the files match the library">
+    <div class="type-tools">
+      <div class="options" role="radiogroup" aria-label="Format">
+        {files.map((f, i) => <label class="toggle"><input type="radio" name="format" value={f.key} data-pick="format" checked={i === 0} /><span>{f.name}</span></label>)}
+      </div>
+    </div>
+    {files.map((f, i) => (
+      <div class="export" data-pick-block={`format:${f.key}`} hidden={i > 0}>
+        <div class="export-head">
+          <div>
+            <p class="subhead">{f.file}</p>
+            <p class="desc">{f.hint}</p>
+            <p class="label muted">{f.lines.toLocaleString('en')} lines · {f.kb} KB</p>
+          </div>
+          <div class="export-actions">
+            <Btn size="Small" variant="Secondary" type="Neutral" label="Copy" data-copy-code={f.key} />
+            <Btn size="Small" label="Download" data-download={`/tokens/${f.file}`} data-file={f.file} />
+          </div>
+        </div>
+        <pre class="code code-tall" data-code={f.key}><code>{f.text}</code></pre>
+      </div>
+    ))}
+  </Section>
+
+  <Section id="code" label="Code" title="Use in code" desc="Point every style at a semantic token. The theme layer does the rest">
+    {snippets.map(([name, desc, code]) => (
+      <div class="block">
+        <p class="subhead">{name}</p>
+        <p class="desc">{desc}</p>
+        <pre class="code"><code>{code}</code></pre>
+      </div>
+    ))}
+  </Section>
+
+  <Section id="figma" label="Figma" title="Use in Figma" desc="Designers don’t need the files. The tokens come with the library">
+    <ol class="steps">
+      <li>Open Assets → Libraries and turn on the Unictive DS library</li>
+      <li>Pick colors, radius and spacing from the variable picker, never from the color wheel</li>
+      <li>To use Slate, select a frame and set 02-Neutral to Slate under Layer → Appearance</li>
+      <li>When the library publishes an update, accept it so the frames get the new values</li>
+    </ol>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Starting a new front end, link the CSS file before writing styles', 'A Tailwind project, import the theme instead of a config file', 'A token tool like Style Dictionary, start from the JSON']}
+      avoid={['Copying hex values out of the file into components', 'Editing the file by hand, the next export overwrites it', 'Renaming tokens in code, keep the DS names so design and code match']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['How tokens work', 'Layers, naming and modes'],
+      ['All tokens', 'Search every token'],
+      ['Color', 'Ramps and contrast'],
+      ['Typography', 'Text styles'],
+    ]} />
+  </Section>
+</DocPage>

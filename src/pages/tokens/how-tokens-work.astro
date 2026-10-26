@@ -1,0 +1,168 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import { tokens, collections, countOf, chain, collectionOf, display, get, resolve, type Mode } from '../../data/tokens';
+
+const toc: [string, string][] = [
+  ['layers', 'Three layers'],
+  ['collections', 'Collections'],
+  ['naming', 'Naming'],
+  ['themes', 'Gray and Slate'],
+  ['brand', 'Brand'],
+  ['usage', 'When to use'],
+  ['guidance', 'Do and don’t'],
+  ['related', 'Related'],
+];
+const layers = [
+  { name: 'Semantic', count: countOf('tokens'), text: 'Names that say where a color goes, like text/sub-600 or bg/weak-50. Design with these' },
+  { name: 'Theme', count: countOf('neutral') + countOf('brand'), text: 'A switch between the two. 02-Neutral swaps Gray for Slate, 03-Brand points the primary roles at a brand' },
+  { name: 'Primitive', count: tokens.length - countOf('tokens') - countOf('neutral') - countOf('brand'), text: 'Raw values: color ramps, alpha colors, radius, spacing and opacity. They never change meaning' },
+];
+const modes: Mode[] = ['gray', 'slate'];
+const example = get('text/sub-600');
+
+const categories: [string, string, string][] = [
+  ['Page and surface fills', 'bg/weak-50', 'bg'],
+  ['Text', 'text/sub-600', 'text'],
+  ['Borders and dividers', 'stroke/soft-200', 'stroke'],
+  ['Icon fills and strokes', 'icon/strong-950', 'icon'],
+  ['Status: dark, base, light, lighter', 'state/error/base', 'state'],
+  ['Product colors and their alphas', 'brand/core/base', 'brand'],
+  ['Colors that stay the same in every mode', 'static/static-white', 'static'],
+  ['Scrims behind modals and sheets', 'overlay/overlay-gray', 'overlay'],
+  ['Shadow tints', 'shadow/gray/shadow-8', 'shadow'],
+  ['Spot illustrations', 'illustration/soft-200', 'illustration'],
+  ['Sign-in buttons of other services', 'social/github', 'social'],
+].map(([what, token]) => [what, token, resolve(get(token))]);
+
+// a small card drawn only with semantic tokens, resolved per mode
+const v = (name: string, m: Mode) => resolve(get(name), m);
+const card = (m: Mode) => [
+  `--c-bg:${v('bg/weak-50', m)}`, `--c-card:${v('bg/white-0', m)}`, `--c-line:${v('stroke/soft-200', m)}`, `--c-strong:${v('text/strong-950', m)}`,
+  `--c-sub:${v('text/sub-600', m)}`, `--c-soft:${v('text/soft-400', m)}`, `--c-chip:${v('bg/soft-200', m)}`, `--c-brand:${v('brand/core/base', m)}`,
+].join(';');
+const brandRows = tokens.filter((x) => x.collection === 'brand').map((x): [string, string, string] => [x.ref!, x.name, resolve(x)]);
+---
+<DocPage
+  title="How tokens work"
+  section="Tokens"
+  script="tokens"
+  description="How the Unictive design tokens are built: primitive values, a theme layer for Gray, Slate and brand, and the semantic names to design with."
+  intro="Every value has a name. Primitives hold the values, the theme layer picks Gray or Slate and a brand, and semantic tokens say where each one goes"
+  toc={toc}
+  meta={[['Tokens', tokens.length], ['Collections', collections.length], ['Neutral modes', 2]]}
+>
+  <Section id="layers" label="Layers" title="Three layers" desc="A semantic token points to a theme token, which points to a primitive. Change a layer and everything above it follows">
+    <div class="grid3">
+      {layers.map((l, i) => (
+        <div class="tile tile-static layer-tile">
+          <span class="tile-top"><span class="label">0{i + 1} — {l.name}</span><span class="label muted">{l.count}</span></span>
+          <p>{l.text}</p>
+        </div>
+      ))}
+    </div>
+    <div class="block chain-block">
+      <div class="type-tools">
+        <p class="subhead">Follow a token</p>
+        <div class="options" role="radiogroup" aria-label="Neutral mode">
+          {modes.map((m, i) => <label class="toggle"><input type="radio" name="chain-mode" value={m} data-pick="chain" checked={i === 0} /><span>{m === 'gray' ? 'Gray' : 'Slate'}</span></label>)}
+        </div>
+      </div>
+      {modes.map((m, i) => (
+        <ol class="chain" data-pick-block={`chain:${m}`} hidden={i > 0}>
+          {chain(example, m).map((x) => (
+            <li>
+              <span class="label muted">{collectionOf(x.collection).name}</span>
+              <button type="button" class="token" data-token={x.name}>{x.name}</button>
+            </li>
+          ))}
+          <li class="chain-end"><i class="swatch" style={`--c:${display(example, m)}`}></i><span>{display(example, m)}</span></li>
+        </ol>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="collections" label="Collections" desc="The DS library keeps its variables in seven collections. Click a name to see its tokens">
+    <div class="table table-cols" role="table" aria-label="Collections">
+      <div class="tr th" role="row">{['Collection', 'Layer', 'Holds', 'Modes', 'Tokens'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {collections.map((c) => (
+        <div class="tr" role="row">
+          <span role="cell"><a class="token" href={`/tokens/all-tokens/?c=${c.key}`}>{c.name}</a></span>
+          <span role="cell">{c.layer}</span>
+          <span role="cell" class="muted-cell">{c.holds}</span>
+          <span role="cell">{c.modes.join(', ')}</span>
+          <span role="cell" class="num-cell">{countOf(c.key)}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="naming" label="Naming" desc="A semantic name reads category, role and step. The step matches the neutral step it points to, so the name tells you how dark it is">
+    <div class="anatomy" aria-label="text/sub-600: category text, role sub, step 600">
+      <span><b>text</b><em class="label">Category</em></span>
+      <span class="sep">/</span>
+      <span><b>sub</b><em class="label">Role</em></span>
+      <span class="sep">-</span>
+      <span><b>600</b><em class="label">Step</em></span>
+    </div>
+    <div class="block">
+      <p class="subhead">Roles</p>
+      <p class="desc">From the most to the least emphasis: strong, surface, sub, soft, weak, disabled, white. States and brands use dark, base, light and lighter instead</p>
+    </div>
+    <div class="block">
+      <p class="subhead">Categories</p>
+      <SpecsTable label="Token categories" head={['Used for', 'Example', 'Value']} rows={categories} />
+    </div>
+  </Section>
+
+  <Section id="themes" label="Themes" title="Gray and Slate" desc="02-Neutral has two modes. Gray is the default; Slate is a cooler neutral for products that want it. The same semantic tokens draw both cards">
+    <div class="grid2">
+      {modes.map((m) => (
+        <figure class="mode-demo" style={card(m)}>
+          <div class="mode-card">
+            <span class="mode-chip">Paid</span>
+            <p class="mode-title">Invoice INV-2041</p>
+            <p class="mode-sub">Sent to PT Sinar Jaya on 12 Oct</p>
+            <p class="mode-foot"><span>Rp 4.250.000</span><b>View</b></p>
+          </div>
+          <figcaption class="label muted">02-Neutral · {m === 'gray' ? 'Gray' : 'Slate'}</figcaption>
+        </figure>
+      ))}
+    </div>
+    <p class="desc mode-note">In Figma, pick the mode on a frame under Layer → Appearance. In code, set <code>data-neutral="slate"</code> on a container</p>
+  </Section>
+
+  <Section id="brand" label="Brand" desc="01-Tokens has a full set of roles for each of the six brands. 03-Brand gives the Unictive roles generic names, so a component can say primary-base and not care which brand it is">
+    <SpecsTable label="03-Brand tokens" head={['Points to', 'Token', 'Value']} rows={brandRows} />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Use a semantic token for every color in a design or a stylesheet', 'Use a primitive only for data, like a chart series or an illustration', 'Use radius and spacing tokens for every corner, padding and gap']}
+      avoid={['Typing a hex value, it will not follow Slate or a brand change', 'Picking neutral/gray/600 for text, use text/sub-600', 'Making a new token for a one-off color, ask the DS team first']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Bind text to text/sub-600. Switch the frame to Slate and it turns #525866 with the rest of the card"
+      dontText="Don’t bind text to neutral/gray/600. It stays gray on a Slate frame and the card looks patched"
+    >
+      <Fragment slot="do"><p class="demo-text" style={`color:${v('text/sub-600', 'slate')}`}>text/sub-600 on Slate</p></Fragment>
+      <Fragment slot="dont"><p class="demo-text" style="color:#5C5C5C">neutral/gray/600 on Slate</p></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['All tokens', 'Search every token'],
+      ['Export', 'CSS, Tailwind and JSON'],
+      ['Color', 'Ramps and contrast'],
+      ['Radius & spacing', 'The number scales'],
+    ]} />
+  </Section>
+</DocPage>

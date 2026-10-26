@@ -55,6 +55,7 @@
 
   /* type */
   --font: 'Inter', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --fs-display: clamp(64px, 11vw, 120px);
   --lh-display: 0.934;
   --ls-display: -0.05em;

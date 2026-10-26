@@ -1,7 +1,7 @@
 // foundation pages: copy values, brand and weight pickers, type preview text, icon library
 import { showToast } from './toast';
 
-const copy = async (text: string, what = text) => {
+export const copy = async (text: string, what = text) => {
   try {
     await navigator.clipboard.writeText(text);
     showToast(`Copied ${what}`);
@@ -11,7 +11,7 @@ const copy = async (text: string, what = text) => {
 };
 
 // radios with data-pick="<group>" show the [data-pick-block="<group>:<value>"] that matches
-function pickers(signal: AbortSignal) {
+export function pickers(signal: AbortSignal) {
   document.querySelectorAll<HTMLInputElement>('input[data-pick]').forEach((r) =>
     r.addEventListener(
       'change',

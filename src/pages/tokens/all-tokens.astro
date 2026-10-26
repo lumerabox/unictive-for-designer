@@ -1,0 +1,82 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+import { tokens, collections, countOf, refOf, display, cssName } from '../../data/tokens';
+
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['related', 'Related'],
+];
+const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const slateCount = tokens.filter((x) => display(x, 'gray') !== display(x, 'slate')).length;
+---
+<DocPage
+  title="All tokens"
+  section="Tokens"
+  script="tokens"
+  description="Search every Unictive design token: semantic colors, neutral and brand themes, radius, spacing, opacity and the primitive ramps, with their values in Gray and Slate."
+  intro="Every variable in the DS library, with what it points to and its value. Click a name to copy it, or a value to copy the value"
+  toc={toc}
+  meta={[['Tokens', tokens.length], ['Collections', collections.length], ['Change in Slate', slateCount]]}
+>
+  <Section id="library" label="Library" desc="Search by name or value. Slate shows the values a Slate frame gets; only tokens built on 02-Neutral change">
+    <div data-token-lib>
+      <form class="icon-tools" role="search" onsubmit="return false">
+        <label class="text-field">
+          <span class="label muted">Search</span>
+          <input type="search" name="q" placeholder="sub-600, brand, #1868D0…" spellcheck="false" autocomplete="off" />
+        </label>
+        <label class="select asset-cat">
+          <span class="visually-hidden">Collection</span>
+          <select name="c">
+            <option value="all">All collections</option>
+            {collections.map((c) => <option value={c.key}>{c.name}</option>)}
+          </select>
+          <Fragment set:html={chevron} />
+        </label>
+        <div class="options" role="radiogroup" aria-label="Neutral mode">
+          <label class="toggle"><input type="radio" name="mode" value="gray" checked /><span>Gray</span></label>
+          <label class="toggle"><input type="radio" name="mode" value="slate" /><span>Slate</span></label>
+        </div>
+      </form>
+      <p class="icon-count label muted" data-token-count aria-live="polite">{tokens.length} tokens</p>
+      <div class="table token-table" role="table" aria-label="All tokens">
+        <div class="tr th" role="row">{['Token', 'Points to', 'Value'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+        {collections.map((c) => (
+          <>
+            <p class="icon-cat" data-c={c.key}><span class="label">{c.name}</span><span class="label muted">{countOf(c.key)}</span></p>
+            {tokens.filter((x) => x.collection === c.key).map((x) => {
+              const g = display(x, 'gray');
+              const s = display(x, 'slate');
+              return (
+                <div class="tr" role="row" data-c={c.key} data-q={`${x.name} ${cssName(x)} ${g} ${s} ${x.ref ?? ''}`.toLowerCase()}>
+                  <span role="cell" class="tok-name">
+                    <button type="button" class="token" data-token={x.name} title="Copy token name">{x.name}</button>
+                    <button type="button" class="tok-css" data-copy={`var(${cssName(x)})`} title="Copy CSS variable">{cssName(x)}</button>
+                  </span>
+                  <span role="cell" class="muted-cell" data-gray={refOf(x, 'gray') ?? '—'} data-slate={refOf(x, 'slate') ?? '—'}>{refOf(x, 'gray') ?? '—'}</span>
+                  <span role="cell">
+                    <button type="button" class="val tok-val" data-copy={g} data-gray={g} data-slate={s} title="Copy value">
+                      {x.kind === 'color' && <i class="swatch" style={`--c:${g}`}></i>}<span>{g}</span>
+                    </button>
+                  </span>
+                </div>
+              );
+            })}
+          </>
+        ))}
+        <p class="icon-empty" data-token-empty hidden></p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['How tokens work', 'Layers, naming and modes'],
+      ['Export', 'CSS, Tailwind and JSON'],
+      ['Color', 'Ramps and contrast'],
+      ['Radius & spacing', 'The number scales'],
+    ]} />
+  </Section>
+</DocPage>

@@ -1,7 +1,7 @@
 export const topNav = [
   { label: 'Foundations', href: '/foundations/color/' },
   { label: 'Components', href: '/components/button/' },
-  { label: 'Tokens', href: null },
+  { label: 'Tokens', href: '/tokens/how-tokens-work/' },
   { label: 'Assets', href: '/assets/avatars/' },
   { label: "What's new", href: null },
 ];
@@ -13,6 +13,7 @@ export const sideNav = [
   { group: 'Navigation', items: ['Breadcrumbs', 'Tab Menu', 'Pagination', 'Stepper'] },
   { group: 'Feedback', items: ['Alert', 'Banner', 'Badge', 'Progress Bar', 'Tooltip'] },
   { group: 'Overlays', items: ['Modal', 'Popover'] },
+  { group: 'Tokens', items: ['How tokens work', 'All tokens', 'Export'] },
   { group: 'Assets', items: ['Avatars', 'Brand Logos', 'Country Flags', 'Emoji'] },
 ];
 
@@ -23,6 +24,9 @@ export const livePages: Record<string, string> = {
   'Radius & spacing': '/foundations/radius-and-spacing/',
   Shadows: '/foundations/shadows/',
   Icons: '/foundations/icons/',
+  'How tokens work': '/tokens/how-tokens-work/',
+  'All tokens': '/tokens/all-tokens/',
+  Export: '/tokens/export/',
   Avatars: '/assets/avatars/',
   'Brand Logos': '/assets/brand-logos/',
   'Country Flags': '/assets/country-flags/',
