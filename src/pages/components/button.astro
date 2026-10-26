@@ -58,8 +58,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="leftIcon" /><span>Left icon</span></label>
         <label class="toggle"><input type="checkbox" name="rightIcon" /><span>Right icon</span></label>
         <label class="text-field">
-          <span class="label muted">Label</span>
-          <input type="text" name="label" value="Button" maxlength="32" spellcheck="false" autocomplete="off" />
+          <input aria-label="Label" type="text" name="label" value="Button" maxlength="32" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas" data-canvas>
@@ -108,9 +107,9 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States">
     <div class="grid-states">
-      {[['A', 'Default', 'Default'], ['B', 'Hover', 'Hover'], ['C', 'Disabled', 'Disable']].map(([k, name, st]) => (
+      {[['Default', 'Default'], ['Hover', 'Hover'], ['Disabled', 'Disable']].map(([name, st]) => (
         <button type="button" class="tile tile-big" data-copy={copyAttr({ size: 'Medium', state: st })} aria-label={`Copy ${name} state to Figma`}>
-          <span class="tile-top"><span class="big">{k}</span><span class="label muted">{name}</span></span>
+          <span class="tile-top"><span class="label muted">{name}</span></span>
           <span class="tile-body"><Btn as="span" state={st as any} static /></span>
           <span class="copy-hint">Copy</span>
         </button>

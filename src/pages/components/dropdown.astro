@@ -77,8 +77,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="icon" checked /><span>Icon</span></label>
         <label class="toggle"><input type="checkbox" name="description" checked /><span>Description</span></label>
         <label class="text-field">
-          <span class="label muted">Title</span>
-          <input type="text" name="text" value={samples.Default.title} maxlength="40" spellcheck="false" autocomplete="off" />
+          <input aria-label="Title" type="text" name="text" value={samples.Default.title} maxlength="40" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas canvas-dd" data-canvas>
@@ -123,9 +122,9 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Hover and Selected fill the row, Selected adds a check at the end, Disabled greys out the text and lead">
     <div class="grid2">
-      {states.map((s, i) => (
+      {states.map((s) => (
         <button type="button" class="tile tile-dd" data-copy={row('Profile', 'Large', s)} aria-label={`Copy ${stateName(s)} dropdown item to Figma`}>
-          <span class="tile-top"><span class="big">{'ABCD'[i]}</span><span class="label muted">{stateName(s)}</span></span>
+          <span class="tile-top"><span class="label muted">{stateName(s)}</span></span>
           <span class="tile-body"><span class="u-dd-panel u-dd-stack" data-size="large"><Dropdown type="Profile" size="Large" state={s} /></span></span>
           <span class="copy-hint">Copy</span>
         </button>

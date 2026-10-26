@@ -68,8 +68,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="badge" /><span>Badge</span></label>
         <label class="toggle"><input type="checkbox" name="button" /><span>Link button</span></label>
         <label class="text-field">
-          <span class="label muted">Label</span>
-          <input type="text" name="text" value="Option" maxlength="32" spellcheck="false" autocomplete="off" />
+          <input aria-label="Label" type="text" name="text" value="Option" maxlength="32" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas" data-canvas>
@@ -106,11 +105,10 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Selected thickens the ring to 4 px in brand blue. Disabled keeps the shape and greys it out">
     <div class="grid4">
-      {states.map(([name, selected, disabled], i) => (
+      {states.map(([name, selected, disabled]) => (
         <button type="button" class="tile tile-v" data-copy={copyAttr(`Radio · ${name}`, { parts: [bare('radio', 'Medium', String(selected), disabled)] })} aria-label={`Copy ${name} radio to Figma`}>
-          <span class="tile-top"><span class="big">{'ABCD'[i]}</span></span>
+          <span class="tile-top"><span class="label muted">{name}</span></span>
           <span class="tile-body"><RadioGroup selected={selected} disabled={disabled} /></span>
-          <span class="label muted">{name}</span>
           <span class="copy-hint">Copy</span>
         </button>
       ))}

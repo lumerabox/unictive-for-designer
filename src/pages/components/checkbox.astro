@@ -64,8 +64,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="badge" checked /><span>Badge</span></label>
         <label class="toggle"><input type="checkbox" name="button" checked /><span>Link button</span></label>
         <label class="text-field">
-          <span class="label muted">Label</span>
-          <input type="text" name="text" value="Email me product updates" maxlength="40" spellcheck="false" autocomplete="off" />
+          <input aria-label="Label" type="text" name="text" value="Email me product updates" maxlength="40" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas" data-canvas>
@@ -102,9 +101,9 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Each state has a disabled twin. Indeterminate only comes from a parent whose children are partly checked">
     <div class="grid3">
-      {states.map((s, i) => (
+      {states.map((s) => (
         <button type="button" class="tile tile-v" data-copy={copyAttr(`${stateName[s]} · Enabled and disabled`, group('Checkboxes', 'HORIZONTAL', 24, [bare('checkbox', 'Medium', s), bare('checkbox', 'Medium', s, true)]))} aria-label={`Copy ${stateName[s]} checkboxes to Figma`}>
-          <span class="tile-top"><span class="big">{'ABC'[i]}</span><span class="label muted">{stateName[s]}</span></span>
+          <span class="tile-top"><span class="label muted">{stateName[s]}</span></span>
           <span class="tile-body"><span class="choice-pair"><Checkbox state={s} /><Checkbox state={s} disabled /></span></span>
           <span class="copy-hint">Copy</span>
         </button>

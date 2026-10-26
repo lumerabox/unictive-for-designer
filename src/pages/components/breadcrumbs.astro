@@ -92,9 +92,9 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Parents are Default and darken on hover. The last item is Active, it marks the current page and can open a Dropdown of sibling pages">
     <div class="grid3">
-      {states.map(([name, note], i) => (
+      {states.map(([name, note]) => (
         <div class="tile tile-static tile-big">
-          <span class="tile-top"><span class="big">{'ABC'[i]}</span><span class="label muted">{name}</span></span>
+          <span class="tile-top"><span class="label muted">{name}</span></span>
           <span class="tile-body">
             <span class="tile-stack center">
               {[false, true].map((r) => (

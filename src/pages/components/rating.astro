@@ -100,11 +100,10 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Each item is Default, Precision for a half point, or Select. Disabled items are filled grey whatever the value">
     <div class="grid4">
-      {states.map(([name, value, disabled], i) => (
+      {states.map(([name, value, disabled]) => (
         <button type="button" class="tile tile-v" data-copy={copyAttr(`Rating items · ${name}`, group('Rating items', 'HORIZONTAL', 24, ['Star', 'Heart'].flatMap((t) => ratingRow(t, 'Large', value, disabled, 1).parts)))} aria-label={`Copy ${name} rating items to Figma`}>
-          <span class="tile-top"><span class="big">{'ABCD'[i]}</span></span>
+          <span class="tile-top"><span class="label muted">{name}</span></span>
           <span class="tile-body"><span class="choice-pair"><Rating size="Large" count={1} value={value} disabled={disabled} /><Rating type="Heart" size="Large" count={1} value={value} disabled={disabled} /></span></span>
-          <span class="label muted">{name}</span>
           <span class="copy-hint">Copy</span>
         </button>
       ))}

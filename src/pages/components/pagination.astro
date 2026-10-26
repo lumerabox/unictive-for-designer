@@ -96,11 +96,10 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Numbers and actions are flat until hovered. The current page gets a stroke/soft-200 outline, and actions at either end are disabled">
     <div class="grid3">
-      {states.map(([k, s, name], i) => (
+      {states.map(([k, s, name]) => (
         <div class="tile tile-static tile-v">
-          <span class="tile-top"><span class="big">{'ABCDEF'[i]}</span></span>
+          <span class="tile-top"><span class="label muted">{name}</span></span>
           <span class="tile-body"><span class="surface"><Fragment set:html={part(k, s)} /></span></span>
-          <span class="label muted">{name}</span>
         </div>
       ))}
     </div>

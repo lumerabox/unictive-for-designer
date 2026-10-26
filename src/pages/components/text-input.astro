@@ -71,8 +71,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="leadIcon" checked /><span>Leading icon</span></label>
         <label class="toggle"><input type="checkbox" name="trailIcon" checked /><span>Trailing icon</span></label>
         <label class="text-field">
-          <span class="label muted">Text</span>
-          <input type="text" name="text" value="Placeholder text" maxlength="40" spellcheck="false" autocomplete="off" />
+          <input aria-label="Text" type="text" name="text" value="Placeholder text" maxlength="40" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas" data-canvas>
@@ -128,9 +127,9 @@ const specs: [string, string, string][] = [
 
   <Section id="states" label="States" desc="Focus and Typing use the brand border, Error swaps the border and caption to the error color">
     <div class="grid3">
-      {states.map((s, i) => (
+      {states.map((s) => (
         <button type="button" class="tile tile-field" data-copy={copyAttr({ state: s })} aria-label={`Copy ${stateName(s)} text input to Figma`}>
-          <span class="tile-top"><span class="big">{'ABCDEF'[i]}</span><span class="label muted">{stateName(s)}</span></span>
+          <span class="tile-top"><span class="label muted">{stateName(s)}</span></span>
           <span class="tile-body"><TextInput state={s} /></span>
           <span class="copy-hint">Copy</span>
         </button>

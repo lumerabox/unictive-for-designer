@@ -37,7 +37,9 @@ The look is editorial and brutalist, the opposite of a generic card UI. The firs
 
 - One strict 12-column grid, which is visible: 0.5 px brand-alpha-16 guide lines at the container edges only.
 - Horizontal lines (0.5 px, stroke-soft-200) only at the bottom of a section. Lines never cut through content.
-- Content sits on white or `bg-weak-50` blocks. Corners are square (radius 0); only DS components such as Button keep their own radius.
+- Content sits on white or `bg-weak-50` blocks. Corners use `--radius` 12 for boxes (tiles, canvas, pager, palette), `--radius-sm` 8 for controls (selects, toggles, fields, chips, table rows) and `--radius-xs` 4 for small marks. DS components keep their own radius.
+- Content keeps `--inset` 14 from the guide lines: topbar padding, sidebar labels/items and the right edge of the center column (0 below 1024, where guides are hidden).
+- State tiles carry only the uppercase state label top-left, no A/B/C letters.
 - No light green or red tinted backgrounds. Status is shown with a 4 px top border (brand for do, error for don't) and colored labels.
 - Labels are uppercase, 10/12, 500 weight, 8% tracking, in brand blue (or `muted` grey). Numbered labels such as "01 — Playground" are allowed.
 - Headings are large and tight: the display h1 is 64–120 px with −5% tracking, and h2 is 32/40 with −3% tracking.

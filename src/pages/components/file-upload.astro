@@ -89,8 +89,7 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="caption" checked /><span>Caption</span></label>
         <label class="toggle"><input type="checkbox" name="close" checked /><span>Close</span></label>
         <label class="text-field">
-          <span class="label muted">File name</span>
-          <input type="text" name="name" value="File name" maxlength="60" spellcheck="false" autocomplete="off" />
+          <input aria-label="File name" type="text" name="name" value="File name" maxlength="60" spellcheck="false" autocomplete="off" />
         </label>
       </div>
       <div class="canvas fu-canvas" data-canvas>
@@ -133,9 +132,9 @@ const specs: [string, string, string][] = [
 
   <Section id="card-states" label="File card" title="File card states" desc="A file moves from Ready to Upload through Loading to Finish, or to Failed. View is the card after the upload, while the file is processed or reviewed">
     <div class="fu-list">
-      {cardStates.map((s, i) => (
+      {cardStates.map((s) => (
         <button type="button" class="tile fu-tile fu-row" data-copy={cardCopy('Large', s)} aria-label={`Copy ${s} file card to Figma`}>
-          <span class="tile-top"><span class="label muted">{'ABCDE'[i]} — {s}</span><span class="desc">{stateNotes[s]}</span></span>
+          <span class="tile-top"><span class="label muted">{s}</span><span class="desc">{stateNotes[s]}</span></span>
           <span class="tile-body"><FileCard state={s} /></span>
           <span class="copy-hint">Copy</span>
         </button>
