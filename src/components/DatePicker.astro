@@ -15,12 +15,15 @@ interface Props {
   required?: boolean;
   labelText?: string;
   value?: string;
+  time?: boolean;
+  actions?: boolean;
+  presets?: boolean;
   live?: boolean;
   [key: string]: any;
 }
 const {
   align = 'Left', open = true, multiple = false, range = false, label = true, required = true,
-  labelText = 'Date', value = '', live = false, ...rest
+  labelText = 'Date', value = '', time = false, actions = true, presets = false, live = false, ...rest
 } = Astro.props;
 
 const t = keyOf(today.y, today.m, today.d);
@@ -49,5 +52,5 @@ const Control = live ? 'button' : 'span';
       </Control>
     </span>
   </span>
-  <Calendar type={multiple ? 'Multiple' : 'Single'} start={start} end={end} info={false} live={live} data-part="panel" hidden={!open} />
+  <Calendar type={multiple ? 'Multiple' : 'Single'} start={start} end={end} info={false} time={time} actions={actions} presets={presets} live={live} data-part="panel" hidden={!open} />
 </Root>

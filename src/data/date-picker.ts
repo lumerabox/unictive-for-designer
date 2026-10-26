@@ -54,18 +54,47 @@ export const formatRange = (a: number, b: number) => `${short(a)} - ${short(b)},
 // copy to figma: the DS variant as-is, label and required hide the field's own layers (the time field and the
 // range rail reuse the same names, so these are paths under the variant)
 const field = 'Text-input (Outline)';
-interface Picker { align: Align; calendar: boolean; multiple: boolean; label?: boolean; required?: boolean; value?: string }
-export const pickerCopy = ({ align, calendar, multiple, label = true, required = true, value = '' }: Picker) => ({
-  label: [align, multiple ? 'Multiple' : 'Single', ...(calendar ? ['Open'] : [])].join(' · '),
-  spec: {
-    parts: [{
-      variant: `Date Picker / ${align} / ${calendar} / ${multiple}`,
-      hide: [...(label ? [] : [`${field} > Label`]), ...(required ? [] : [`${field} > Label > *`])],
-      ...(value ? { texts: { [`${field} > Form > Placeholder text`]: value } } : {}),
-    }],
-  },
-});
-export const calendarCopy = (type: CalendarType, range: boolean) => ({
-  label: `Calendar · ${type}${range ? ' · Date range' : ''}`,
-  spec: { parts: [{ variant: `Calendar / ${type} / ${range}` }] },
+
+// Time, Action-button and Date-preset booleans of the Calendar set, as layer paths under `at`; Multiple has only Action-button
+export interface CalendarOpts { time?: boolean; actions?: boolean; presets?: boolean }
+export const calendarDefaults = { time: false, actions: true, presets: false } as const;
+function calendarLayers(multiple: boolean, at: string, { time = false, actions = true, presets = false }: CalendarOpts) {
+  const show: string[] = [];
+  const hide: string[] = [];
+  const put = (on: boolean, path: string) => (on ? show : hide).push(at + path);
+  if (multiple) put(actions, 'Calendar + Action > Action-button');
+  else {
+    put(time, 'Form-input-time');
+    put(actions, 'Action-button');
+    put(presets, 'Date-presets');
+  }
+  return { show, hide };
+}
+// figma's boolean names, listed only when they differ from `base`: the picker hides Time and Date-preset, the
+// Calendar set shows all three
+const all = { time: true, actions: true, presets: true } as const;
+export function optsLabel(multiple: boolean, o: CalendarOpts, base: CalendarOpts = calendarDefaults) {
+  const names: [keyof CalendarOpts, string][] = multiple ? [['actions', 'Action-button']] : [['time', 'Time'], ['actions', 'Action-button'], ['presets', 'Date-preset']];
+  const v = (k: keyof CalendarOpts) => !!(o[k] ?? base[k]);
+  return names.filter(([k]) => v(k) !== !!base[k]).map(([k, n]) => `${n}=${v(k)}`);
+}
+
+interface Picker extends CalendarOpts { align: Align; calendar: boolean; multiple: boolean; label?: boolean; required?: boolean; value?: string }
+export const pickerCopy = ({ align, calendar, multiple, label = true, required = true, value = '', ...opts }: Picker) => {
+  const cal = calendar ? calendarLayers(multiple, 'Calendar > ', opts) : { show: [], hide: [] };
+  return {
+    label: [align, multiple ? 'Multiple' : 'Single', ...(calendar ? ['Open', ...optsLabel(multiple, opts)] : [])].join(' · '),
+    spec: {
+      parts: [{
+        variant: `Date Picker / ${align} / ${calendar} / ${multiple}`,
+        hide: [...(label ? [] : [`${field} > Label`]), ...(required ? [] : [`${field} > Label > *`]), ...cal.hide],
+        show: cal.show,
+        ...(value ? { texts: { [`${field} > Form > Placeholder text`]: value } } : {}),
+      }],
+    },
+  };
+};
+export const calendarCopy = (type: CalendarType, range: boolean, opts: CalendarOpts = all) => ({
+  label: [`Calendar · ${type}${range ? ' · Date range' : ''}`, ...optsLabel(type === 'Multiple', opts, all)].join(' · '),
+  spec: { parts: [{ variant: `Calendar / ${type} / ${range}`, ...calendarLayers(type === 'Multiple', '', { ...all, ...opts }) }] },
 });

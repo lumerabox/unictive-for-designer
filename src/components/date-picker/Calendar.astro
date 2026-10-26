@@ -1,5 +1,6 @@
 ---
-// the Unictive DS calendar panel, mirrors the Calendar component set (Type × Date Range, with Time, Action button and Date preset toggles)
+// the Unictive DS calendar panel, mirrors the Calendar component set (Type × Date Range, with Time, Action button and Date preset toggles);
+// a live panel keeps every section in the markup so the playground can switch them
 import '../../styles/u-field.css';
 import '../../styles/u-date-picker.css';
 import Btn from '../Btn.astro';
@@ -81,16 +82,16 @@ const ctl = (k: string) => (live ? { 'data-act': k } : {});
         </span>
       ))}
     </span>
-    {!multi && time && (
-      <span class="u-cal-sec u-cal-time">
+    {!multi && (time || live) && (
+      <span class="u-cal-sec u-cal-time" data-part="time" hidden={!time}>
         <span class="u-field" data-size="medium" data-style="outline" data-state="filled">
           <span class="u-field-label">Time</span>
           <span class="u-field-box"><span class="u-field-control"><span class="u-field-value">00:00</span><svg class="u-field-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={clock} /></svg></span></span>
         </span>
       </span>
     )}
-    {actions && (
-      <span class="u-cal-sec u-cal-actions">
+    {(actions || live) && (
+      <span class="u-cal-sec u-cal-actions" data-part="actions" hidden={!actions}>
         {multi && (
           <span class="u-cal-info" data-part="info" hidden={!info}>
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d={calIcon} /></svg>
@@ -101,9 +102,9 @@ const ctl = (k: string) => (live ? { 'data-act': k } : {});
         <Btn as={live ? 'button' : 'span'} label="Apply" {...ctl('apply')} />
       </span>
     )}
-    {!multi && presets && (
-      <span class="u-cal-sec u-cal-chips">
-        {chipPresets.map((p) => <Tag class="u-cal-chip" data-on={p === chip ? '' : undefined} data-chip={live ? p : undefined} {...btn}>{p}</Tag>)}
+    {!multi && (presets || live) && (
+      <span class="u-cal-sec u-cal-chips" data-part="presets" hidden={!presets}>
+        {chipPresets.map((p) => <Tag class="u-cal-chip" data-on={p === chip ? '' : undefined} data-quick={live ? p : undefined} {...btn}>{p}</Tag>)}
       </span>
     )}
   </span>

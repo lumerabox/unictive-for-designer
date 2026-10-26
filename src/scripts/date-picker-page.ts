@@ -1,6 +1,6 @@
 // playground for the date picker page: the form picks the variant, the calendar picks real dates
 import { rowsHTML, todayKey } from '../components/date-picker/render';
-import { keyOf, months, today, formatDate, formatRange, pickerCopy, type Align } from '../data/date-picker';
+import { keyOf, months, today, formatDate, formatRange, pickerCopy, optsLabel, type Align } from '../data/date-picker';
 import { setupCopy } from './controls-copy';
 
 export default function init(signal: AbortSignal) {
@@ -17,7 +17,7 @@ export default function init(signal: AbortSignal) {
     y: today.y, m: today.m,
     start: null as number | null, end: null as number | null,
     saved: { start: null as number | null, end: null as number | null },
-    value: '', rail: null as string | null, yearOpen: false,
+    value: '', rail: null as string | null, chip: null as string | null, yearOpen: false,
   };
 
   const parts = (k: number) => ({ y: Math.floor(k / 10000), m: Math.floor(k / 100) % 100, d: k % 100 });
@@ -47,6 +47,21 @@ export default function init(signal: AbortSignal) {
     }
   }
 
+  // date preset chips under the single calendar, the multi-day ones need a range
+  function chipRange(name: string): [number, number | null] {
+    const t = todayKey;
+    switch (name) {
+      case 'Yesterday': return [shift(t, -1), null];
+      case 'Tomorrow': return [shift(t, 1), null];
+      case 'Last 7 Days': return [shift(t, -6), t];
+      case 'Last 14 Days': return [shift(t, -13), t];
+      default: return [t, null];
+    }
+  }
+
+  const multiple = () => get('multiple') === 'true';
+  const opts = () => ({ time: on('time'), actions: on('actions'), presets: on('presets') });
+
   function renderPicker(p: HTMLElement) {
     const multi = p.hasAttribute('data-multiple');
     const open = get('calendar') === 'true';
@@ -59,6 +74,10 @@ export default function init(signal: AbortSignal) {
     part('req').hidden = !on('required');
     part('panel').hidden = !open;
     part('control').setAttribute('aria-expanded', String(open));
+    for (const k of ['time', 'actions', 'presets'] as const) {
+      const sec = p.querySelector<HTMLElement>(`[data-part="${k}"]`);
+      if (sec) sec.hidden = !on(k);
+    }
     const field = p.querySelector<HTMLElement>('.u-field')!;
     field.dataset.state = open ? 'focus' : s.value ? 'filled' : 'placeholder';
     const val = part('value');
@@ -76,6 +95,7 @@ export default function init(signal: AbortSignal) {
       pane.querySelector('[data-part="grid"]')!.innerHTML = rowsHTML(y, m, { start: s.start, end: range ? s.end : null, today: todayKey, live: true });
     });
     p.querySelectorAll<HTMLElement>('[data-preset]').forEach((o) => o.toggleAttribute('data-on', o.dataset.preset === s.rail));
+    p.querySelectorAll<HTMLElement>('[data-quick]').forEach((o) => o.toggleAttribute('data-on', o.dataset.quick === s.chip));
     const info = p.querySelector<HTMLElement>('[data-part="info"]');
     if (info) {
       info.hidden = !(s.start && s.end);
@@ -84,12 +104,14 @@ export default function init(signal: AbortSignal) {
   }
 
   function render() {
+    // multiple has no time field and no preset chips
+    for (const k of ['time', 'presets']) (form.elements.namedItem(k) as HTMLInputElement).disabled = multiple();
     pickers.forEach(renderPicker);
     if (!chip.classList.contains('copied')) chipText();
     fit();
   }
 
-  const chipText = () => (chip.textContent = `Alight=${get('align')} · Calendar=${get('calendar')} · Multiple=${get('multiple')}`);
+  const chipText = () => (chip.textContent = [`Alight=${get('align')}`, `Calendar=${get('calendar')}`, `Multiple=${get('multiple')}`, ...optsLabel(multiple(), opts())].join(' · '));
 
   function close(revert: boolean) {
     if (revert) Object.assign(s, s.saved);
@@ -111,6 +133,7 @@ export default function init(signal: AbortSignal) {
   function pick(k: number) {
     const range = on('range') || get('multiple') === 'true';
     s.rail = null;
+    s.chip = null;
     if (!range) {
       s.start = k;
       s.end = null;
@@ -125,6 +148,9 @@ export default function init(signal: AbortSignal) {
     if (p.m === s.m || (multi && p.m === next)) return;
     view(multi && p.m !== (s.m + 11) % 12 ? shift(k, 0, -1) : k);
   }
+
+  // without action buttons a finished pick applies right away
+  const done = () => !on('actions') && !!s.start && (!(on('range') || multiple()) || !!s.end);
 
   canvas.addEventListener('click', (e) => {
     const el = e.target as HTMLElement;
@@ -146,13 +172,25 @@ export default function init(signal: AbortSignal) {
     const act = el.closest<HTMLElement>('[data-act]')?.dataset.act;
     const year = el.closest<HTMLElement>('[data-year]')?.dataset.year;
     const pre = el.closest<HTMLElement>('[data-preset]')?.dataset.preset;
+    const quick = el.closest<HTMLElement>('[data-quick]')?.dataset.quick;
     if (year) {
       s.y = Number(year);
       s.yearOpen = false;
-    } else if (cell) pick(Number(cell.dataset.key));
-    else if (pre) {
+    } else if (cell) {
+      pick(Number(cell.dataset.key));
+      if (done()) return apply();
+    } else if (quick) {
+      const [a, b] = chipRange(quick);
+      if (b) (form.elements.namedItem('range') as HTMLInputElement).checked = true;
+      // a one-day chip in range mode is a finished range of one day
+      [s.start, s.end] = [a, b ?? (on('range') ? a : null)];
+      s.chip = quick;
+      view(a);
+      if (done()) return apply();
+    } else if (pre) {
       [s.start, s.end] = preset(pre);
       s.rail = pre;
+      s.chip = null;
       // show the start month when the range fits in the two panes
       const a = parts(s.start);
       const b = parts(s.end);
@@ -164,6 +202,7 @@ export default function init(signal: AbortSignal) {
     else if (act === 'clear') {
       s.start = s.end = null;
       s.rail = null;
+      s.chip = null;
       s.value = '';
     } else if (s.yearOpen && !el.closest('.u-cal-years')) s.yearOpen = false;
     else return;
@@ -177,7 +216,10 @@ export default function init(signal: AbortSignal) {
   form.addEventListener('change', (e) => {
     const name = (e.target as HTMLInputElement).name;
     // switching to multiple keeps the range rail meaningful, a single date drops its end
-    if (name === 'range' && !on('range')) s.end = null;
+    if (name === 'range' && !on('range')) {
+      s.end = null;
+      s.chip = null;
+    }
     render();
   });
 
@@ -203,7 +245,7 @@ export default function init(signal: AbortSignal) {
     signal,
     current: () => pickerCopy({
       align: get('align') as Align, calendar: get('calendar') === 'true', multiple: get('multiple') === 'true',
-      label: on('label'), required: on('required'), value: s.value,
+      label: on('label'), required: on('required'), value: s.value, ...opts(),
     }),
     canvas,
     chip,

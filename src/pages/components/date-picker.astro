@@ -14,6 +14,9 @@ import { chevronDown } from '../../components/date-picker/icons';
 const t = keyOf(today.y, today.m, today.d);
 const r0 = keyOf(today.y, today.m, 2);
 const pickerAttr = (align: 'Left' | 'Right', calendar: boolean, multiple: boolean) => JSON.stringify(pickerCopy({ align, calendar, multiple }));
+// every Time × Action-button × Date-preset combination of the single calendar
+const combos = [false, true].flatMap((time) => [true, false].flatMap((actions) => [false, true].map((presets) => ({ time, actions, presets }))));
+const comboText = (o: { time: boolean; actions: boolean; presets: boolean }) => `Time=${o.time} · Action=${o.actions} · Preset=${o.presets}`;
 const specs: [string, string, string][] = [
   ['Field', 'Text-input (Outline) / Medium', '300 × 40 px'],
   ['Field to panel gap', 'spacing-4', '4 px'],
@@ -43,7 +46,7 @@ const specs: [string, string, string][] = [
   meta={[['Variants', variantCount], ['Calendar parts', partCount]]}
 >
   <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
-  <Section id="playground" label="Playground" desc="Pick a variant, then open the field and click a date. Apply writes it into the field">
+  <Section id="playground" label="Playground" desc="Pick a variant, then open the field and click a date. Apply writes it into the field, with Action button off the date goes in as soon as it is picked">
     <form class="pg" data-dp-playground onsubmit="return false">
       <div class="fields" data-cols="3">
         {[['align', 'Alight', aligns], ['calendar', 'Calendar', bools], ['multiple', 'Multiple', bools]].map(([key, label, opts]) => (
@@ -62,6 +65,9 @@ const specs: [string, string, string][] = [
         <label class="toggle"><input type="checkbox" name="label" checked /><span>Label</span></label>
         <label class="toggle"><input type="checkbox" name="required" checked /><span>Required</span></label>
         <label class="toggle"><input type="checkbox" name="range" /><span>Date range</span></label>
+        <label class="toggle"><input type="checkbox" name="time" /><span>Time</span></label>
+        <label class="toggle"><input type="checkbox" name="actions" checked /><span>Action button</span></label>
+        <label class="toggle"><input type="checkbox" name="presets" /><span>Date preset</span></label>
       </div>
       <div class="canvas dp-canvas" data-canvas>
         <div class="dp-fit" data-fit>
@@ -126,6 +132,23 @@ const specs: [string, string, string][] = [
         <span class="copy-hint">Copy</span>
       </button>
     ))}
+  </Section>
+
+  <Section id="options" label="Options" title="Time, actions and presets" desc="Three switches on the Calendar set. Time adds a time field, Action button adds Cancel and Apply, Date preset adds quick picks under the month. Without action buttons a date applies as soon as it is clicked. Multiple only has the action buttons">
+    <div class="grid4 dp-opts">
+      {combos.map((o) => (
+        <button type="button" class="tile dp-tile" data-copy={JSON.stringify(calendarCopy('Single', false, o))} aria-label={`Copy single calendar, ${comboText(o)}, to Figma`}>
+          <span class="tile-top"><span class="label muted">{comboText(o)}</span></span>
+          <span class="tile-body"><span data-fit><Calendar {...o} chip={o.presets ? chipPresets[0] : null} /></span></span>
+          <span class="copy-hint">Copy</span>
+        </button>
+      ))}
+    </div>
+    <button type="button" class="tile dp-tile dp-gap" data-copy={JSON.stringify(calendarCopy('Multiple', false, { actions: false }))} aria-label="Copy multiple calendar without action buttons to Figma">
+      <span class="tile-top"><span class="label muted">Multiple · Action-button=false</span></span>
+      <span class="tile-body"><span data-fit><Calendar type="Multiple" actions={false} /></span></span>
+      <span class="copy-hint">Copy</span>
+    </button>
   </Section>
 
   <Section id="dates" label="Dates" title="Date states" desc="Today keeps a light brand fill so people can find it, the picked date takes the solid brand fill">
