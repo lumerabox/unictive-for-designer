@@ -1,0 +1,44 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import AssetLibrary from '../../components/AssetLibrary.astro';
+import data from '../../data/assets.json';
+
+const count = data.filter((g) => g.kind === 'flags').reduce((n, g) => n + g.items.length, 0);
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['usage', 'When to use'],
+  ['related', 'Related'],
+];
+---
+<DocPage
+  title="Country Flags"
+  section="Assets"
+  script="assets"
+  description="Search and copy round country and region flags from the Unictive design system. Click a flag to copy its SVG and paste it into Figma."
+  intro="Round flags for countries, regions and organizations. Click one to copy its SVG, then paste it into Figma or code"
+  toc={toc}
+  meta={[['Flags', count], ['Shape', 'Circle'], ['Format', 'SVG']]}
+>
+  <Section id="library" label="Library" desc="Flags paste as vectors at 24 px, the size used in phone and currency fields">
+    <AssetLibrary kind="flags" size={40} paste={24} placeholder="indonesia, japan…" />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People choose a country code, currency or language', 'A list of countries needs to be scanned quickly', 'An amount or account belongs to a specific country']}
+      avoid={['Standing in for a language on its own, write the language name', 'The flag is the only label, add the country name', 'Showing many flags at sizes under 16 px']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Dropdown', 'Country and currency pickers'],
+      ['Text Input', 'Phone numbers'],
+      ['Brand Logos', 'Banks and wallets'],
+      ['Emoji', 'Expressive images'],
+    ]} />
+  </Section>
+</DocPage>

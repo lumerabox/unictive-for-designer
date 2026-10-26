@@ -1,0 +1,45 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import AssetLibrary from '../../components/AssetLibrary.astro';
+import data from '../../data/assets.json';
+
+const groups = data.filter((g) => g.kind === 'emoji');
+const count = groups.reduce((n, g) => n + g.items.length, 0);
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['usage', 'When to use'],
+  ['related', 'Related'],
+];
+---
+<DocPage
+  title="Emoji"
+  section="Assets"
+  script="assets"
+  description="Search and copy the 3D emoji from the Unictive design system. Click one to copy it, then paste it into Figma at 24 px."
+  intro="3D emoji for reactions, ratings and friendly moments. Click one to copy it, then paste it into Figma"
+  toc={toc}
+  meta={[['Emoji', count], ['Categories', groups.length], ['Paste size', '24 px']]}
+>
+  <Section id="library" label="Library" desc="Pastes into Figma as a 24 × 24 image. Use the arrow to download the PNG at 3x">
+    <AssetLibrary kind="emoji" size={40} paste={24} placeholder="smile, heart, food…" />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Feedback and ratings ask how something felt', 'Empty states, success screens and onboarding need warmth', 'Reactions in chat or comments']}
+      avoid={['The emoji is the only way to read a status or an error', 'Formal moments like payments, contracts or errors', 'More than one or two per screen']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Rating', 'Scores and reviews'],
+      ['Avatars', 'Illustrated characters'],
+      ['Icons', 'Interface icons'],
+      ['Modal', 'Success and empty states'],
+    ]} />
+  </Section>
+</DocPage>

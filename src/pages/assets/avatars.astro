@@ -1,0 +1,44 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import AssetLibrary from '../../components/AssetLibrary.astro';
+import data from '../../data/assets.json';
+
+const count = data.filter((g) => g.kind === 'avatars').reduce((n, g) => n + g.items.length, 0);
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['usage', 'When to use'],
+  ['related', 'Related'],
+];
+---
+<DocPage
+  title="Avatars"
+  section="Assets"
+  script="assets"
+  description="Preview and copy the Unictive avatar characters. Click one to copy it, then paste it into Figma at 64 px."
+  intro="Ten illustrated characters, plain or on a colored background. Click one to copy it, then paste it into Figma"
+  toc={toc}
+  meta={[['Characters', count / 2], ['Styles', 2], ['Paste size', '64 px']]}
+>
+  <Section id="library" label="Library" desc="Pastes into Figma as a 64 × 64 image. Use the arrow to download the PNG at 2x">
+    <AssetLibrary kind="avatars" size={64} paste={64} placeholder="01, background…" />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['A person has no profile photo yet', 'Mockups and prototypes need realistic people', 'Empty states and onboarding show who something is for']}
+      avoid={['A real photo is available, show the photo', 'The same character stands for two people in one view', 'Status or role needs to be read, add a badge or text']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Brand Logos', 'Company and app logos'],
+      ['Emoji', 'Expressive images'],
+      ['Badge', 'Status next to an avatar'],
+      ['Dropdown', 'Avatars in list items'],
+    ]} />
+  </Section>
+</DocPage>

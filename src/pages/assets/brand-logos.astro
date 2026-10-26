@@ -1,0 +1,45 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import AssetLibrary from '../../components/AssetLibrary.astro';
+import data from '../../data/assets.json';
+
+const groups = data.filter((g) => g.kind === 'logos');
+const count = groups.reduce((n, g) => n + g.items.length, 0);
+const toc: [string, string][] = [
+  ['library', 'Library'],
+  ['usage', 'When to use'],
+  ['related', 'Related'],
+];
+---
+<DocPage
+  title="Brand Logos"
+  section="Assets"
+  script="assets"
+  description="Search and copy bank, payment, wallet and app logos from the Unictive design system. Click a logo to copy its SVG and paste it into Figma."
+  intro="Banks, card networks, wallets and the apps people sign in with. Click a logo to copy its SVG, then paste it into Figma or code"
+  toc={toc}
+  meta={[['Logos', count.toLocaleString('en')], ['Categories', groups.length], ['Format', 'SVG']]}
+>
+  <Section id="library" label="Library" desc="Logos paste as vectors at 32 px. Major brands come in original, black and white">
+    <AssetLibrary kind="logos" size={40} paste={32} placeholder="bank, visa, wallet…" />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['People pick a bank or payment method', 'A card, wallet or account needs to be recognized at a glance', 'Sign in or share options name a third-party service']}
+      avoid={['Recoloring, stretching or cropping a logo. Each brand sets its own rules', 'Using a logo as decoration where the service isn’t offered', 'Showing an outdated mark when the brand has a newer one']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Country Flags', 'Flags for countries and regions'],
+      ['Icons', 'Interface icons'],
+      ['Radio Group', 'Pick one payment method'],
+      ['Dropdown', 'Long lists of banks'],
+    ]} />
+  </Section>
+</DocPage>

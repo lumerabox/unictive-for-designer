@@ -2,7 +2,7 @@ export const topNav = [
   { label: 'Foundations', href: '/foundations/color/' },
   { label: 'Components', href: '/components/button/' },
   { label: 'Tokens', href: null },
-  { label: 'Assets', href: null },
+  { label: 'Assets', href: '/assets/avatars/' },
   { label: "What's new", href: null },
 ];
 
@@ -13,6 +13,7 @@ export const sideNav = [
   { group: 'Navigation', items: ['Breadcrumbs', 'Tab Menu', 'Pagination', 'Stepper'] },
   { group: 'Feedback', items: ['Alert', 'Banner', 'Badge', 'Progress Bar', 'Tooltip'] },
   { group: 'Overlays', items: ['Modal', 'Popover'] },
+  { group: 'Assets', items: ['Avatars', 'Brand Logos', 'Country Flags', 'Emoji'] },
 ];
 
 // pages that are live; everything else is listed as coming soon
@@ -22,6 +23,10 @@ export const livePages: Record<string, string> = {
   'Radius & spacing': '/foundations/radius-and-spacing/',
   Shadows: '/foundations/shadows/',
   Icons: '/foundations/icons/',
+  Avatars: '/assets/avatars/',
+  'Brand Logos': '/assets/brand-logos/',
+  'Country Flags': '/assets/country-flags/',
+  Emoji: '/assets/emoji/',
   Button: '/components/button/',
   'Text Input': '/components/text-input/',
   'Text Area': '/components/text-area/',
