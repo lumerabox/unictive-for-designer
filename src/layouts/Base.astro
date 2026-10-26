@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/u-button.css';
 import '../styles/u-field.css';
 import '../styles/doc.css';
+import { ClientRouter } from 'astro:transitions';
 import { topNav, sideNav, livePages } from '../data/nav';
 
 interface Props {
@@ -14,7 +15,7 @@ const { title, description, active = 'Components' } = Astro.props;
 const searchItems = sideNav.flatMap((g) => g.items.map((i) => ({ label: i, group: g.group, href: livePages[i] ?? null })));
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,12 +27,13 @@ const searchItems = sideNav.flatMap((g) => g.items.map((i) => ({ label: i, group
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <ClientRouter />
   </head>
   <body>
     <div class="guides" aria-hidden="true"></div>
     <a class="skip" href="#content">Skip to content</a>
 
-    <header class="topbar">
+    <header class="topbar" transition:name="topbar" transition:persist="topbar" transition:animate="none">
       <div class="topbar-inner">
         <a class="brand" href="/" aria-label="Unictive for Designer, home">
           <svg width="33" height="16" viewBox="0 0 33 16" aria-hidden="true"><path fill="#1868D0" d="M13.8844 8.14276L10.5819 11.4075C9.83519 12.0251 8.88751 12.5545 7.85367 12.5545C5.47009 12.5545 3.546 10.584 3.546 8.14276C3.546 5.70158 5.47009 3.73098 7.85367 3.73098C9.03109 3.73098 10.1224 4.23098 10.8978 5.0251L12.5921 6.67217L13.8844 8.14276ZM15.3777 4.23098C15.3777 4.23098 11.8454 -0.298447 7.65264 0.0250836C3.48857 0.378026 1.56448 3.17216 1.56448 3.17216C1.56448 3.17216 -0.589356 5.93687 0.157306 9.64277C0.903968 13.3781 3.71831 14.8487 3.71831 14.8487C3.71831 14.8487 6.73367 16.6134 9.63417 15.731C12.5347 14.8487 13.4249 13.584 13.4249 13.584L16.2967 10.6134L19.9726 14.231C19.9726 14.231 22.4136 16.6134 26.233 15.8487C26.233 15.8487 29.794 15.4663 31.8617 11.731C33.9294 7.9957 31.8617 4.40745 31.8617 4.40745C31.8617 4.40745 29.7653 -0.386683 23.9069 0.0250836C21.7818 0.172143 19.8003 1.67215 18.1633 3.55451L16.4116 5.43687L15.3777 4.23098ZM24.9695 12.5251C23.9356 12.5251 22.9592 12.0251 22.2413 11.3781L18.8526 8.05453L21.9254 5.05452C22.7008 4.26039 23.7633 3.76039 24.9695 3.76039C27.353 3.76039 29.2771 5.73099 29.2771 8.17217C29.2771 10.6134 27.353 12.5251 24.9695 12.5251Z"/></svg>
@@ -55,7 +57,7 @@ const searchItems = sideNav.flatMap((g) => g.items.map((i) => ({ label: i, group
 
     <slot />
 
-    <dialog class="palette" data-palette aria-label="Search">
+    <dialog class="palette" data-palette aria-label="Search" transition:persist="palette">
       <div class="palette-box">
         <div class="palette-input">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -74,7 +76,7 @@ const searchItems = sideNav.flatMap((g) => g.items.map((i) => ({ label: i, group
       </div>
     </dialog>
 
-    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <div class="toast" role="status" aria-live="polite" data-toast transition:persist="toast"></div>
 
     <script>
       import '../scripts/chrome';

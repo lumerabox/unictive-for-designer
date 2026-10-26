@@ -11,7 +11,7 @@ export interface Copyable {
 
 type Controls = typeof import('../lib/figma/controls');
 
-export function setupCopy(page: string, opts: { current: () => Copyable; canvas: HTMLElement; chip?: HTMLElement; restoreChip?: () => void }) {
+export function setupCopy(page: string, opts: { signal: AbortSignal; current: () => Copyable; canvas: HTMLElement; chip?: HTMLElement; restoreChip?: () => void }) {
   let lib: Controls | null = null;
   let template: Awaited<ReturnType<Controls['loadTemplate']>> | null = null;
   const load = () =>
@@ -61,7 +61,7 @@ export function setupCopy(page: string, opts: { current: () => Copyable; canvas:
     if (r.bottom < 0 || r.top > innerHeight) return;
     e.preventDefault();
     copy(opts.current()).then((ok) => ok && flashChip());
-  });
+  }, { signal: opts.signal });
 
   document.querySelectorAll<HTMLElement>('[data-copy]').forEach((tile) =>
     tile.addEventListener('click', () => {

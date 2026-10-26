@@ -11,8 +11,10 @@ interface Props {
   section?: string;
   toc: [id: string, label: string][];
   meta?: [label: string, value: string | number][];
+  // name of the scripts/<name>-page.ts module that runs this page
+  script?: string;
 }
-const { title, description, intro, section = 'Components', toc, meta = [] } = Astro.props;
+const { title, description, intro, section = 'Components', toc, meta = [], script } = Astro.props;
 
 const group = sideNav.find((g) => g.items.includes(title))?.group ?? '';
 const flat = sideNav.flatMap((g) => g.items);
@@ -23,7 +25,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
 <Base title={title} description={description} active={section}>
   <div class="shell">
     <div class="scrim" data-scrim aria-hidden="true"></div>
-    <aside id="sidebar" class="sidebar" aria-label={section}>
+    <aside id="sidebar" class="sidebar" aria-label={section} transition:name="sidebar" transition:persist="sidebar" transition:animate="none">
       <nav class="drawer-nav" aria-label="Sections">
         {topNav.map((n) => n.href
           ? <a href={n.href} aria-current={n.label === section ? 'page' : undefined}>{n.label}</a>
@@ -43,7 +45,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
       </nav>
     </aside>
 
-    <div class="center" id="content">
+    <div class="center" id="content" data-script={script}>
       <header class="page-head">
         <p class="crumbs"><span class="label">{section}</span>{group && <><span class="slash">/</span><span class="label">{group}</span></>}</p>
         <h1>{title}</h1>

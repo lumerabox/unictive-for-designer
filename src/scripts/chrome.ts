@@ -1,10 +1,13 @@
 // site chrome: search palette, mobile drawer, coming-soon links
+import { navigate } from 'astro:transitions/client';
 import { showToast } from './toast';
 
 const soon = (name: string) => showToast(`${name} is coming soon`);
 document.addEventListener('click', (e) => {
-  const t = (e.target as HTMLElement).closest<HTMLElement>('[data-soon]');
+  const el = e.target as HTMLElement;
+  const t = el.closest<HTMLElement>('[data-soon]');
   if (t) soon(t.dataset.soon!);
+  if (el.closest('[data-scrim], #sidebar a')) setNav(false);
 });
 
 // mobile drawer
@@ -15,8 +18,7 @@ const setNav = (open: boolean) => {
   menu?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 };
 menu?.addEventListener('click', () => setNav(!document.body.classList.contains('nav-open')));
-document.querySelector('[data-scrim]')?.addEventListener('click', () => setNav(false));
-document.querySelectorAll('#sidebar a').forEach((a) => a.addEventListener('click', () => setNav(false)));
+document.addEventListener('astro:after-swap', () => setNav(false));
 matchMedia('(min-width: 1024px)').addEventListener('change', (m) => m.matches && setNav(false));
 
 // search palette
@@ -43,7 +45,7 @@ const filter = () => {
 const go = (li?: HTMLLIElement) => {
   if (!li) return;
   dialog.close();
-  if (li.dataset.href) location.href = li.dataset.href;
+  if (li.dataset.href) navigate(li.dataset.href);
   else soon(li.querySelector('span')!.textContent!);
 };
 const open = () => {
