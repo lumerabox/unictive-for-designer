@@ -27,6 +27,10 @@ function init(signal: AbortSignal) {
     if (part(a.pathname) === part(location.pathname)) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
+  // the sidebar only lists the groups of the current section
+  document.querySelectorAll<HTMLElement>('#sidebar [data-section]').forEach((g) => {
+    g.hidden = g.dataset.section !== part(location.pathname);
+  });
 
   const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
   const sections = links.map((a) => document.getElementById(a.dataset.toc!)).filter((s): s is HTMLElement => !!s);
