@@ -1,0 +1,54 @@
+---
+import DocPage from '../layouts/DocPage.astro';
+import Section from '../components/doc/Section.astro';
+import Link from '../components/doc/Link.astro';
+import { livePages } from '../data/nav';
+import { releases, kinds, idOf, dateOf, countOf } from '../data/changelog';
+
+const toc = releases.map((r): [string, string] => [idOf(r), dateOf(r)]);
+const total = releases.reduce((n, r) => n + r.changes.length, 0);
+---
+<DocPage
+  title="Changelog"
+  section="What's new"
+  script="whats-new"
+  description="What changed on Unictive for Designer: new pages, improvements and removals, newest first."
+  intro="New pages, improvements and removals on the site, newest first"
+  toc={toc}
+  meta={[['Last update', dateOf(releases[0])], ['Releases', releases.length], ['Live pages', Object.keys(livePages).length]]}
+>
+  <div class="options log-filter" slot="action" role="radiogroup" aria-label="Show changes">
+    <label class="toggle"><input type="radio" name="kind" value="all" checked /><span>All {total}</span></label>
+    {kinds.map(([k, name]) => <label class="toggle"><input type="radio" name="kind" value={k} /><span>{name} {countOf(k)}</span></label>)}
+  </div>
+
+  {releases.map((r, i) => (
+    <Section id={idOf(r)} label={dateOf(r)} title={r.title} desc={r.summary}>
+      <p class="log-date">
+        <span class="label dark">{dateOf(r)}</span>
+        {i === 0 && <span class="label">Latest</span>}
+        <span class="label muted">{r.changes.length} changes</span>
+      </p>
+      {kinds.map(([k, name]) => {
+        const list = r.changes.filter((c) => c.kind === k);
+        return list.length > 0 && (
+          <div class="log-group" data-kind={k}>
+            <div class="usage-head"><i class={`sq sq-${k}`}></i><span class="label dark">{name}</span><span class="label muted">{list.length}</span></div>
+            <ol class="log-list">
+              {list.map((c) => (
+                <li>
+                  <p>{c.text}</p>
+                  {c.pages && (
+                    <p class="log-pages">
+                      {c.pages.map((p) => <Link class="log-page" href={livePages[p]} name={p}>{p}</Link>)}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      })}
+    </Section>
+  ))}
+</DocPage>

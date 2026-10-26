@@ -19,6 +19,8 @@ const { title, description, intro, section = 'Components', toc, meta = [], scrip
 const group = sideNav.find((g) => g.items.includes(title))?.group ?? '';
 // each sidebar group belongs to one top-nav section; groups without their own section are components
 const sectionOf = (g: string) => (topNav.some((n) => n.label === g) ? g : 'Components');
+// matches the first url segment, which the sidebar script compares against
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ /g, '-');
 const flat = sideNav.filter((g) => sectionOf(g.group) === section).flatMap((g) => g.items);
 const at = flat.indexOf(title);
 const prev = at > 0 ? flat[at - 1] : null;
@@ -35,7 +37,7 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
       </nav>
       <nav>
         {sideNav.map((g) => (
-          <div class="side-group" data-section={sectionOf(g.group).toLowerCase()} hidden={sectionOf(g.group) !== section}>
+          <div class="side-group" data-section={slug(sectionOf(g.group))} hidden={sectionOf(g.group) !== section}>
             <p class="label">{g.group}</p>
             <ul>
               {g.items.map((item) => livePages[item]

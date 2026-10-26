@@ -3,7 +3,7 @@ export const topNav = [
   { label: 'Components', href: '/components/button/' },
   { label: 'Tokens', href: '/tokens/how-tokens-work/' },
   { label: 'Assets', href: '/assets/avatars/' },
-  { label: "What's new", href: null },
+  { label: "What's new", href: '/whats-new/' },
 ];
 
 export const sideNav = [
@@ -15,6 +15,7 @@ export const sideNav = [
   { group: 'Overlays', items: ['Modal', 'Popover'] },
   { group: 'Tokens', items: ['How tokens work', 'All tokens', 'Export'] },
   { group: 'Assets', items: ['Avatars', 'Brand Logos', 'Country Flags', 'Emoji'] },
+  { group: "What's new", items: ['Changelog'] },
 ];
 
 // pages that are live; everything else is listed as coming soon
@@ -31,6 +32,7 @@ export const livePages: Record<string, string> = {
   'Brand Logos': '/assets/brand-logos/',
   'Country Flags': '/assets/country-flags/',
   Emoji: '/assets/emoji/',
+  Changelog: '/whats-new/',
   Button: '/components/button/',
   'Icon Button': '/components/icon-button/',
   'Link Button': '/components/link-button/',
