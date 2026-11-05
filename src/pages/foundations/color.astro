@@ -6,6 +6,8 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import Ramp from '../../components/foundations/Ramp.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
+import { tokens, get, resolve } from '../../data/tokens';
 import { brands, brandTokens, neutrals, stateScales, semantic, states, alphas, opacity, contrast } from '../../data/foundations';
 
 const primitiveCount = brands.length * 11 + 24 + Object.keys(stateScales).length * 11;
@@ -17,10 +19,21 @@ const rows = (group: (typeof semantic)[number]) =>
     const r = contrast(hex);
     return [text && hex !== '#FFFFFF' ? `${alias} · ${r.toFixed(1)}:1 ${grade(r)}` : alias, t, hex];
   });
+const twPrefix: Record<string, string> = { Background: 'bg', Text: 'text', Stroke: 'border', Icon: 'text', Static: 'bg' };
+const twSemantic = semantic.flatMap((g) => g.tokens.map(([t, , hex]): [string, string, string] => [t, `${twPrefix[g.group]}-${t.replace('/', '-')}`, hex]));
+const twStates = states.map((s): [string, string, string] => [`state/${s.key}/base`, `bg-state-${s.key}-base`, s.tokens[1][2]]);
+const twPrimary = tokens.filter((x) => x.collection === 'brand' && !x.name.includes('/')).map((x): [string, string, string] => [x.name, `bg-${x.name}`, resolve(x).toUpperCase()]);
+const twPrimitive = [...brands.map((b) => `${b.key}/${b.base}`), ...Object.keys(stateScales).map((k) => `${k}/500`)].map((n): [string, string, string] => [n, `bg-${n.replace('/', '-')}`, get(n).value!]);
+const twExample = `<div class="bg-bg-white-0 border border-stroke-soft-200 rounded-16 p-24">
+  <p class="text-text-strong-950">Invoice paid</p>
+  <p class="text-text-sub-600">Sent to PT Sinar Jaya</p>
+  <span class="bg-state-success-lighter text-state-success-dark">Paid</span>
+  <button class="bg-primary-base hover:bg-primary-dark text-text-white-0">View</button>
+</div>`;
 ---
 <DocPage
   title="Color"
-  section="Foundations"
+  section="Components"
   script="foundations"
   description="The Unictive color system: brand ramps for every product, neutrals, state colors and the semantic tokens designers should pick from."
   intro="Primitives hold the values, semantic tokens say where each one goes. Design with the semantic tokens and the brand can change underneath"
@@ -104,6 +117,17 @@ const rows = (group: (typeof semantic)[number]) =>
       </div>
     </div>
   </Section>
+
+  <TailwindSection
+    desc="Every color token is a Tailwind color. Put the utility in front of the token name with / turned into -: bg-, text-, border-, fill-, ring-. Click a class to copy it"
+    tables={[
+      { title: 'Semantic', note: 'Background on bg-, text on text-, strokes on border- or divide-, icons on text- with currentColor', rows: twSemantic },
+      { title: 'State', note: 'Swap base for dark, light or lighter: text-state-error-dark, bg-state-error-lighter', rows: twStates },
+      { title: 'Primary', note: 'The roles of the active brand, for the main action and the current item. Product brands use bg-brand-kelolain-base and the like', rows: twPrimary },
+      { title: 'Primitives', note: 'Every step of each ramp, from -950 to -50. Only for charts and illustrations', rows: twPrimitive },
+    ]}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

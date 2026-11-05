@@ -67,9 +67,9 @@
   --lh-body: 24px;
   --fs-small: 14px;
   --lh-small: 20px;
-  --fs-label: 10px;
-  --lh-label: 12px;
-  --ls-label: 0.08em;
+  --fs-label: 12px;
+  --lh-label: 16px;
+  --ls-label: 0;
 
   /* tile heights */
   --tile-sm: 144px;

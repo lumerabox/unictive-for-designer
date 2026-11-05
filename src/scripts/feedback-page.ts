@@ -9,6 +9,13 @@ import * as modal from '../data/modal';
 import * as popover from '../data/popover';
 import { iconBtn, btn } from '../data/markup';
 import { showToast } from './toast';
+import { codeExamples } from './code-examples';
+import { copy } from './foundations-page';
+import { setupCopy } from './controls-copy';
+import { alertHtml, bannerHtml, badgeHtml, progressHtml, tooltipHtml } from '../lib/feedback-code';
+import { copyPage as feedbackPages, alertSpec, bannerSpec, badgeSpec, progressSpec, tooltipSpec } from '../lib/figma/feedback-copy';
+import { modalHtml, popoverHtml } from '../lib/overlay-code';
+import { copyPage as overlayPages, modalSpec, popoverSpec } from '../lib/figma/overlay-copy';
 
 export default function init(signal: AbortSignal) {
   type Opts = Record<string, any>;
@@ -90,12 +97,31 @@ export default function init(signal: AbortSignal) {
     if (out) out.textContent = `${o.value}%`;
   }
 
+  // copy html and copy to figma for the feedback playgrounds, from the options the preview was drawn with
+  const copyPage = { ...feedbackPages, ...overlayPages };
+  const htmlOf: Record<string, (o: any) => string> = { alert: alertHtml, banner: bannerHtml, badge: badgeHtml, progress: progressHtml, tooltip: tooltipHtml, modal: modalHtml, popover: popoverHtml };
+  const specOf: Record<string, (o: any) => ReturnType<typeof alertSpec>> = { alert: alertSpec, banner: bannerSpec, badge: badgeSpec, progress: progressSpec, tooltip: tooltipSpec, modal: modalSpec, popover: popoverSpec };
+
   document.querySelectorAll<HTMLFormElement>('[data-playground]').forEach((form) => {
     form.addEventListener('input', (e) => {
       if (!(e.target as HTMLElement).closest('[data-host]')) draw(form, form.dataset.kind === 'popover' ? { step: forms.get(form)?.step ?? 0 } : {});
     });
     draw(form);
+
+    const k = form.dataset.kind!;
+    if (!(k in copyPage)) return;
+    const opts = () => forms.get(form)!;
+    form.querySelector('[data-pg-copy]')?.addEventListener('click', () => copy(htmlOf[k](opts()), `${k} HTML`));
+    const chip = form.querySelector<HTMLElement>('[data-chip]')!;
+    setupCopy(copyPage[k as keyof typeof copyPage], {
+      signal,
+      current: () => ({ label: kinds[k].chip(opts()), spec: specOf[k](opts()) }),
+      canvas: form.querySelector<HTMLElement>('[data-canvas]')!,
+      chip,
+      restoreChip: () => (chip.textContent = kinds[k].chip(opts())),
+    });
   });
+  codeExamples();
 
   /* dismiss: alerts and banners fade out; in a playground a Show again button brings them back, tiles come back by themselves */
   function dismiss(target: HTMLElement) {

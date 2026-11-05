@@ -2,7 +2,7 @@
 // template for every doc page: sidebar, header, sections, pager
 import Base from './Base.astro';
 import Link from '../components/doc/Link.astro';
-import { sideNav, livePages, topNav } from '../data/nav';
+import { sideNav, livePages, topNav, sectionOf } from '../data/nav';
 
 interface Props {
   title: string;
@@ -16,8 +16,6 @@ interface Props {
 const { title, description, intro, section = 'Components', meta = [], script } = Astro.props;
 
 const group = sideNav.find((g) => g.items.includes(title))?.group ?? '';
-// each sidebar group belongs to one top-nav section; groups without their own section are components
-const sectionOf = (g: string) => (topNav.some((n) => n.label === g) ? g : 'Components');
 // matches the first url segment, which the sidebar script compares against
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ /g, '-');
 const flat = sideNav.filter((g) => sectionOf(g.group) === section).flatMap((g) => g.items);
@@ -67,9 +65,15 @@ const next = at >= 0 && at < flat.length - 1 ? flat[at + 1] : null;
           <slot />
           <nav class="pager" aria-label="Pagination">
             {prev
-              ? <Link class="pager-item" href={livePages[prev]} name={prev}><span class="label muted">← Previous</span><span class="pager-title">{prev}</span></Link>
+              ? <Link class="pager-item" href={livePages[prev]} name={prev}>
+                  <svg class="pager-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12.5 8h-9m0 0L7.5 4m-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="pager-text"><span class="pager-label">Previous</span><span class="pager-title">{prev}</span></span>
+                </Link>
               : <span></span>}
-            {next && <Link class="pager-item next" href={livePages[next]} name={next}><span class="label muted">Next →</span><span class="pager-title">{next}</span></Link>}
+            {next && <Link class="pager-item next" href={livePages[next]} name={next}>
+              <span class="pager-text"><span class="pager-label">Next</span><span class="pager-title">{next}</span></span>
+              <svg class="pager-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8h9m0 0L8.5 4m4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </Link>}
           </nav>
       </main>
     </div>

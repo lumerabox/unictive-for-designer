@@ -1,0 +1,73 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+
+const parts: [string, string, string][] = [
+  ['Playground', 'Designers, developers', 'Pick every property of a variant, then Copy to Figma or Copy HTML'],
+  ['Variants, sizes, states', 'Designers', 'Every option side by side. Click a tile to copy that variant'],
+  ['When to use', 'Designers', 'Where the component fits, and where another one is better'],
+  ['Do and don’t', 'Designers', 'Common mistakes next to the right way'],
+  ['Tokens and specs', 'Designers, developers', 'Sizes, spacing and the token behind every color. Click a token to copy it'],
+  ['Classes, examples', 'Developers', 'The class reference and ready-to-paste HTML with a live preview'],
+  ['Related', 'Everyone', 'Components that are often used together or instead'],
+];
+const keys: [string, string][] = [
+  ['⌘K', 'Search every page'],
+  ['⌘C', 'Copy the playground variant to Figma'],
+  ['↑ ↓ and Enter', 'Move through and open search results'],
+  ['Esc', 'Close search or the menu'],
+];
+---
+<DocPage
+  title="Usage"
+  section="Getting Started"
+  description="How a component page on Unictive for Designer is laid out, which parts are for designers and developers, and the keyboard shortcuts."
+  intro="Every component page has the same parts in the same order, so you know where to look"
+  meta={[['Parts', parts.length], ['Shortcuts', keys.length]]}
+>
+  <Section id="page" label="Page" title="A component page" desc="Top to bottom. Some components skip a part they don’t need">
+    <div class="table table-usage" role="table" aria-label="Parts of a component page">
+      <div class="tr th" role="row">{['Part', 'For', 'What it gives you'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {parts.map(([part, who, what]) => (
+        <div class="tr" role="row">
+          <span role="cell">{part}</span>
+          <span role="cell" class="muted">{who}</span>
+          <span role="cell">{what}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="soon" label="Soon" title="Coming soon" desc="Items in the sidebar or search that aren’t live yet show a short note instead of opening. The Changelog lists each one when it ships" />
+
+  <Section id="keys" label="Keys" title="Keyboard">
+    <div class="table table-keys" role="table" aria-label="Keyboard shortcuts">
+      <div class="tr th" role="row">{['Keys', 'Action'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {keys.map(([k, what]) => (
+        <div class="tr" role="row">
+          <span role="cell"><kbd>{k}</kbd></span>
+          <span role="cell">{what}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Button', 'A full component page'],
+      ['Installation', 'Set up code'],
+      ['Figma Library', 'Set up Figma'],
+      ['Changelog', 'What’s new'],
+    ]} />
+  </Section>
+</DocPage>
+
+<style>
+  .table-usage .tr { grid-template-columns: 200px 180px minmax(0, 1fr); }
+  .table-keys .tr { grid-template-columns: 200px minmax(0, 1fr); }
+  kbd { font: 500 13px/1 var(--mono); color: var(--text-strong-950); }
+  @media (max-width: 767px) {
+    .table-usage .tr, .table-keys .tr { grid-template-columns: 1fr 1fr; }
+  }
+</style>

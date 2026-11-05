@@ -1,0 +1,156 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import CopyHtml from '../../components/doc/CopyHtml.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+import { scrollGroups, scrollVars, motionSetup } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const lines = (n: number) => Array.from({ length: n }, (_, i) => `<i style="width:${[100, 92, 96, 70][i % 4]}%"></i>`).join('');
+// one line of the marquee: the words four times over, so the sideways move never shows an edge
+const marq = (words: string, attr: string) => `<p data-motion-scroll="marquee"${attr}>${Array(4).fill(words.split(' ').map((w) => `${w}<i></i>`).join('')).join('')}</p>`;
+const steps = [['01', 'Discover', 'mo-img-1'], ['02', 'Design', 'mo-img-2'], ['03', 'Build', 'mo-img-3'], ['04', 'Launch', 'mo-img-1']];
+
+// demos follow the page scroll itself, so there is only ever one scroller
+const demo = (v: string) => {
+  switch (v) {
+    case 'chars-fill': return { tone: 'dark', html: `<p class="mo-stext mo-serif" data-motion-scroll="chars-fill" style="--motion-accent: #f2643d">A product should say something before it moves. Every line, material and finish is considered.</p>` };
+    case 'words-fill': return { tone: '', html: `<p class="mo-stext" data-motion-scroll="words-fill">We design the parts you never notice, so the ones you do feel effortless.</p>` };
+    case 'words-blur': return { tone: 'navy', html: `<p class="mo-stext mo-serif" data-motion-scroll="words-blur">In this composition the structure recedes while it keeps its shape.</p>` };
+    case 'expand': return { tone: '', html: `<section class="mo-xsec" data-motion-scroll="expand"><div class="mo-img mo-img-1"></div><strong>Full bleed when it matters</strong></section>` };
+    case 'marquee': return { tone: 'tint', html: `<div class="mo-marq">${marq('Design Motion Systems', '')}${marq('Build Ship Measure', ' style="--motion-shift-from: -50%; --motion-shift: 0%"')}${marq('Tokens Components Patterns', '')}</div>` };
+    case 'parallax': return { tone: '', html: `<figure class="mo-sfig" data-motion-scroll="parallax"><div class="mo-img mo-img-2"></div></figure>` };
+    case 'zoom-out': return { tone: '', html: `<figure class="mo-sfig" data-motion-scroll="zoom-out"><div class="mo-img mo-img-3"></div></figure>` };
+    case 'reveal-circle': return { tone: '', html: `<figure class="mo-sfig" data-motion-scroll="reveal-circle"><div class="mo-img mo-img-1"></div></figure>` };
+    case 'stack': return { tone: 'tall', html: `<ul class="mo-stack" data-motion-scroll="stack" style="--motion-stack-top: calc(var(--topbar) + 24px)">${steps.map(([n, t, img]) => `<li><span class="mo-img ${img}"></span><b>${n}</b><strong>${t}</strong></li>`).join('')}</ul>` };
+    case 'pin-x': return { tone: 'tall', html: `<section data-motion-scroll="pin-x" style="--motion-pin-length: 1400px; --motion-pin-view: 420px; --motion-pin-top: calc(50vh - 210px); --motion-pin-range: cover calc(50vh + 210px) cover calc(50vh - 210px + 1400px)"><div class="m-pin"><div class="mo-pin-track">${[1, 2, 3, 1, 2, 3].map((n, i) => `<figure><div class="mo-img mo-img-${n}"></div><figcaption>Project ${String(i + 1).padStart(2, '0')}</figcaption></figure>`).join('')}</div></div></section>` };
+    case 'progress': return { tone: '', html: `<div class="mo-read"><div class="mo-pbar"><div data-motion-scroll="progress" style="--motion-timeline: --m-read; --motion-range: contain 0% contain 100%"></div></div><article class="mo-article"><b></b>${lines(5)}<span class="mo-img mo-img-2"></span>${lines(7)}<span class="mo-img mo-img-3"></span>${lines(6)}</article></div>` };
+    default: return { tone: '', html: `<div class="mo-basics"><div data-motion-scroll="fade-up"><span class="mo-card"><b></b><i></i><i></i></span></div><div data-motion-scroll="scale-in"><span class="mo-card"><b></b><i></i><i></i></span></div><div data-motion-scroll="blur-in"><span class="mo-card"><b></b><i></i><i></i></span></div><figure class="mo-frame" data-motion-scroll="reveal-clip"><div class="mo-img mo-img-2"></div></figure></div>` };
+  }
+};
+const frame = (v: string) => {
+  const d = demo(v);
+  return `<div class="mo-sframe${d.tone ? ` mo-sframe-${d.tone}` : ''}">${d.html}</div>`;
+};
+const count = scrollGroups.reduce((n, g) => n + g.items.length, 0) + 3;
+const code = {
+  text: `<p data-motion-scroll="chars-fill">A product should say something before it moves.</p>
+
+<!-- tune where it starts and how much scroll it takes -->
+<p data-motion-scroll="words-fill" style="--motion-text-start: 25%; --motion-text-span: 30%">…</p>`,
+  expand: `<section data-motion-scroll="expand" style="--motion-inset: 10%; --motion-radius: 32px">
+  <video src="reel.mp4" autoplay muted loop playsinline></video>
+</section>`,
+  pin: `<section data-motion-scroll="pin-x" style="--motion-pin-length: 400vh">
+  <div class="m-pin">
+    <div class="row">
+      <article>…</article>
+      <article>…</article>
+    </div>
+  </div>
+</section>`,
+};
+---
+<DocPage
+  title="Scroll"
+  section="Motion"
+  script="motion"
+  description="Scroll-driven animations for Unictive: text that fills as you read, sections that expand to full width, parallax, stacking cards, a pinned horizontal gallery, marquee and reading progress."
+  intro="Animations that follow the scroll position instead of a clock. Scroll slowly and they move slowly, scroll back and they rewind. Every demo here follows the page as you scroll it"
+  meta={[['Presets', count], ['Runs on', 'CSS scroll timelines'], ['JavaScript', 'Only to split text']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+  <Btn slot="action" size="Large" variant="Secondary" type="Neutral" label="Download motion.css" data-dl="/code/motion.css" data-dl-name="motion.css" />
+
+  {scrollGroups.map((g) => (
+    <Section id={g.id} label={g.group} desc={g.desc}>
+      <div class={g.items.length === 3 && !g.items.some((i) => i.wide) ? 'grid3' : 'mo-sgrid'}>
+        {g.items.map((it) => (
+          <div class:list={['tile tile-static mo-tile mo-stile', { 'mo-stile-wide': it.wide }]}>
+            <span class="tile-top"><span class="label">{it.name}</span><CopyHtml value={it.snippet} what={`${it.name} HTML`} /></span>
+            <span class="tile-body" set:html={frame(it.value)} />
+            <p class="desc">{it.desc}</p>
+            <p><button type="button" class="token cls" data-token={`data-motion-scroll="${it.value}"`}>{it.value}</button></p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  ))}
+
+  <Section id="code" label="Code" desc="Load motion.css, and motion.js when you use the text presets. The rest is one attribute">
+    <div class="block">
+      <p class="subhead">Install</p>
+      <pre class="code"><code set:html={highlight(motionSetup, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Text fill</p>
+      <pre class="code"><code set:html={highlight(code.text, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Expand to full width</p>
+      <pre class="code"><code set:html={highlight(code.expand, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Horizontal gallery</p>
+      <pre class="code"><code set:html={highlight(code.pin, 'html')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="attributes" label="Attributes" desc="One attribute picks the preset, CSS variables tune it">
+    <div class="table table-classes" role="table" aria-label="Attributes">
+      <div class="tr th" role="row">{['Attribute', 'Value', 'Description'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {scrollVars.map(([n, t, d]) => (
+        <div class="tr" role="row">
+          <span role="cell"><button type="button" class="token cls" data-token={n}>{n}</button></span>
+          <span role="cell" class="muted">{t}</span>
+          <span role="cell">{d}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="support" label="Support" desc="Scroll timelines run on the compositor, so they stay smooth without a scroll listener">
+    <SpecsTable
+      label="Support"
+      head={['Browser', 'Version', 'Without support']}
+      rows={[
+        ['Chrome and Edge', '115', '—'],
+        ['Safari', '26', 'Older versions show the content as is'],
+        ['Firefox', '159', 'Older versions show the content as is'],
+        ['Reduced motion', 'Any', 'Everything shows at rest; the gallery becomes a row you swipe'],
+        ['overflow: hidden on a parent', '—', 'The parent becomes the scroller and the animation freezes. Use overflow: clip'],
+      ]}
+    />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Landing pages and stories, where the scroll is the experience', 'One statement paragraph per page with a text fill', 'A hero image or video that opens to full width']}
+      avoid={['Product screens, forms and anything people work in', 'Hiding information until people scroll to a point', 'More than one pinned section per page; pinning takes over the scroll']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Let the text fill finish while it is still in the middle of the screen, where people read"
+      dontText="Don’t stretch it over the whole screen height. People have to scroll past the text to read the end"
+    >
+      <Fragment slot="do"><span class="mo-dd-text"><b>Every line is</b> <span>considered</span></span></Fragment>
+      <Fragment slot="dont"><span class="mo-dd-text"><b>Every</b> <span>line is considered</span></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Reveal', 'Play once on scroll'],
+      ['Text Reveal', 'Split text on time'],
+      ['Easing', 'Why scroll runs linear'],
+      ['Interaction', 'Hover and press'],
+    ]} />
+  </Section>
+</DocPage>

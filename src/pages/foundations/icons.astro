@@ -4,6 +4,8 @@ import Section from '../../components/doc/Section.astro';
 import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
+import { semantic } from '../../data/foundations';
 import data from '../../../public/icons/icons.json';
 
 const { categories, icons } = data as { categories: string[]; icons: [string, number, string, string][] };
@@ -12,11 +14,17 @@ const draw = (n: string, solid: boolean, size: number) => {
   const i = find(n);
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"${solid ? '' : ' stroke-width="2"'} aria-hidden="true">${solid ? i[3] : i[2]}</svg>`;
 };
-const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const chevron = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const twSizes = [16, 20, 24, 32].map((s): [string, string, string] => [`spacing-${s}`, `size-${s}`, `${s} px`]);
+const twColors = semantic.find((g) => g.group === 'Icon')!.tokens.map(([t, , hex]): [string, string, string] => [t, `text-${t.replace('/', '-')}`, hex]);
+const twExample = `<button class="inline-flex items-center gap-8 text-label-sm">
+  <svg class="size-20 text-icon-sub-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">…</svg>
+  Settings
+</button>`;
 ---
 <DocPage
   title="Icons"
-  section="Foundations"
+  section="Components"
   script="foundations"
   description="Search and copy all 1,171 Unictive icons in line and solid styles. Click an icon to copy its SVG and paste it into Figma or code."
   intro="Every icon comes in line and solid, on a 24 px grid. Click one to copy its SVG, then paste it into Figma or your code"
@@ -26,7 +34,7 @@ const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" ari
     <div data-icons>
       <form class="icon-tools" role="search">
         <label class="text-field">
-          <span class="label muted">Search</span>
+          <span class="visually-hidden">Search</span>
           <input type="search" name="q" placeholder="arrow, file, user…" spellcheck="false" autocomplete="off" />
         </label>
         <div class="options" role="radiogroup" aria-label="Style">
@@ -74,6 +82,15 @@ const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" ari
       </div>
     </div>
   </Section>
+
+  <TailwindSection
+    desc="Copied SVGs come in #171717 for Figma. In code, change it to currentColor, then a text- class colors the icon and size- sets its size. Click a class to copy it"
+    tables={[
+      { title: 'Size', rows: twSizes },
+      { title: 'Color', note: 'Add the class to the svg or to its parent', rows: twColors },
+    ]}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

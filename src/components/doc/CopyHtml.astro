@@ -1,0 +1,12 @@
+---
+// the plain copy button from component examples, for a snippet given as a value
+interface Props {
+  value: string;
+  what: string;
+}
+const { value, what } = Astro.props;
+---
+<button type="button" class="ex-copy" data-copy-value={value} data-copy-what={what} aria-label={`Copy ${what}`}>
+  <span>Copy</span>
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7L3 12L8 17M16 7L21 12L16 17M14 4L10 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>

@@ -1,0 +1,222 @@
+/* Unictive Design System · motion.css · tokens and reveal presets. pair with motion.js */
+
+:root {
+  /* easing */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-curtain: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: linear(0, 0.048, 0.159, 0.302, 0.452, 0.594, 0.719, 0.823, 0.903, 0.963, 1.004, 1.03, 1.043, 1.048, 1.047, 1.043, 1.036, 1.029, 1.022, 1.015, 1.01, 1.006, 1.003, 1, 0.999, 0.998, 1);
+
+  /* duration: nothing runs shorter than 300ms, the default */
+  --duration-base: 300ms;
+  --duration-medium: 400ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  --duration-reveal: 900ms;
+  --duration-cinematic: 1400ms;
+
+  /* stagger and distance */
+  --stagger-list: 60ms;
+  --stagger-item: 100ms;
+  --stagger-word: 80ms;
+  --stagger-char: 30ms;
+  --distance-sm: 8px;
+  --distance-md: 24px;
+  --distance-lg: 64px;
+}
+
+/* reveal: motion.js marks each moving part .m-t and adds .is-in when it scrolls into view.
+   without motion.js nothing is hidden, so content never gets stuck invisible */
+.m-t {
+  --_d: var(--motion-duration, var(--duration-reveal));
+  --_e: var(--motion-ease, var(--ease-expo));
+  --_dist: var(--motion-distance, var(--distance-md));
+  --_delay: calc(var(--motion-delay, 0ms) + var(--m-i, 0) * var(--motion-stagger, var(--m-stagger, var(--stagger-item))));
+  transition-property: opacity, translate, scale, filter, clip-path;
+  transition-duration: var(--_d);
+  /* opacity follows a plain ease-out so it lands before the slower movement */
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1), var(--_e), var(--_e), var(--_e), var(--_e);
+  transition-delay: var(--_delay);
+}
+
+.m-t:not(.is-in) { opacity: 0; }
+.m-t:not(.is-in)[data-m='fade-up'] { translate: 0 var(--_dist); }
+.m-t:not(.is-in)[data-m='fade-down'] { translate: 0 calc(var(--_dist) * -1); }
+.m-t:not(.is-in)[data-m='fade-left'] { translate: var(--_dist) 0; }
+.m-t:not(.is-in)[data-m='fade-right'] { translate: calc(var(--_dist) * -1) 0; }
+.m-t:not(.is-in)[data-m='scale-in'] { scale: 0.92; }
+.m-t:not(.is-in)[data-m='blur-in'] { filter: blur(12px); translate: 0 calc(var(--_dist) / 2); }
+
+/* image reveal: wipe the frame open, settle the image from a zoom, or pass a color block over it */
+.m-t[data-m^='reveal'] { overflow: hidden; }
+.m-t[data-m^='reveal']:not(.is-in) { opacity: 1; }
+.m-t[data-m='reveal-clip'], .m-t[data-m='reveal-curtain'] { --_e: var(--motion-ease, var(--ease-curtain)); --_d: var(--motion-duration, var(--duration-cinematic)); }
+.m-t[data-m='reveal-clip'] { clip-path: inset(0); }
+.m-t[data-m='reveal-clip']:not(.is-in) { clip-path: inset(100% 0 0 0); }
+.m-t[data-m='reveal-clip'][data-motion-from='top']:not(.is-in) { clip-path: inset(0 0 100% 0); }
+.m-t[data-m='reveal-clip'][data-motion-from='left']:not(.is-in) { clip-path: inset(0 100% 0 0); }
+.m-t[data-m='reveal-clip'][data-motion-from='right']:not(.is-in) { clip-path: inset(0 0 0 100%); }
+.m-t[data-m='reveal-clip'][data-motion-from='center']:not(.is-in) { clip-path: inset(50% 50% 50% 50%); }
+.m-t:is([data-m='reveal-clip'], [data-m='reveal-zoom']) > :is(img, picture, video, .m-media) { transition: scale calc(var(--_d) * 1.2) var(--_e) var(--_delay); }
+.m-t[data-m='reveal-clip']:not(.is-in) > :is(img, picture, video, .m-media) { scale: 1.2; }
+.m-t[data-m='reveal-zoom']:not(.is-in) { opacity: 0; }
+.m-t[data-m='reveal-zoom']:not(.is-in) > :is(img, picture, video, .m-media) { scale: 1.25; }
+.m-t[data-m='reveal-curtain'] { position: relative; }
+.m-t[data-m='reveal-curtain']::after { content: ''; position: absolute; inset: 0; background: var(--motion-curtain, var(--color-primary-base, #1868d0)); scale: 0 1; pointer-events: none; }
+.m-t[data-m='reveal-curtain'].is-in::after { animation: m-curtain var(--_d) var(--_e) var(--_delay) both; }
+.m-t[data-m='reveal-curtain'] > * { transition: opacity 0ms linear calc(var(--_delay) + var(--_d) / 2); }
+.m-t[data-m='reveal-curtain']:not(.is-in) > * { opacity: 0; transition-delay: 0ms; }
+@keyframes m-curtain {
+  0% { scale: 0 1; transform-origin: left; }
+  50% { scale: 1 1; transform-origin: left; }
+  50.01% { scale: 1 1; transform-origin: right; }
+  100% { scale: 0 1; transform-origin: right; }
+}
+
+/* replay: motion.js snaps back to the start without playing the exit */
+.m-reset, .m-reset *, .m-reset *::after { transition: none !important; }
+
+/* text reveal: motion.js splits the text into words or characters, each in its own mask */
+.m-split { display: inline-block; vertical-align: top; }
+.m-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+.m-word { display: inline-block; white-space: nowrap; }
+.m-piece { display: inline-block; }
+.m-piece:not(.is-in)[data-m$='-up'] { opacity: 1; translate: 0 110%; }
+.m-piece:not(.is-in)[data-m='words-blur'] { filter: blur(10px); translate: 0 0.3em; }
+.m-piece:not(.is-in)[data-m='chars-fade'] { translate: 0 0.15em; }
+.m-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* interaction: classes for hover and press, data-motion-* attributes for pointer effects that need motion.js.
+   hover effects only run on devices that can hover */
+.m-press { transition: scale var(--duration-base) var(--ease-standard); }
+.m-press:active { scale: 0.97; }
+
+.m-pop[aria-pressed='true'] > svg { animation: m-pop var(--duration-slower) var(--ease-pop); }
+@keyframes m-pop { from { scale: 0.5; } }
+
+.m-lift { transition: translate var(--duration-medium) var(--ease-enter), box-shadow var(--duration-medium) var(--ease-enter); }
+.m-underline { text-decoration: none; background: linear-gradient(currentColor, currentColor) right bottom / 0 1px no-repeat; transition: background-size var(--duration-medium) var(--ease-move); }
+.m-nudge > svg:last-child { transition: translate var(--duration-base) var(--ease-enter); }
+.m-zoom { overflow: hidden; }
+.m-zoom > :is(img, picture, video, .m-media) { transition: scale var(--duration-reveal) var(--ease-expo); }
+.m-fill { background-image: linear-gradient(var(--motion-fill, var(--color-primary-base, #1868d0)) 0 0); background-repeat: no-repeat; background-position: right; background-size: 0 100%; transition: background-size var(--duration-medium) var(--ease-move), color var(--duration-medium) var(--ease-move), box-shadow var(--duration-medium) var(--ease-move); }
+.m-rotate > svg { transition: rotate var(--duration-slower) var(--ease-spring); }
+
+@media (hover: hover) {
+  .m-lift:hover { translate: 0 -4px; box-shadow: 0 12px 24px -8px rgb(14 18 27 / 0.16), 0 0 0 1px rgb(14 18 27 / 0.04); }
+  .m-underline:hover { background-position: left bottom; background-size: 100% 1px; }
+  .m-nudge:hover > svg:last-child { translate: 3px 0; }
+  .m-zoom:hover > :is(img, picture, video, .m-media) { scale: 1.06; }
+  .m-fill:hover { background-position: left; background-size: 100% 100%; color: var(--motion-fill-text, #fff); }
+  .m-rotate:hover > svg { rotate: 90deg; }
+}
+
+[data-motion-magnetic] { transition: translate 600ms var(--ease-spring); }
+[data-motion-magnetic].is-near { transition: translate var(--duration-base) var(--ease-enter); }
+[data-motion-tilt] { transition: transform 600ms var(--ease-spring); transform-style: preserve-3d; }
+[data-motion-tilt].is-near { transition: transform var(--duration-base) var(--ease-enter); }
+[data-motion-spotlight] { position: relative; isolation: isolate; }
+[data-motion-spotlight]::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(var(--motion-glow-size, 240px) circle at var(--m-x, 50%) var(--m-y, 50%), var(--motion-glow, rgb(24 104 208 / 0.16)), transparent 70%); opacity: 0; transition: opacity var(--duration-base) var(--ease-standard); pointer-events: none; z-index: -1; }
+[data-motion-spotlight].is-near::after { opacity: 1; }
+[data-motion-ripple] { position: relative; overflow: hidden; isolation: isolate; }
+.m-ripple { position: absolute; border-radius: 50%; background: var(--motion-ripple, currentColor); opacity: 0.2; translate: -50% -50%; scale: 0; pointer-events: none; animation: m-ripple 600ms var(--ease-enter) forwards; }
+@keyframes m-ripple { to { scale: 1; opacity: 0; } }
+
+/* scroll-driven: progress follows the scroll position instead of time. pure css except text, which motion.js splits.
+   browsers without scroll-driven animations, and reduced motion, just show the content */
+.m-pin { overflow-x: auto; }
+.m-pin > * { display: flex; gap: var(--motion-pin-gap, 24px); width: max-content; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-motion-scroll] {
+      animation: var(--_kf, none) linear both;
+      animation-timeline: view();
+      animation-range: var(--motion-range, var(--_range, entry 0% cover 40%));
+    }
+    [data-motion-scroll='fade-up'] { --_kf: m-fade-up; }
+    [data-motion-scroll='scale-in'] { --_kf: m-scale-in; }
+    [data-motion-scroll='blur-in'] { --_kf: m-blur-in; }
+    [data-motion-scroll='reveal-clip'] { --_kf: m-reveal-clip; }
+
+    /* a section that opens from inset to full width as it reaches the middle */
+    [data-motion-scroll='expand'] { --_kf: m-expand; --_range: entry 0% cover 50%; }
+    [data-motion-scroll='reveal-circle'] { --_kf: m-reveal-circle; --_range: entry 30% cover 60%; }
+
+    /* the frame stays, the image inside drifts or settles */
+    [data-motion-scroll='parallax'], [data-motion-scroll='zoom-out'] { overflow: hidden; view-timeline: --m-frame block; }
+    :is([data-motion-scroll='parallax'], [data-motion-scroll='zoom-out']) > * { animation: var(--_ckf) linear both; animation-timeline: --m-frame; animation-range: var(--motion-range, var(--_crange, cover 0% cover 100%)); }
+    [data-motion-scroll='parallax'] > * { --_ckf: m-parallax; scale: 1.3; }
+    [data-motion-scroll='zoom-out'] > * { --_ckf: m-zoom-out; --_crange: entry 0% cover 60%; }
+
+    /* a line of type that slides sideways with the scroll */
+    [data-motion-scroll='marquee'] { --_kf: m-marquee; --_range: cover 0% cover 100%; width: max-content; white-space: nowrap; }
+
+    /* reading progress: a bar that fills with the nearest scroller */
+    [data-motion-scroll='progress'] { animation: m-progress linear both; animation-timeline: var(--motion-timeline, scroll(nearest block)); animation-range: var(--motion-range, normal); transform-origin: left; }
+
+    /* text: motion.js splits it, each piece lights up in turn as the block crosses the screen */
+    .m-scroll-text { view-timeline: --m-text block; }
+    .m-scroll-text .m-piece {
+      --_from: calc(var(--motion-text-start, 15%) + var(--m-i, 0) / var(--m-n, 1) * var(--motion-text-span, 35%));
+      animation: var(--_pkf) linear both;
+      animation-timeline: --m-text;
+      animation-range: cover var(--_from) cover calc(var(--_from) + var(--motion-text-window, 8%));
+    }
+    [data-motion-scroll='words-fill'] .m-piece { --_pkf: m-text-fill; }
+    [data-motion-scroll='chars-fill'] .m-piece { --_pkf: m-text-accent; --motion-text-window: 12%; }
+    [data-motion-scroll='words-blur'] .m-piece { --_pkf: m-text-blur; --motion-text-window: 12%; }
+
+    /* cards stick one over another and step back as the next arrives. motion.js numbers them */
+    [data-motion-scroll='stack'] { view-timeline: --m-stack block; }
+    [data-motion-scroll='stack'] > * {
+      position: sticky;
+      top: calc(var(--motion-stack-top, 24px) + var(--m-i, 0) * var(--motion-stack-peek, 12px));
+      transform-origin: top center;
+      animation: m-stack linear both;
+      animation-timeline: --m-stack;
+      animation-range: contain calc(var(--m-i, 0) / var(--m-n, 1) * 100%) contain 100%;
+    }
+
+    /* a tall section pins its child and turns vertical scroll into a sideways move */
+    [data-motion-scroll='pin-x'] { --_kf: none; height: var(--motion-pin-length, 300vh); view-timeline: --m-pin block; }
+    [data-motion-scroll='pin-x'] > .m-pin { position: sticky; top: var(--motion-pin-top, 0px); height: var(--motion-pin-view, 100vh); display: flex; align-items: center; overflow: hidden; container-type: inline-size; }
+    [data-motion-scroll='pin-x'] > .m-pin > * { animation: m-pin-x linear both; animation-timeline: --m-pin; animation-range: var(--motion-pin-range, contain 0% contain 100%); }
+  }
+}
+@keyframes m-fade-up { from { opacity: 0; translate: 0 var(--motion-distance, var(--distance-lg)); } }
+@keyframes m-scale-in { from { opacity: 0; scale: 0.85; } }
+@keyframes m-blur-in { from { opacity: 0; filter: blur(16px); } }
+@keyframes m-reveal-clip { from { clip-path: inset(100% 0 0 0); } }
+@keyframes m-expand { from { clip-path: inset(0 var(--motion-inset, 10%) round var(--motion-radius, 24px)); } to { clip-path: inset(0 0 round 0); } }
+@keyframes m-reveal-circle { from { clip-path: circle(12% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+@keyframes m-parallax { from { translate: 0 -12%; } to { translate: 0 12%; } }
+@keyframes m-zoom-out { from { scale: 1.35; } to { scale: 1; } }
+@keyframes m-marquee { from { translate: var(--motion-shift-from, 0%) 0; } to { translate: var(--motion-shift, -50%) 0; } }
+@keyframes m-progress { from { scale: 0 1; } }
+@keyframes m-text-fill { from { opacity: var(--motion-text-dim, 0.2); } }
+@keyframes m-text-accent { 0% { opacity: var(--motion-text-dim, 0.2); } 30% { opacity: 0.7; color: var(--motion-accent, var(--color-primary-base, #1868d0)); } 70% { opacity: 1; } }
+@keyframes m-text-blur { from { opacity: var(--motion-text-dim, 0.2); filter: blur(8px); } }
+@keyframes m-stack { to { scale: calc(1 - (var(--m-n, 1) - 1 - var(--m-i, 0)) * 0.04); filter: brightness(0.92); } }
+@keyframes m-pin-x { to { translate: calc(-100% + 100cqw) 0; } }
+
+/* reduced motion: keep a short fade, drop movement, blur and wipes */
+@media (prefers-reduced-motion: reduce) {
+  .m-t, .m-t > *, .m-t::after {
+    translate: none !important;
+    scale: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition-duration: var(--duration-base) !important;
+    transition-delay: 0ms !important;
+  }
+  .m-t[data-m='reveal-curtain']::after { display: none; }
+  .m-t[data-m='reveal-curtain'] > * { transition-delay: 0ms !important; }
+  .m-press:active, .m-lift:hover, .m-zoom:hover > *, .m-nudge:hover > svg, .m-rotate:hover > svg { translate: none; scale: none; rotate: none; }
+  .m-ripple { display: none; }
+  .m-pop > svg { animation: none !important; }
+}

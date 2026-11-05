@@ -1,6 +1,9 @@
 import { defaultVariant, metrics, variantName, type Variant } from '../data/button';
 import { showToast, pasteKey } from './toast';
 import { writeClipboard } from './figma-copy';
+import { copy } from './foundations-page';
+import { buttonHtml } from '../lib/button-code';
+import { codeExamples } from './code-examples';
 
 export default function init(signal: AbortSignal) {
   type Clip = typeof import('../lib/figma/clipboard');
@@ -67,6 +70,11 @@ export default function init(signal: AbortSignal) {
     el.querySelector<SVGElement>('[data-icon="right"]')!.toggleAttribute('hidden', !v.rightIcon);
     el.querySelector('.u-btn-text')!.textContent = v.label;
   }
+
+  // html for the playground variant
+  document.querySelector('[data-pg-copy]')!.addEventListener('click', () => copy(buttonHtml(current()), 'button HTML'));
+
+  codeExamples();
 
   let chipTimer = 0;
   function render() {

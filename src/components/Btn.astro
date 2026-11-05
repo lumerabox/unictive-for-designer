@@ -9,14 +9,17 @@ interface Props {
   rightIcon?: boolean;
   label?: string;
   static?: boolean;
-  as?: 'button' | 'span';
+  as?: 'button' | 'span' | 'a';
+  copy?: 'figma' | 'html';
   [key: string]: any;
 }
-const { size = 'Medium', variant = 'Primary', type = 'Main', state = 'Default', rounded = false, leftIcon = false, rightIcon = false, label = 'Button', static: isStatic = false, as = 'button', ...rest } = Astro.props;
+const { size = 'Medium', variant = 'Primary', type = 'Main', state = 'Default', rounded = false, leftIcon = false, rightIcon = false, label = 'Button', static: isStatic = false, as = 'button', copy, ...rest } = Astro.props;
 const Tag = as;
+const copyLabel = copy === 'figma' ? 'Copy to Figma' : copy === 'html' ? 'Copy HTML' : undefined;
 ---
 <Tag
-  class="u-btn"
+  class:list={['u-btn', copy && 'u-btn-copy']}
+  aria-label={copyLabel}
   data-size={size.toLowerCase()}
   data-style={variant.toLowerCase()}
   data-type={type.toLowerCase()}
@@ -29,5 +32,11 @@ const Tag = as;
 >
   <svg data-icon="left" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden={!leftIcon}><path d="M15 18L9 12L15 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
   <span class="u-btn-text">{label}</span>
-  <svg data-icon="right" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden={!rightIcon}><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  {copy === 'figma' ? (
+    <svg data-logo viewBox="0 0 38 57" aria-hidden="true"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" /><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" /><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" /><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" /><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" /></svg>
+  ) : copy === 'html' ? (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7L3 12L8 17M16 7L21 12L16 17M14 4L10 20" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  ) : (
+    <svg data-icon="right" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden={!rightIcon}><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  )}
 </Tag>

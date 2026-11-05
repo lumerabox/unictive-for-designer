@@ -2,6 +2,10 @@
 import { cardInfo, maxSizeMB, slug, type CardState } from '../data/file-upload';
 import { stateIcon, close as closeIcon, refresh } from '../components/file-upload/icons';
 import { setupCopy } from './controls-copy';
+import { copy } from './foundations-page';
+import { codeExamples } from './code-examples';
+import { fileUploadHtml } from '../lib/file-upload-code';
+import type { AreaSize, CardSize } from '../data/file-upload';
 import type { Part } from '../lib/figma/controls';
 
 export default function init(signal: AbortSignal) {
@@ -172,4 +176,14 @@ export default function init(signal: AbortSignal) {
   }
 
   setupCopy('file-upload', { signal, current, canvas, chip, restoreChip: render });
+
+  // html for the playground variant
+  document.querySelector('[data-pg-copy]')!.addEventListener('click', () => copy(fileUploadHtml({
+    areaSize: get('areaSize') as AreaSize, disabled: get('disable') === 'true',
+    label: on('label'), required: on('required'), optional: on('optional'), caption: on('caption'),
+    cardSize: get('cardSize') as CardSize, cardState: get('cardState') as CardState, close: on('close'),
+    name: file?.name || 'File name', card: !card.hidden,
+  }), 'file upload HTML'));
+
+  codeExamples();
 }

@@ -1,0 +1,124 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import PgSelect from '../../components/choice/PgSelect.astro';
+import EaseTile from '../../components/foundations/EaseTile.astro';
+import { highlight } from '../../lib/highlight';
+import { easings, families, keywords, physics, motionSetup } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const total = easings.length + families.length * 3 + keywords.length + physics.length;
+const all: [string, string][] = [
+  ...easings.map((e): [string, string] => [`var(--${e.name})`, e.name]),
+  ...families.flatMap((f) => f.curves.map((c): [string, string] => [c.value, c.name])),
+  ...keywords.map((c): [string, string] => [c.value, c.name]),
+  ...physics.map((c): [string, string] => [c.value, c.name]),
+];
+const lanes = [['var(--ease-standard)'], ['var(--ease-expo)'], ['var(--ease-spring)']];
+const tokenCss = `:root {
+${easings.map((e) => `  --${e.name}: ${e.value};`).join('\n')}
+}`;
+const usageCss = `.menu { transition: opacity 160ms var(--ease-enter), translate 160ms var(--ease-enter); }
+.menu[hidden] { transition-duration: 120ms; transition-timing-function: var(--ease-exit); }`;
+---
+<DocPage
+  title="Easing"
+  section="Motion"
+  script="motion"
+  description="Every easing curve for Unictive motion: the eight tokens, the standard sine to back families, CSS keywords, springs, elastic and bounce. Hover a curve to see it move."
+  intro="Easing is how speed changes over time, and it decides whether motion feels alive or mechanical. Hover any curve to watch it play, click to copy it"
+  meta={[['Tokens', easings.length], ['Curves', total], ['Default', 'ease-standard']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+  <Btn slot="action" size="Large" variant="Secondary" type="Neutral" label="Download motion.css" data-dl="/code/motion.css" data-dl-name="motion.css" />
+
+  <Section id="tokens" label="Tokens" desc="Eight curves cover everything in Unictive. Reach for these first; the catalog below is for when you need something specific">
+    <div class="grid4">
+      {easings.map((e) => <EaseTile name={e.name} value={e.value} bezier={e.bezier} copy={`var(--${e.name})`} />)}
+    </div>
+    <div class="block" style="margin-top:24px">
+      <SpecsTable label="Token use" head={['Use for', 'Token', 'Value']} rows={easings.map((e): [string, string, string] => [e.use, e.name, e.bezier ? e.value : 'linear(…)'])} />
+    </div>
+  </Section>
+
+  <Section id="compare" label="Compare" desc="Race three curves at the same duration to feel the difference">
+    <form class="pg" data-ease-compare onsubmit="return false">
+      <div class="fields">
+        {lanes.map(([v], i) => <PgSelect name={`e${i}`} label={`Curve ${i + 1}`} options={all} value={v} />)}
+        <PgSelect name="t" label="Duration" options={[['400ms', '400 ms'], ['700ms', '700 ms'], ['1200ms', '1200 ms'], ['2000ms', '2000 ms']]} value="1200ms" />
+      </div>
+      <div class="canvas mo-lanes" data-lanes>
+        {lanes.map((_, i) => (
+          <div class="mo-lane"><span class="label muted" data-lane-name={i}></span><span class="mo-track"><span class="mo-run" data-lane={i}><i></i></span></span></div>
+        ))}
+        <div class="canvas-tools"><Btn size="Small" label="Play" data-lanes-play /></div>
+      </div>
+    </form>
+  </Section>
+
+  {families.map((f, i) => (
+    <Section id={f.name.toLowerCase()} label={f.name} desc={`${f.desc}. In starts slow, out ends slow, in-out does both`}>
+      <div class="grid3">
+        {f.curves.map((c) => <EaseTile name={c.name} value={c.value} bezier={c.bezier} />)}
+      </div>
+    </Section>
+  ))}
+
+  <Section id="physics" label="Spring and bounce" desc="Built with linear(), so they run in CSS with no JavaScript. Springs feel physical; elastic and bounce are for playful moments only">
+    <div class="grid3">
+      {physics.map((c) => <EaseTile name={c.name} value={c.value} />)}
+    </div>
+  </Section>
+
+  <Section id="keywords" label="CSS keywords" desc="The browser’s built-in curves. Fine for prototypes; prefer a token in production">
+    <div class="grid3">
+      {keywords.map((c) => <EaseTile name={c.name} value={c.value} bezier={c.bezier} />)}
+    </div>
+  </Section>
+
+  <Section id="code" label="Code" desc="The tokens live in motion.css. Exits use the exit curve and a shorter duration">
+    <div class="block">
+      <p class="subhead">Install</p>
+      <pre class="code"><code set:html={highlight(motionSetup, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Tokens</p>
+      <pre class="code"><code set:html={highlight(tokenCss, 'css')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Enter and exit</p>
+      <pre class="code"><code set:html={highlight(usageCss, 'css')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="Picking a curve">
+    <Usage
+      use={['Out curves when something arrives: it moves fast, then settles where you look', 'In curves when something leaves: it starts slow, then gets out of the way', 'In-out when something moves from one place to another on screen']}
+      avoid={['In curves for something appearing; it feels sluggish', 'Back, elastic and bounce in product UI people use every day', 'Linear for movement; keep it for spinners, progress and scroll-linked effects']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Ease movement with a curve: enter with ease-enter, leave with ease-exit, a little faster"
+      dontText="Don’t move UI on a linear curve. It reads mechanical"
+    >
+      <Fragment slot="do"><svg class="mo-curve" style="width:120px" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M0 0H100V100H0Z" /><path class="line" d="M0 100 C22 0 36 0 100 0" /></svg></Fragment>
+      <Fragment slot="dont"><svg class="mo-curve" style="width:120px" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M0 0H100V100H0Z" /><path class="line" d="M0 100 L100 0" /></svg></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Duration', 'How long it takes'],
+      ['Choreography', 'Stagger, distance and order'],
+      ['Reveal', 'Curves on scroll'],
+      ['Interaction', 'Curves under the pointer'],
+    ]} />
+  </Section>
+</DocPage>

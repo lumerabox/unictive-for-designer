@@ -9,6 +9,8 @@ import Checkbox from '../../components/Checkbox.astro';
 import ChoiceLabel from '../../components/choice/ChoiceLabel.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { checkbox as code } from '../../lib/choice-code';
 import { bare, labeled, group, copyAttr } from '../../lib/figma/choice-copy';
 import { sizes, states, positions, metrics, variantCount } from '../../data/checkbox';
 
@@ -38,7 +40,7 @@ const specs: [string, string, string][] = [
   intro="Checkboxes let people pick any number of options from a list, or confirm a single choice like agreeing to terms"
   meta={[['Variants', variantCount], ['Component sets', 2]]}
 >
-  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then click the preview to check and uncheck it">
     <form class="pg" data-playground data-kind="checkbox" onsubmit="return false">
       <div class="fields">
@@ -67,8 +69,11 @@ const specs: [string, string, string][] = [
         <p class="chip" data-chip aria-live="polite">Checkbox-label · Position=Right · State=Select · Disable=false</p>
       </div>
       <div class="pg-foot">
-        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
-        <Btn label="Copy to Figma" data-copy-current />
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -142,6 +147,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Checkbox tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Checkbox" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

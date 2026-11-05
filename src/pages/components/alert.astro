@@ -7,6 +7,8 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { alertCode as code } from '../../lib/feedback-code';
 import '../../styles/u-feedback.css';
 import '../../styles/u-alert.css';
 import { sizes, statuses, styles, render, chip, variantCount } from '../../data/alert';
@@ -48,6 +50,7 @@ const specs: [string, string, string][] = [
   intro="Alerts give short, timely feedback inside a page, from a saved change to a failed payment"
   meta={[['Variants', variantCount], ['Statuses', statuses.length], ['Styles', styles.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a size, status and style, then dismiss it to see how it leaves">
     <form class="pg" data-playground data-kind="alert" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -64,7 +67,14 @@ const specs: [string, string, string][] = [
       <div class="canvas" data-canvas>
         <div data-host><Fragment set:html={render({ live: true })} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ size: 'Large', status: 'Info', style: 'Light' })}</p>
-        <div class="canvas-tools"><Btn size="Small" variant="Secondary" type="Neutral" label="Show again" data-restore hidden /></div>
+        <div class="canvas-tools"><Btn size="Small" variant="Tertiary" type="Neutral" label="Show again" data-restore hidden /></div>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -123,6 +133,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Alert tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Alert" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

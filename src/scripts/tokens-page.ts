@@ -12,7 +12,7 @@ function library(signal: AbortSignal) {
   const swaps = [...root.querySelectorAll<HTMLElement>('[data-slate]')];
   let mode = 'gray';
 
-  // a collection can be opened from a link, /tokens/all-tokens/?c=neutral
+  // a collection can be opened from a link, /foundations/all-tokens/?c=neutral
   const c0 = new URLSearchParams(location.search).get('c');
   if (c0 && form.c.querySelector(`option[value="${c0}"]`)) form.c.value = c0;
 
@@ -72,7 +72,7 @@ function exports(signal: AbortSignal) {
 export default function init(signal: AbortSignal) {
   document.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[data-copy]');
-    if (b) copy(b.dataset.copy!);
+    if (b) copy(b.dataset.copy!, b.dataset.copyLabel ?? b.dataset.copy);
   }, { signal });
   pickers(signal);
   library(signal);

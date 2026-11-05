@@ -6,6 +6,9 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { badgeCode as code } from '../../lib/feedback-code';
 import '../../styles/u-feedback.css';
 import '../../styles/u-badge.css';
 import { sizes, types, colors, styles, colorTokens, render, chip, variantCount } from '../../data/badge';
@@ -39,6 +42,7 @@ const specs: [string, string, string][] = [
   intro="Badges are small labels for a status, a category or a count, next to the thing they describe"
   meta={[['Variants', variantCount], ['Colors', colors.length], ['Styles', styles.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Build a badge, then change its text. Numbers work on Basic and Dot, icons on the Icon type">
     <form class="pg" data-playground data-kind="badge" onsubmit="return false">
       <div class="fields">
@@ -56,6 +60,13 @@ const specs: [string, string, string][] = [
       <div class="canvas" data-canvas>
         <div data-host><Fragment set:html={render({})} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ size: 'Medium', type: 'Basic', color: 'Main', style: 'Light', number: false, rounded: false })}</p>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -119,6 +130,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Badge tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Badge" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

@@ -7,6 +7,8 @@ import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import TextArea from '../../components/TextArea.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { classes, examples } from '../../lib/text-area-code';
 import { styles, sizes, states, metrics, maxLength, variantCount } from '../../data/text-area';
 
 const stateName = (s: string) => (s === 'Disable' ? 'Disabled' : s);
@@ -35,7 +37,7 @@ const specs: [string, string, string][] = [
   intro="Text areas let people write longer text across several lines, like a note, a description or feedback"
   meta={[['Variants', variantCount], ['Limit', `${maxLength} characters`]]}
 >
-  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then click into the preview to type">
     <form class="pg" data-playground onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -46,7 +48,7 @@ const specs: [string, string, string][] = [
               <select name={key as string}>
                 {(opts as readonly string[]).map((o) => <option value={o}>{stateName(o)}</option>)}
               </select>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </label>
         ))}
@@ -67,8 +69,11 @@ const specs: [string, string, string][] = [
         <p class="chip" data-chip aria-live="polite">Style=Outline · Size=Large · State=Placeholder</p>
       </div>
       <div class="pg-foot">
-        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
-        <Btn label="Copy to Figma" data-copy-current />
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -129,6 +134,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Text Area tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Text area" classes={classes} examples={examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

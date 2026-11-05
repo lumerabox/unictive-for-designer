@@ -1,0 +1,141 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import CopyHtml from '../../components/doc/CopyHtml.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+import { staggers, distances } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const replay = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.67 8a5.33 5.33 0 1 0 1.56-3.77M2.67 2.67v2.66h2.66" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const card = '<span class="mo-card"><b></b><i></i></span>';
+// each stagger token plays on its own kind of content: rows, cards, words, letters
+const stagDemo = (n: string) => {
+  const st = `--motion-stagger: var(--${n})`;
+  if (n === 'stagger-list') return `<ul class="mo-list" data-motion="fade-left" data-motion-children style="${st}; --motion-distance: var(--distance-sm); --motion-duration: var(--duration-slower)">${'<li><b></b><i></i></li>'.repeat(5)}</ul>`;
+  if (n === 'stagger-item') return `<ul class="mo-row" data-motion="fade-up" data-motion-children style="${st}; --motion-duration: var(--duration-slower)">${`<li>${card}</li>`.repeat(3)}</ul>`;
+  if (n === 'stagger-word') return `<p class="mo-text" data-motion="words-up" style="${st}">Word by word, the sentence builds itself</p>`;
+  return `<p class="mo-text" data-motion="chars-up" style="${st}">Letter by letter</p>`;
+};
+const stagSnip = (n: string) => {
+  const st = `--motion-stagger: var(--${n})`;
+  if (n === 'stagger-list') return `<ul data-motion="fade-left" data-motion-children style="${st}">\n${'  <li>…</li>\n'.repeat(5)}</ul>`;
+  if (n === 'stagger-item') return `<ul data-motion="fade-up" data-motion-children style="${st}">\n${'  <li>…</li>\n'.repeat(3)}</ul>`;
+  if (n === 'stagger-word') return `<p data-motion="words-up" style="${st}">Word by word, the sentence builds itself</p>`;
+  return `<h2 data-motion="chars-up" style="${st}">Letter by letter</h2>`;
+};
+const tokenCss = `:root {
+${staggers.map(([n, v]) => `  --${n}: ${v};`).join('\n')}
+${distances.map(([n, v]) => `  --${n}: ${v};`).join('\n')}
+}`;
+const stagCss = `.list > li {
+  animation: in var(--duration-slower) var(--ease-enter) both;
+  animation-delay: calc(sibling-index() * var(--stagger-list));
+}`;
+---
+<DocPage
+  title="Choreography"
+  section="Motion"
+  script="motion"
+  description="How Unictive motion moves together: stagger and distance tokens, ordering, and pairing curves with durations."
+  intro="When several things move at once, order and spacing matter as much as the curve. Stagger gives the eye a path, distance keeps it calm. Hover a tile to replay it"
+  meta={[['Stagger', staggers.length], ['Distance', distances.length], ['Max sequence', '≈ 2 s']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+
+  <Section id="stagger" label="Stagger" desc="The gap between items that move one after another. Each token on the content it was made for">
+    <div class="grid2">
+      {staggers.map(([n, v, u]) => (
+        <div class="tile tile-static mo-tile" data-hover-replay>
+          <span class="tile-top"><button type="button" class="token" data-token={`var(--${n})`}>{n}</button><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${n}`} set:html={replay} /><CopyHtml value={stagSnip(n)} what={`${n} HTML`} /></span></span>
+          <span class="tile-body" set:html={stagDemo(n)} />
+          <p class="desc">{v} · {u}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="distance" label="Distance" desc="How far a fade travels. Short in product UI, longer on landing pages">
+    <div class="grid3">
+      {distances.map(([n, v, u]) => (
+        <div class="tile tile-static mo-tile" data-hover-replay>
+          <span class="tile-top"><button type="button" class="token" data-token={`var(--${n})`}>{n}</button><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${n}`} set:html={replay} /><CopyHtml value={`<div data-motion="fade-up" style="--motion-distance: var(--${n})">…</div>`} what={`${n} HTML`} /></span></span>
+          <span class="tile-body"><span data-motion="fade-up" style={`--motion-distance: var(--${n}); --motion-duration: var(--duration-slower)`} set:html={card} /></span>
+          <p class="desc">{v} · {u}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="order" label="Order" desc="Move in the order people read, and keep the whole sequence short">
+    <SpecsTable
+      label="Order"
+      head={['Rule', 'Token', 'Detail']}
+      rows={[
+        ['Container before content', '—', 'The surface lands first, its content follows 60 to 100 ms later'],
+        ['Top to bottom, start to end', '—', 'Follow reading order, never random'],
+        ['Exit all at once', '—', 'Leaving things go together and faster, no stagger'],
+        ['Cap the sequence', 'stagger-item', 'After about 6 items, stop adding delay; the rest come in with the last one'],
+        ['Overlap, don’t queue', '—', 'Start the next step before the last one ends'],
+      ]}
+    />
+  </Section>
+
+  <Section id="pairing" label="Pairing" title="Curve and duration together" desc="Pick the curve by what happens, then the duration by how far and how big">
+    <SpecsTable
+      label="Pairing"
+      head={['Moment', 'Curve', 'Duration']}
+      rows={[
+        ['Hover, focus, color', 'ease-standard', '300 ms'],
+        ['Menu or popover opens', 'ease-enter', '400 ms'],
+        ['Menu or popover closes', 'ease-exit', '300 ms'],
+        ['Drawer or modal', 'ease-enter', '500 ms'],
+        ['Tab indicator, slider', 'ease-move', '500 ms'],
+        ['Card reveal on scroll', 'ease-expo', '900 ms'],
+        ['Image curtain, hero intro', 'ease-curtain', '1400 ms'],
+        ['Toggle, badge pop', 'ease-spring', '700 ms'],
+      ]}
+    />
+  </Section>
+
+  <Section id="code" label="Code" desc="Tokens in motion.css. With data-motion-children, motion.js applies the stagger for you; in plain CSS, sibling-index() does it where supported">
+    <div class="block">
+      <p class="subhead">Tokens</p>
+      <pre class="code"><code set:html={highlight(tokenCss, 'css')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Stagger in CSS</p>
+      <pre class="code"><code set:html={highlight(stagCss, 'css')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to stagger">
+    <Usage
+      use={['A group of similar items arrives together: cards, list rows, features', 'A heading, its text and its action enter as one block', 'A menu opens and its rows follow']}
+      avoid={['Long lists; nobody waits for row 20', 'Items leaving the screen', 'Content people already scrolled past']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="One direction and one short stagger for the whole group"
+      dontText="Don’t send things in from every direction at different speeds"
+    >
+      <Fragment slot="do"><span class="mo-row" style="flex-wrap:nowrap">{[0, 1, 2].map((i) => <span class="mo-card" style={`width:64px;padding:8px;translate:0 ${i * 6}px;opacity:${1 - i * 0.3}`}><b style="height:28px"></b><i></i></span>)}</span></Fragment>
+      <Fragment slot="dont"><span class="mo-row" style="flex-wrap:nowrap">{['-10px 8px', '0 -12px', '10px 6px'].map((t) => <span class="mo-card" style={`width:64px;padding:8px;translate:${t};opacity:.7`}><b style="height:28px"></b><i></i></span>)}</span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Easing', 'The shape of the motion'],
+      ['Duration', 'How long it takes'],
+      ['Reveal', 'Stagger on scroll'],
+      ['Text Reveal', 'Stagger per word and letter'],
+    ]} />
+  </Section>
+</DocPage>

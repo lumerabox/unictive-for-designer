@@ -8,6 +8,8 @@ import Related from '../../components/doc/Related.astro';
 import DatePicker from '../../components/DatePicker.astro';
 import Calendar from '../../components/date-picker/Calendar.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { classes, examples } from '../../lib/date-picker-code';
 import { aligns, bools, dateStates, variantCount, partCount, keyOf, today, years, chipPresets, railPresets, pickerCopy, calendarCopy } from '../../data/date-picker';
 import { chevronDown } from '../../components/date-picker/icons';
 
@@ -45,7 +47,7 @@ const specs: [string, string, string][] = [
   intro="Date pickers let people pick a date or a range of dates from a calendar that opens under the field"
   meta={[['Variants', variantCount], ['Calendar parts', partCount]]}
 >
-  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then open the field and click a date. Apply writes it into the field, with Action button off the date goes in as soon as it is picked">
     <form class="pg" data-dp-playground onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -56,7 +58,7 @@ const specs: [string, string, string][] = [
               <select name={key as string}>
                 {(opts as readonly string[]).map((o) => <option value={o} selected={key === 'calendar' && o === 'true'}>{o}</option>)}
               </select>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </label>
         ))}
@@ -77,8 +79,11 @@ const specs: [string, string, string][] = [
         <p class="chip" data-chip aria-live="polite">Alight=Left · Calendar=true · Multiple=false</p>
       </div>
       <div class="pg-foot">
-        <p>Pastes into Figma as editable auto layout layers with Unictive values, the calendar comes as the DS variant. Click the button or press <kbd>⌘C</kbd> to copy</p>
-        <Btn label="Copy to Figma" data-copy-current />
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -206,6 +211,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Date Picker tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Date picker" classes={classes} examples={examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

@@ -1,4 +1,5 @@
 // exports the DS asset components (figma/assets/keys.txt) through figma-cli into public/assets
+// a key with a colon is a node id of a local component in the open DS file
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 const { daemonExec } = await import('/Users/cansa/figma-cli/src/lib/cli-core.js');
 const raster = { emoji: 3, avatars: 2 };
@@ -16,7 +17,7 @@ for (const g of groups) {
   const used = new Set();
   for (const it of g.items) {
     let s = slug(it.name); while (used.has(s)) s += '-2'; used.add(s);
-    if (g.kind === 'logos') s = slug(g.name) + '--' + s;
+    if (g.kind === 'logos' || g.kind === 'files') s = slug(g.name) + '--' + s;
     it.file = `/assets/${g.kind}/${s}.${raster[g.kind] ? 'png' : 'svg'}`;
     if (!existsSync('public' + it.file) || process.argv.includes('--force')) jobs.push({ ...it, kind: g.kind });
   }
@@ -28,7 +29,7 @@ for (let i = 0; i < jobs.length; i += 20) {
 const late = (p) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), 20000))]);
 const out = await Promise.all(rows.map(async ([key, scale]) => {
   try {
-    const c = await late(figma.importComponentByKeyAsync(key));
+    const c = key.includes(':') ? await figma.getNodeByIdAsync(key) : await late(figma.importComponentByKeyAsync(key));
     if (!scale) return key + '\\t' + (await c.exportAsync({ format: 'SVG_STRING' })).replace(/\\n/g, ' ');
     const b = await c.exportAsync({ format: 'PNG', constraint: { type: 'SCALE', value: scale } });
     return key + '\\t' + figma.base64Encode(b);

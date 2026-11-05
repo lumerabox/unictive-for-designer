@@ -5,14 +5,21 @@ import SpecsTable from '../../components/doc/SpecsTable.astro';
 import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
 import { radii, spacing, radiusUse } from '../../data/foundations';
 
 const rName = (r: number) => (r === 999 ? 'radius-full' : `radius-${r}`);
 const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, t, t === 'radius-full' ? '999 px' : `${t.slice(7)} px`]);
+const twRadius = radii.map((r): [string, string, string] => [rName(r), r === 999 ? 'rounded-full' : `rounded-${r}`, r === 999 ? '999 px' : `${r} px`]);
+const twSpacing = spacing.map((v): [string, string, string] => [`spacing-${v}`, `p-${v}`, `${v} px`]);
+const twExample = `<div class="rounded-16 p-24 flex flex-col gap-16">
+  <div class="rounded-8 px-12 py-8">…</div>
+  <span class="rounded-full px-8">New</span>
+</div>`;
 ---
 <DocPage
   title="Radius & spacing"
-  section="Foundations"
+  section="Components"
   script="foundations"
   description="Corner radius and spacing tokens of the Unictive design system, from radius-0 to radius-full and spacing-0 to spacing-64."
   intro="Two small scales keep every component in step. Radius grows with the size of the thing it rounds, spacing moves in steps of 2, 4 and 8"
@@ -22,7 +29,7 @@ const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, 
     <div class="radius-grid">
       {radii.map((r) => (
         <button type="button" class="tile tile-v" data-copy={rName(r)}>
-          <span class="tile-top"><span class="label muted">{r === 999 ? "full" : r}</span><span class="label muted">{r === 999 ? "" : "px"}</span></span>
+          <span class="tile-top"><span class="label muted">{r === 999 ? "Full" : r}</span><span class="label muted">{r === 999 ? "" : "px"}</span></span>
           <span class="tile-body"><i class="radius-shape" style={r === 999 ? "border-radius:50%" : `border-top-left-radius:${r}px`}></i></span>
         </button>
       ))}
@@ -44,6 +51,15 @@ const useRows = radiusUse.map(([t, where]): [string, string, string] => [where, 
       ))}
     </div>
   </Section>
+
+  <TailwindSection
+    desc="Radius and spacing replace the Tailwind scale, so the number in the class is the pixel value: rounded-8 is 8 px, p-16 is 16 px. Click a class to copy it"
+    tables={[
+      { title: 'Radius', note: 'Works on every rounded- utility: rounded-t-12, rounded-bl-4', rows: twRadius },
+      { title: 'Spacing', note: 'p- is the example. The same numbers work with m-, px-, gap-, space-y-, inset- and size-', rows: twSpacing },
+    ]}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

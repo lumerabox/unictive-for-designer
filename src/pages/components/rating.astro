@@ -8,6 +8,8 @@ import Related from '../../components/doc/Related.astro';
 import Rating from '../../components/Rating.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { classes, examples } from '../../lib/rating-code';
 import { ratingRow, group, copyAttr } from '../../lib/figma/choice-copy';
 import { types, sizes, metrics, count, variantCount } from '../../data/rating';
 
@@ -37,7 +39,7 @@ const specs: [string, string, string][] = [
   intro="Ratings let people score an experience on a scale of five, or show the average score others gave"
   meta={[['Variants', variantCount], ['Scale', `${count} items`]]}
 >
-  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then hover and click the preview to rate. Arrow keys work too">
     <form class="pg" data-playground data-kind="rating" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -58,8 +60,11 @@ const specs: [string, string, string][] = [
         <p class="chip" data-chip aria-live="polite">Rating-items · Type=Star · Size=Large · Disable=false · Value=3.5</p>
       </div>
       <div class="pg-foot">
-        <p>Pastes into Figma as editable auto layout layers with Unictive values, click the button or press <kbd>⌘C</kbd> to copy</p>
-        <Btn label="Copy to Figma" data-copy-current />
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -120,6 +125,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Rating tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Rating" classes={classes} examples={examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

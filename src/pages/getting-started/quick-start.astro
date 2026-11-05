@@ -1,0 +1,176 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+
+type Lang = 'css' | 'html';
+// title, description, then the code block: file label, language, code
+type Step = [string, string, [string, Lang, string]?];
+
+const cdn = 'https://cdn.jsdelivr.net/npm/unictive-ds@1/unictive.css';
+const use = `<button type="button" class="btn btn-md btn-primary btn-main">Save changes</button>
+<button type="button" class="btn btn-md btn-secondary btn-neutral">Cancel</button>`;
+
+const paths: { id: string; name: string; badge: string; hint: string; desc: string; steps: Step[] }[] = [
+  {
+    id: 'cdn', name: 'CDN', badge: 'Fastest', hint: 'Prototypes, static pages, no build step',
+    desc: 'No install and no build step. Good for a prototype, a static page or trying the DS out',
+    steps: [
+      ['Add the stylesheet', 'Put this line in the head of every page. It loads the tokens, the Inter font and every component class', ['index.html', 'html', `<link rel="stylesheet" href="${cdn}" />`]],
+      ['Use a component', 'Copy the HTML from any component page and paste it into the body', ['index.html', 'html', use]],
+    ],
+  },
+  {
+    id: 'npm', name: 'npm', badge: 'Recommended', hint: 'Projects with a bundler such as Vite or Next.js',
+    desc: 'For a project with a bundler. Updates come through npm like any other dependency',
+    steps: [
+      ['Install the package', 'Run this in the project folder', ['Terminal', 'css', 'npm install unictive-ds']],
+      ['Import it once', 'Add the import at the top of the main CSS file, before your own styles', ['src/styles/main.css', 'css', '@import "unictive-ds";']],
+      ['Use a component', 'Copy the HTML from any component page. In React, swap class for className', ['App.html', 'html', use]],
+    ],
+  },
+  {
+    id: 'tailwind', name: 'npm with Tailwind v4', badge: 'Optional', hint: 'Projects already on Tailwind CSS',
+    desc: 'The same component classes, plus utilities generated from the tokens',
+    steps: [
+      ['Install the packages', 'unictive-ds brings the theme, Tailwind and its Vite plugin do the rest', ['Terminal', 'css', 'npm install unictive-ds tailwindcss @tailwindcss/vite']],
+      ['Add the Vite plugin', 'Skip this if Tailwind already runs in the project. For other setups, follow the Tailwind install guide', ['vite.config.js', 'css', `import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [tailwindcss()],
+});`]],
+      ['Replace the Tailwind import', 'tailwind.css imports Tailwind itself, so it takes the place of @import "tailwindcss"', ['src/styles/main.css', 'css', '@import "unictive-ds/tailwind.css";']],
+      ['Use tokens as utilities', 'Components work as before, and every token is now a utility class', ['App.html', 'html', `<div class="bg-bg-weak-50 text-text-sub-600 rounded-8 p-16">
+  <button type="button" class="btn btn-md btn-primary btn-main">Save changes</button>
+</div>`]],
+    ],
+  },
+];
+
+const plain = `@import "unictive-ds/tokens.css";
+
+.card {
+  background: var(--bg-white-0);
+  border: 1px solid var(--stroke-soft-200);
+  border-radius: var(--radius-16);
+  padding: var(--spacing-24);
+  color: var(--text-strong-950);
+}`;
+---
+<DocPage
+  title="Installation"
+  section="Getting Started"
+  script="tokens"
+  description="Set up the Unictive Design System in code with the unictive-ds package, from a CDN or npm, with or without Tailwind."
+  intro="Add one stylesheet and every component on this site works by copying its HTML. Pick a setup below and follow the steps"
+  meta={[['Package', 'unictive-ds'], ['Tailwind', 'Optional'], ['Font', 'Inter']]}
+>
+  <Section id="choose" label="Choose" title="Choose a setup" desc="Every setup loads the same classes, so the HTML on the component pages works the same">
+    <div class="grid3 qs-pick">
+      {paths.map((p) => (
+        <a class="tile qs-opt" href={`#${p.id}`}>
+          <span class="tile-top"><span class="label">{p.name}</span><span class="label muted">{p.badge}</span></span>
+          <p>{p.hint}</p>
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  {paths.map((p) => (
+    <Section id={p.id} label={p.name} title={`Install with ${p.name}`} desc={p.desc}>
+      <ol class="qs-steps">
+        {p.steps.map(([title, desc, code]) => (
+          <li>
+            <div class="qs-step-head">
+              <p class="subhead">{title}</p>
+              <p class="desc">{desc}</p>
+            </div>
+            {code && (
+              <div class="qs-code">
+                <div class="qs-code-head">
+                  <span>{code[0]}</span>
+                  <button type="button" class="qs-copy" data-copy={code[2]} data-copy-label={code[0] === 'Terminal' ? 'command' : code[0]} aria-label={`Copy ${code[0]}`}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5" stroke="currentColor" stroke-width="1.3"/></svg>
+                    <span>Copy</span>
+                  </button>
+                </div>
+                <pre class="code"><code set:html={highlight(code[2], code[1])} /></pre>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </Section>
+  ))}
+
+  <Section id="tokens" label="Tokens only" title="Only the tokens" desc="No component classes, but every token works as a CSS variable. Useful for styling something the components don’t cover">
+    <div class="qs-code">
+      <div class="qs-code-head">
+        <span>src/styles/main.css</span>
+        <button type="button" class="qs-copy" data-copy={plain} data-copy-label="tokens example" aria-label="Copy tokens example">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span>Copy</span>
+        </button>
+      </div>
+      <pre class="code"><code set:html={highlight(plain, 'css')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="download" label="Download" title="Without npm" desc="The same files to drop into a project by hand. They are built from the DS on every deploy">
+    <div class="grid2">
+      <div class="tile tile-static tile-file">
+        <span class="tile-top"><span class="label">unictive.css</span><span class="label muted">Plain CSS</span></span>
+        <p>Tokens, the Inter font and every component class. Link it and you are done</p>
+        <Btn size="Small" variant="Tertiary" type="Neutral" label="Download" data-download="/code/unictive.css" data-file="unictive.css" />
+      </div>
+      <div class="tile tile-static tile-file">
+        <span class="tile-top"><span class="label">global.css</span><span class="label muted">Tailwind v4</span></span>
+        <p>The same classes for Tailwind. Needs unictive-tailwind.css from Export next to it</p>
+        <Btn size="Small" variant="Tertiary" type="Neutral" label="Download" data-download="/code/global.css" data-file="global.css" />
+      </div>
+    </div>
+  </Section>
+
+  <Section id="related" label="Related" title="Next steps">
+    <Related items={[
+      ['Button', 'Classes and examples'],
+      ['How tokens work', 'Layers and modes'],
+      ['Export', 'Every token format'],
+      ['Figma Library', 'Design with the DS'],
+    ]} />
+  </Section>
+</DocPage>
+
+<style>
+  .tile-file { gap: 12px; align-items: flex-start; }
+  .tile-file .tile-top { align-self: stretch; }
+  .tile-file p { flex: 1; color: var(--text-sub-600); font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  .qs-opt { min-height: 132px; justify-content: space-between; gap: 24px; }
+  .qs-opt p { color: var(--text-sub-600); font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  /* numbered steps joined by a line */
+  .qs-steps { list-style: none; margin: 0; padding: 0; counter-reset: qs; display: grid; }
+  .qs-steps li { counter-increment: qs; position: relative; display: grid; gap: 16px; padding: 0 0 40px 48px; min-width: 0; }
+  .qs-steps li:last-child { padding-bottom: 0; }
+  .qs-steps li::before { content: counter(qs); position: absolute; left: 0; top: 0; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--bg-weak-50); box-shadow: inset 0 0 0 1px var(--stroke-sub-300); font-size: 13px; font-weight: 600; color: var(--text-strong-950); }
+  .qs-steps li:not(:last-child)::after { content: ''; position: absolute; left: 14px; top: 36px; bottom: 8px; width: 1px; background: var(--stroke-soft-200); }
+  .qs-step-head { display: grid; gap: 4px; padding-top: 2px; }
+  .qs-step-head .subhead { margin: 0; font-size: 16px; }
+  .qs-step-head .desc { max-width: 588px; font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  /* code block with file name and copy */
+  .qs-code { min-width: 0; border-radius: var(--radius); background: var(--bg-strong-950); overflow: hidden; }
+  .qs-code-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 40px; padding: 0 8px 0 var(--pad-tile); border-bottom: 1px solid rgb(255 255 255 / 0.08); font: 500 12px/16px var(--mono); color: #a3a3a3; }
+  .qs-code .code { border-radius: 0; padding-top: 16px; }
+  .qs-copy { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 0; border-radius: var(--radius-sm); background: none; font: 500 12px/16px var(--font); color: #a3a3a3; cursor: pointer; transition: background-color var(--fast) var(--ease), color var(--fast) var(--ease); }
+  .qs-copy:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
+  .qs-copy:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  @media (max-width: 767px) {
+    .qs-steps li { padding-left: 40px; }
+  }
+</style>

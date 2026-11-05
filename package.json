@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "./scripts/deploy.sh"
+    "deploy": "./scripts/deploy.sh",
+    "pkg": "astro build && node scripts/pkg-build.mjs"
   },
   "dependencies": {
     "astro": "^7.4.2",

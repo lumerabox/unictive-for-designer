@@ -1,0 +1,29 @@
+---
+// tailwind classes for a foundation: the token, the class that applies it and an example
+import Section from './Section.astro';
+import SpecsTable from './SpecsTable.astro';
+import { highlight } from '../../lib/highlight';
+
+interface Props {
+  desc: string;
+  tables: { title?: string; note?: string; rows: [token: string, cls: string, value: string][] }[];
+  example: string;
+}
+const { desc, tables, example } = Astro.props;
+---
+<Section id="tailwind" label="Tailwind" desc={desc}>
+  {tables.map((t) => (
+    <div class="block">
+      {t.title && <p class="subhead">{t.title}</p>}
+      {t.note && <p class="desc">{t.note}</p>}
+      <SpecsTable label={`${t.title ?? 'Tailwind'} classes`} head={['Token', 'Class', 'Value']} rows={t.rows} />
+    </div>
+  ))}
+  <div class="block">
+    <p class="subhead">Example</p>
+    <pre class="code"><code set:html={highlight(example, 'html')} /></pre>
+  </div>
+  <div class="cls-foot">
+    <p>The classes come from the Tailwind v4 theme in <a href="/foundations/export/">Foundations → Export</a>, or <code>unictive-ds/tailwind.css</code> from npm</p>
+  </div>
+</Section>

@@ -1,0 +1,187 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+
+type Lang = 'css' | 'html';
+// title, description, then the code block: file label, language, code
+type Step = [string, string, [string, Lang, string]?];
+
+const agent = 'https://design.wofyu.space/AGENT.md';
+
+const steps: Step[] = [
+  ['Install the package', 'Run this in the project folder. Skip it if the project already uses unictive-ds', ['Terminal', 'css', 'npm install unictive-ds']],
+  ['Import it once', 'Add the import at the top of the main CSS file, before your own styles', ['src/styles/main.css', 'css', '@import "unictive-ds";']],
+  ['Add the instructions', 'Download AGENT.md into the project root as CLAUDE.md. Claude Code reads it at the start of every session', ['Terminal', 'css', `curl -o CLAUDE.md ${agent}`]],
+  ['Start Claude Code', 'Run it in the same folder and prompt as usual. It now builds with DS classes and tokens', ['Terminal', 'css', 'claude']],
+];
+
+const existing = `curl ${agent} >> CLAUDE.md`;
+const other = `curl -o AGENTS.md ${agent}`;
+
+const prompt = `Build a settings page with a profile form: name and email
+text inputs, a notifications switch, and Save and Cancel buttons.`;
+
+const faqs: [string, string][] = [
+  ['What does AGENT.md contain?', 'The setup, the rules (use DS classes, never hardcode colors or spacing), every semantic token and every component class with an example. It is built from this site on every deploy, so it matches the latest release'],
+  ['The project already has a CLAUDE.md', 'Append instead of overwriting, with the second command under Existing project. Claude Code reads the whole file'],
+  ['Does it work with React or Vue?', 'Yes. The components are plain HTML with classes, so they work in any framework. AGENT.md tells Claude to use className in JSX'],
+  ['Does it work with other agents?', 'Cursor, Codex and most other agents read AGENTS.md from the project root. Save the same file under that name'],
+  ['How do I update it?', 'Run the curl command again. The file changes when the DS adds a component or a token'],
+];
+
+const copyIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5" stroke="currentColor" stroke-width="1.3"/></svg>';
+---
+<DocPage
+  title="Claude Code"
+  section="Getting Started"
+  script="tokens"
+  description="Use the Unictive Design System with Claude Code. Add AGENT.md to a project and Claude builds with DS classes and tokens."
+  intro="Add one instruction file to a project and Claude Code builds with Unictive components and tokens instead of inventing its own styles"
+  meta={[['File', 'AGENT.md'], ['Agent', 'Claude Code'], ['Also', 'Cursor, Codex']]}
+>
+  <Section id="prerequisites" label="Prerequisites" title="Before you start" desc="Claude Code runs in the terminal, the desktop app and the IDE extensions. Install it first if you haven’t">
+    <div class="grid2">
+      <a class="tile qs-opt" href="https://docs.claude.com/en/docs/claude-code/overview" target="_blank" rel="noopener">
+        <span class="tile-top"><span class="label">Claude Code</span><span class="label muted">Docs</span></span>
+        <p>Install Claude Code and sign in</p>
+      </a>
+      <a class="tile qs-opt" href="/getting-started/quick-start/">
+        <span class="tile-top"><span class="label">unictive-ds</span><span class="label muted">Installation</span></span>
+        <p>CDN, npm or Tailwind setups for the package</p>
+      </a>
+    </div>
+  </Section>
+
+  <Section id="setup" label="Setup" title="Set up a project" desc="Four steps in the project folder. After that, every Claude Code session there knows the DS">
+    <ol class="qs-steps">
+      {steps.map(([title, desc, code]) => (
+        <li>
+          <div class="qs-step-head">
+            <p class="subhead">{title}</p>
+            <p class="desc">{desc}</p>
+          </div>
+          {code && (
+            <div class="qs-code">
+              <div class="qs-code-head">
+                <span>{code[0]}</span>
+                <button type="button" class="qs-copy" data-copy={code[2]} data-copy-label={code[0] === 'Terminal' ? 'command' : code[0]} aria-label={`Copy ${code[0]}`}>
+                  <Fragment set:html={copyIcon} />
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="code"><code set:html={highlight(code[2], code[1])} /></pre>
+            </div>
+          )}
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section id="agent-md" label="AGENT.md" title="The instruction file" desc="Setup, rules, every token and every component class with an example. It is rebuilt from this site on every deploy">
+    <div class="cc-file">
+      <div class="tile tile-static tile-file">
+        <span class="tile-top"><span class="label">AGENT.md</span><span class="label muted">Markdown</span></span>
+        <p>Save it as CLAUDE.md for Claude Code, or as AGENTS.md for Cursor and Codex</p>
+        <span class="cc-actions">
+          <Btn size="Small" variant="Tertiary" type="Neutral" label="Download" data-download="/AGENT.md" data-file="AGENT.md" />
+          <Btn size="Small" variant="Ghost" type="Neutral" label="View" as="a" href="/AGENT.md" target="_blank" />
+        </span>
+      </div>
+      <div class="cc-cmds">
+        {[['Existing project', 'append to CLAUDE.md', existing], ['Other agents', 'save as AGENTS.md', other]].map(([t, d, c]) => (
+          <div class="qs-code">
+            <div class="qs-code-head">
+              <span>{t} · {d}</span>
+              <button type="button" class="qs-copy" data-copy={c} data-copy-label="command" aria-label={`Copy ${t} command`}>
+                <Fragment set:html={copyIcon} />
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="code"><code set:html={highlight(c, 'css')} /></pre>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section id="prompt" label="Prompt" title="Try a prompt" desc="No need to name classes or tokens. Claude picks text inputs, a switch and buttons from the DS and spaces them with tokens">
+    <div class="qs-code">
+      <div class="qs-code-head">
+        <span>Claude Code</span>
+        <button type="button" class="qs-copy" data-copy={prompt} data-copy-label="prompt" aria-label="Copy prompt">
+          <Fragment set:html={copyIcon} />
+          <span>Copy</span>
+        </button>
+      </div>
+      <pre class="code"><code>{prompt}</code></pre>
+    </div>
+  </Section>
+
+  <Section id="faq" label="FAQ" title="Questions">
+    <div class="cc-faq">
+      {faqs.map(([q, a]) => (
+        <details>
+          <summary>{q}</summary>
+          <p>{a}</p>
+        </details>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="related" label="Related" title="Next steps">
+    <Related items={[
+      ['Installation', 'CDN, npm or Tailwind'],
+      ['Button', 'Classes and examples'],
+      ['All tokens', 'Every variable'],
+      ['Figma Library', 'Design with the DS'],
+    ]} />
+  </Section>
+</DocPage>
+
+<style>
+  .tile-file { gap: 12px; align-items: flex-start; }
+  .tile-file .tile-top { align-self: stretch; }
+  .tile-file p { flex: 1; color: var(--text-sub-600); font-size: var(--fs-small); line-height: var(--lh-small); }
+  .cc-actions { display: flex; gap: 8px; }
+
+  .qs-opt { min-height: 132px; justify-content: space-between; gap: 24px; }
+  .qs-opt p { color: var(--text-sub-600); font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  .cc-file { display: grid; gap: 16px; }
+  .cc-file .tile-file { min-height: 0; }
+  .cc-cmds { display: grid; gap: 16px; min-width: 0; }
+
+  .cc-faq { display: grid; }
+  .cc-faq details { border-bottom: 1px solid var(--stroke-soft-200); }
+  .cc-faq summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; font-size: 16px; font-weight: 500; color: var(--text-strong-950); cursor: pointer; list-style: none; }
+  .cc-faq summary::-webkit-details-marker { display: none; }
+  .cc-faq summary::after { content: '+'; font-size: 20px; font-weight: 400; color: var(--text-soft-400); transition: transform var(--fast) var(--ease); }
+  .cc-faq details[open] summary::after { transform: rotate(45deg); }
+  .cc-faq summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .cc-faq p { max-width: 588px; padding-bottom: 20px; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text-sub-600); }
+
+  /* numbered steps joined by a line */
+  .qs-steps { list-style: none; margin: 0; padding: 0; counter-reset: qs; display: grid; }
+  .qs-steps li { counter-increment: qs; position: relative; display: grid; gap: 16px; padding: 0 0 40px 48px; min-width: 0; }
+  .qs-steps li:last-child { padding-bottom: 0; }
+  .qs-steps li::before { content: counter(qs); position: absolute; left: 0; top: 0; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--bg-weak-50); box-shadow: inset 0 0 0 1px var(--stroke-sub-300); font-size: 13px; font-weight: 600; color: var(--text-strong-950); }
+  .qs-steps li:not(:last-child)::after { content: ''; position: absolute; left: 14px; top: 36px; bottom: 8px; width: 1px; background: var(--stroke-soft-200); }
+  .qs-step-head { display: grid; gap: 4px; padding-top: 2px; }
+  .qs-step-head .subhead { margin: 0; font-size: 16px; }
+  .qs-step-head .desc { max-width: 588px; font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  /* code block with file name and copy */
+  .qs-code { min-width: 0; border-radius: var(--radius); background: var(--bg-strong-950); overflow: hidden; }
+  .qs-code-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 40px; padding: 0 8px 0 var(--pad-tile); border-bottom: 1px solid rgb(255 255 255 / 0.08); font: 500 12px/16px var(--mono); color: #a3a3a3; }
+  .qs-code .code { border-radius: 0; padding-top: 16px; }
+  .qs-copy { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 0; border-radius: var(--radius-sm); background: none; font: 500 12px/16px var(--font); color: #a3a3a3; cursor: pointer; transition: background-color var(--fast) var(--ease), color var(--fast) var(--ease); }
+  .qs-copy:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
+  .qs-copy:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  @media (max-width: 767px) {
+    .qs-steps li { padding-left: 40px; }
+  }
+</style>

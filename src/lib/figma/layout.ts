@@ -18,7 +18,8 @@ export function childrenIndex(nodes: Node[]) {
 }
 
 const isStack = (n: Node) => n.stackMode === 'HORIZONTAL' || n.stackMode === 'VERTICAL';
-const rotated = (n: Node) => Math.abs(n.transform.m01) > 1e-6 || Math.abs(n.transform.m10) > 1e-6;
+// rotated or flipped: placed by its bounding box, not its origin
+const rotated = (n: Node) => Math.abs(n.transform.m01) > 1e-6 || Math.abs(n.transform.m10) > 1e-6 || n.transform.m00 < 0 || n.transform.m11 < 0;
 
 // bounding box of a node in its parent's space, plus the offset of that box from the node origin
 function extent(n: Node, s: Size = n.size) {
@@ -72,14 +73,40 @@ export function createLayout(kids: Map<string, Node[]>) {
     return h ? { x: prim, y: ctr } : { x: ctr, y: prim };
   }
 
+  // children outside the flow keep their constraints when the frame resizes: stretch keeps both margins, max keeps the far one
+  function constrain(n: Node, prev: Size) {
+    const dx = n.size.x - prev.x, dy = n.size.y - prev.y;
+    if (!dx && !dy) return;
+    for (const c of kids.get(gid(n.guid)) ?? []) {
+      if (isStack(n) && c.stackPositioning !== 'ABSOLUTE') continue;
+      const t = { ...c.transform }, s = { ...c.size };
+      if (c.horizontalConstraint === 'STRETCH') s.x += dx;
+      else if (c.horizontalConstraint === 'MAX') t.m02 += dx;
+      else if (c.horizontalConstraint === 'CENTER') t.m02 += dx / 2;
+      if (c.verticalConstraint === 'STRETCH') s.y += dy;
+      else if (c.verticalConstraint === 'MAX') t.m12 += dy;
+      else if (c.verticalConstraint === 'CENTER') t.m12 += dy / 2;
+      c.transform = t;
+      if (s.x !== c.size.x || s.y !== c.size.y) {
+        const before = c.size;
+        c.size = s;
+        if (!isStack(c)) constrain(c, before);
+      }
+    }
+  }
+
   function layout(n: Node, size: Size) {
+    const prev = n.size;
     n.size = { x: size.x, y: size.y };
+    constrain(n, prev);
     if (!isStack(n)) return;
     const h = n.stackMode === 'HORIZONTAL';
     const [p0, p1, c0, c1] = pads(n);
     const availP = (h ? size.x : size.y) - p0 - p1;
     const availC = (h ? size.y : size.x) - c0 - c1;
-    const gap = n.stackSpacing ?? 0;
+    // with auto spacing figma ignores the stored gap and spreads the children
+    const auto = n.stackPrimaryAlignItems === 'SPACE_BETWEEN' || n.stackPrimaryAlignItems === 'SPACE_EVENLY';
+    const gap = auto && !wraps(n) ? 0 : n.stackSpacing ?? 0;
     const items = flow(n).map((c) => {
       if (rotated(c)) {
         const e = extent(c);

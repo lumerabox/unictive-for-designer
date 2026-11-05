@@ -1,6 +1,6 @@
 // turns the captured "Copy to Figma · Controls" frame into one template per page (public/figma/controls-<page>.json),
 // plus the images its variants use (public/figma/img/<hash>.png).
-// usage: node scripts/figma-controls-template.mjs figma/captures/controls-template.html
+// usage: node scripts/figma-controls-template.mjs figma/captures/controls-template.html (or nav-template.html, feedback-template.html, overlay-template.html)
 import fs from 'node:fs';
 import { decodeBinarySchema, compileSchema } from 'kiwi-schema';
 import { inflateRaw, deflateRaw } from 'pako';
@@ -20,6 +20,36 @@ const pages = {
   Switch: 'switch',
   'Switch Label': 'switch',
   Rating: 'rating',
+  Breadcrumbs: 'breadcrumbs',
+  Crumb: 'breadcrumbs',
+  'Line-tabs': 'tab-menu',
+  'Segmented-tabs': 'tab-menu',
+  'Pill-tabs': 'tab-menu',
+  'Tab-menu-vertical': 'tab-menu',
+  'Line-tab': 'tab-menu',
+  'Segmented-tab': 'tab-menu',
+  'Pill-tab': 'tab-menu',
+  'Vertical-tab': 'tab-menu',
+  'Page Number': 'pagination',
+  Number: 'pagination',
+  Action: 'pagination',
+  'Rows-page': 'pagination',
+  'Step-variant': 'stepper',
+  'Stepper-horizontal': 'stepper',
+  'Stepper-vertical': 'stepper',
+  Alert: 'alert',
+  Banner: 'banner',
+  Badge: 'badge',
+  'Progress-bar': 'progress-bar',
+  Bar: 'progress-bar',
+  Tooltip: 'tooltip',
+  Modal: 'modal',
+  'Modal-header': 'modal',
+  'Modal-footer': 'modal',
+  Popover: 'popover',
+  'Popover-header': 'popover',
+  'Popover-footer': 'popover',
+  'Popover-dot': 'popover',
 };
 
 const [input] = process.argv.slice(2);

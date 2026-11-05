@@ -1,6 +1,9 @@
 // playground for the dropdown page: one item preview and one live menu, the form drives both
 import { heightOf, menuCopy, menuSamples, rowCopy, samples, slug, stateName, states, type Size, type State, type Type } from '../data/dropdown';
 import { setupCopy } from './controls-copy';
+import { copy } from './foundations-page';
+import { codeExamples } from './code-examples';
+import { dropdownHtml } from '../lib/dropdown-code';
 
 export default function init(signal: AbortSignal) {
   const form = document.querySelector<HTMLFormElement>('[data-playground]')!;
@@ -127,4 +130,12 @@ export default function init(signal: AbortSignal) {
     chip,
     restoreChip: chipText,
   });
+
+  // html for the playground variant
+  document.querySelector('[data-pg-copy]')!.addEventListener('click', () => copy(dropdownHtml({
+    type: get('type') as Type, size: get('size') as Size, state: get('state') as State,
+    menu: on('menu'), icon: on('icon'), description: on('description'),
+  }), 'dropdown HTML'));
+
+  codeExamples();
 }

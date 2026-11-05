@@ -1,0 +1,81 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
+import AssetLibrary from '../../components/AssetLibrary.astro';
+import data from '../../data/assets.json';
+
+const groups = data.filter((g) => g.kind === 'files');
+const types = groups[0]?.items.length ?? 0;
+const styles: [string, string, string][] = [
+  ['Default', 'White page, colored extension label', 'Upload lists, attachments, file rows'],
+  ['Light', 'Tinted page, colored extension', 'Dense tables where a label is too loud'],
+  ['Solid', 'Filled page, white extension', 'Selected files, cards and thumbnails'],
+];
+const colors: [string, string, string][] = [
+  ['PDF', 'red', 'Documents to read or sign'],
+  ['DOC, DOCX', 'blue', 'Text documents'],
+  ['HTML, CSS, JS, JSON, SQL, PSD', 'core', 'Code and Photoshop'],
+  ['XLS, XLSX, CSV', 'green', 'Spreadsheets and data'],
+  ['PPT, PPTX', 'orange', 'Slides'],
+  ['AI', 'servios', 'Illustrator'],
+  ['JPG, JPEG, PNG, GIF, WEBP, SVG, FIG', 'unisign', 'Images and design files'],
+  ['MP4, MOV, AVI, MKV', 'kelolain', 'Video'],
+  ['MP3, WAV', 'quiktiv', 'Audio'],
+  ['ZIP, RAR', 'yellow', 'Archives'],
+  ['TXT, EXE', 'neutral', 'Plain text and apps'],
+];
+const twSizes: [string, string, string][] = [['spacing-24', 'size-24', '24 px'], ['spacing-32', 'size-32', '32 px'], ['spacing-40', 'size-40', '40 px'], ['spacing-48', 'size-48', '48 px']];
+const twExample = `<li class="flex items-center gap-12 rounded-12 border border-stroke-soft-200 bg-bg-white-0 p-12">
+  <img class="size-40 shrink-0" src="default--pdf.svg" alt="PDF" />
+  <div class="min-w-0 flex-1">
+    <p class="truncate text-label-sm text-text-strong-950">Invoice-October.pdf</p>
+    <p class="text-paragraph-xs text-text-sub-600">1.2 MB</p>
+  </div>
+</li>`;
+---
+<DocPage
+  title="File Icons"
+  section="Assets"
+  script="assets"
+  description="Search and copy file type icons from the Unictive design system in Default, Light and Solid styles. Click an icon to copy its SVG and paste it into Figma."
+  intro="File type icons for uploads, attachments and file lists, in three styles. Click one to copy its SVG, then paste it into Figma or code"
+  meta={[['Types', types], ['Styles', groups.length], ['Size', '40 px']]}
+>
+  <Section id="library" label="Library" desc="Icons paste as vectors at 40 px, the size used in file upload lists. Filter by style with the menu">
+    <AssetLibrary kind="files" size={40} paste={40} placeholder="pdf, xlsx, mp4…" />
+  </Section>
+
+  <Section id="styles" label="Styles" title="Styles" desc="The same 40 px page in three weights. Pick one per surface and keep it">
+    <SpecsTable label="File icon styles" head={['Style', 'Look', 'Use in']} rows={styles} />
+  </Section>
+
+  <Section id="colors" label="Colors" title="Colors" desc="Each type takes the color of its family, from the foundation palette, so people can tell a sheet from a slide before they read the label">
+    <SpecsTable label="File icon colors" head={['Types', 'Color', 'Family']} rows={colors} />
+  </Section>
+
+  <TailwindSection
+    desc="Download the SVG with the arrow and set its size with size-. Keep the icon at 32 px or more so the label stays readable. Click a class to copy it"
+    tables={[{ title: 'Size', note: 'Use 40 in upload lists, 32 in tables and 48 on cards', rows: twSizes }]}
+    example={twExample}
+  />
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Listing files people uploaded or attached', 'A table or card points to a file people can open', 'People need to tell file types apart at a glance']}
+      avoid={['Showing a preview is possible, use the image thumbnail', 'The type is unknown, use a plain file icon from Icons', 'Sizes under 24 px, the label cannot be read']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['File Upload', 'Upload areas and file lists'],
+      ['Icons', 'The icon set'],
+      ['Brand Logos', 'Company and app logos'],
+      ['Figma File', 'The source file'],
+    ]} />
+  </Section>
+</DocPage>

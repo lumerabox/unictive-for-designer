@@ -6,6 +6,9 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { tooltipCode as code } from '../../lib/feedback-code';
 import '../../styles/u-feedback.css';
 import '../../styles/u-tooltip.css';
 import { types, arrows, sizes, render, chip, variantCount } from '../../data/tooltip';
@@ -43,6 +46,7 @@ const specs: [string, string, string][] = [
   intro="Tooltips put a name or a short hint next to an element, only when people hover or focus it"
   meta={[['Variants', variantCount], ['Types', types.length], ['Arrows', arrows.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a type and an arrow. The arrow always points at the trigger, so the tooltip opens on the other side">
     <form class="pg" data-playground data-kind="tooltip" onsubmit="return false">
       <div class="fields">
@@ -58,6 +62,13 @@ const specs: [string, string, string][] = [
       <div class="canvas canvas-tall" data-canvas>
         <div class="stage" data-host></div>
         <p class="chip" data-chip aria-live="polite">{chip({ type: 'Default', arrow: 'Bottom Center', size: 'Small', dark: true })}</p>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -126,6 +137,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Tooltip tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Tooltip" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

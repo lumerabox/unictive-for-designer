@@ -8,6 +8,8 @@ import Related from '../../components/doc/Related.astro';
 import Dropdown from '../../components/Dropdown.astro';
 import DropdownMenu from '../../components/dropdown/DropdownMenu.astro';
 import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { classes, examples } from '../../lib/dropdown-code';
 import { types, sizes, states, heightOf, menuSamples, samples, stateName, variantCount, rowCopy, menuCopy, type Type } from '../../data/dropdown';
 
 const pick = (t: keyof typeof menuSamples, picked: number, state: 'Selected' | 'Disable' = 'Selected') =>
@@ -45,7 +47,7 @@ const specs: [string, string, string][] = [
   intro="Dropdowns open a list of options under a field, so people can pick one or several without typing"
   meta={[['Variants', variantCount], ['Types', types.length]]}
 >
-  <Btn slot="action" size="Large" label="Copy to Figma" data-copy-current />
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then open the menu and choose a row">
     <form class="pg" data-playground onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -56,7 +58,7 @@ const specs: [string, string, string][] = [
               <select name={key as string}>
                 {(opts as readonly string[]).map((o) => <option value={o}>{stateName(o)}</option>)}
               </select>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </label>
         ))}
@@ -76,8 +78,11 @@ const specs: [string, string, string][] = [
         <p class="chip" data-chip aria-live="polite">Type=Default · Size=Small · State=Default</p>
       </div>
       <div class="pg-foot">
-        <p>Pastes into Figma as editable auto layout layers with Unictive values, the open menu copies as a panel of rows. Click the button or press <kbd>⌘C</kbd> to copy</p>
-        <Btn label="Copy to Figma" data-copy-current />
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -153,6 +158,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Dropdown tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Dropdown" classes={classes} examples={examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

@@ -1,32 +1,37 @@
 ---
 // searchable grid of one asset kind exported from the DS file (scripts/assets-export.mjs)
 import data from '../data/assets.json';
+import emojiText from '../data/emoji-text.json';
 
 interface Props {
-  kind: 'avatars' | 'logos' | 'flags' | 'emoji';
+  kind: 'avatars' | 'logos' | 'flags' | 'emoji' | 'files';
   // preview size in px and the size the copy pastes at in Figma
   size: number;
   paste: number;
   placeholder: string;
 }
 const { kind, size, paste, placeholder } = Astro.props;
-const groups = (data as { kind: string; name: string; items: [string, string][] }[]).filter((g) => g.kind === kind);
+// emoji copy as unicode text, so the alt image of a character it already has is left out
+const text = kind === 'emoji' ? (emojiText as Record<string, string>) : null;
+const groups = (data as { kind: string; name: string; items: [string, string][] }[])
+  .filter((g) => g.kind === kind)
+  .map((g) => (text ? { ...g, items: g.items.filter(([n]) => !n.endsWith(', alt')) } : g));
 const total = groups.reduce((n, g) => n + g.items.length, 0);
-const unit = kind === 'emoji' ? 'emoji' : kind === 'avatars' ? 'avatars' : kind === 'logos' ? 'logos' : 'flags';
-const chevron = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const unit = kind === 'emoji' ? 'emoji' : kind === 'avatars' ? 'avatars' : kind === 'logos' ? 'logos' : kind === 'files' ? 'icons' : 'flags';
+const chevron = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const dl = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.667V10M8 10L5.333 7.333M8 10L10.667 7.333M3.333 13.333H12.667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <div data-assets data-unit={unit} data-paste={paste} style={`--asset:${size}px`}>
   <form class="icon-tools" role="search" onsubmit="return false">
     <label class="text-field">
-      <span class="label muted">Search</span>
+      <span class="visually-hidden">Search</span>
       <input type="search" name="q" placeholder={placeholder} spellcheck="false" autocomplete="off" />
     </label>
     {groups.length > 1 && (
       <label class="select asset-cat">
         <span class="visually-hidden">Category</span>
         <select name="cat">
-          <option value="all">All categories</option>
+          <option value="all">{kind === 'files' ? 'All styles' : 'All categories'}</option>
           {groups.map((g, i) => <option value={i}>{g.name}</option>)}
         </select>
         <Fragment set:html={chevron} />
@@ -38,15 +43,19 @@ const dl = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hid
     {groups.map((g, i) => (
       <>
         {groups.length > 1 && <p class="icon-cat" data-cat={i}><span class="label">{g.name}</span><span class="label muted">{g.items.length}</span></p>}
-        {g.items.map(([name, file]) => (
+        {g.items.map(([type, file]) => {
+          // file icons repeat each type per style, so the style joins the name
+          const name = kind === 'files' && g.name !== 'Default' ? `${type}, ${g.name.toLowerCase()}` : type;
+          return (
           <div class="asset-tile" data-cat={i} data-name={`${name} ${g.name}`.toLowerCase()}>
-            <button type="button" class:list={['icon-tile', { 'asset-dark': name.endsWith(', white') }]} data-asset={file} data-label={name} title={`Copy ${name}`}>
-              <img src={file} alt="" width={size} height={size} loading="lazy" decoding="async" />
+            <button type="button" class:list={['icon-tile', { 'asset-dark': name.endsWith(', white') }]} data-asset={file} data-text={text?.[file]} data-label={name} title={`Copy ${name}`}>
+              {text ? <span class="asset-emoji" aria-hidden="true">{text[file]}</span> : <img src={file} alt="" width={size} height={size} loading="lazy" decoding="async" />}
               <span>{name}</span>
             </button>
-            <a class="asset-dl" href={file} download aria-label={`Download ${name}`} title="Download"><Fragment set:html={dl} /></a>
+            <a class="asset-dl" href={file} download aria-label={`Download ${name}${text ? ' as a 3D PNG' : ''}`} title={text ? 'Download 3D PNG' : 'Download'}><Fragment set:html={dl} /></a>
           </div>
-        ))}
+          );
+        })}
       </>
     ))}
     <p class="icon-empty" data-asset-empty hidden></p>

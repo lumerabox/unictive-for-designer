@@ -6,6 +6,8 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { progressCode as code } from '../../lib/feedback-code';
 import Btn from '../../components/Btn.astro';
 import '../../styles/u-feedback.css';
 import '../../styles/u-progress.css';
@@ -36,6 +38,7 @@ const specs: [string, string, string][] = [
   intro="Progress bars show how much of a task is done, so people know it’s working and roughly how long is left"
   meta={[['Variants', variantCount], ['Sets', 3], ['States', states.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Drag the value or start a fake upload, it runs to 100% and lands on Success">
     <form class="pg" data-playground data-kind="progress" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -55,6 +58,13 @@ const specs: [string, string, string][] = [
         <div class="canvas-fill" data-host><Fragment set:html={render({ live: true })} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ state: 'On Progress' })} · 40%</p>
         <div class="canvas-tools"><Btn size="Small" label="Start upload" data-upload /></div>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -113,6 +123,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Progress bar tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Progress Bar" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

@@ -6,6 +6,9 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { tabsCode as code } from '../../lib/nav-code';
 import '../../styles/u-tabs.css';
 import { kinds, pillStyles, listTypes, render, chip, setName, variantCount, baseCount } from '../../data/tab-menu';
 
@@ -45,6 +48,7 @@ const stateKinds = ['Line', 'Segmented', 'Pill', 'Vertical'] as const;
   intro="Tab menus switch between related views or sections of a page, without sending people somewhere else"
   meta={[['Variants', variantCount], ['Base items', baseCount], ['Types', kinds.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a type, then click the tabs or use the arrow keys to move between them">
     <form class="pg" data-playground data-kind="tabs" onsubmit="return false">
       <div class="fields">
@@ -61,6 +65,13 @@ const stateKinds = ['Line', 'Segmented', 'Pill', 'Vertical'] as const;
       <div class="canvas" data-canvas>
         <div class="canvas-fill"><div class="surface" data-host><Fragment set:html={render({ count: 4, live: true })} /></div></div>
         <p class="chip" data-chip aria-live="polite">{chip({ kind: 'Line', count: 4, rounded: true, style: 'Filled', list: 'Card' })}</p>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -121,6 +132,8 @@ const stateKinds = ['Line', 'Segmented', 'Pill', 'Vertical'] as const;
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Tab menu tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Tab Menu" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

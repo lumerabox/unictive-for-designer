@@ -1,0 +1,126 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import CopyHtml from '../../components/doc/CopyHtml.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import MotionPlayground from '../../components/foundations/MotionPlayground.astro';
+import { highlight } from '../../lib/highlight';
+import { textPresets, motionSetup } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const replay = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.67 8a5.33 5.33 0 1 0 1.56-3.77M2.67 2.67v2.66h2.66" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const samples: Record<string, string> = {
+  'lines-up': 'Calm and editorial, each line rises from its own mask as the heading wraps',
+  'words-up': 'Word by word, a little more energy',
+  'chars-up': 'Letter by letter',
+  'words-blur': 'Coming into focus',
+  'chars-fade': 'Soft and quiet',
+};
+const hero = `<section class="hero">
+  <h1 data-motion="chars-up">Design that moves</h1>
+  <p data-motion="lines-up" style="--motion-delay: 400ms">One system for product and marketing, from tokens to motion.</p>
+  <a class="btn" data-motion="fade-up" style="--motion-delay: 700ms">Get started</a>
+</section>`;
+const markup = `<h2 data-motion="words-up">Ship <em>faster</em> together</h2>
+
+<!-- becomes -->
+<h2 data-motion="words-up">
+  <span class="m-mask"><span class="m-piece m-t is-in">Ship</span></span>
+  <em><span class="m-mask"><span class="m-piece m-t is-in">faster</span></span></em>
+  …
+</h2>`;
+---
+<DocPage
+  title="Text Reveal"
+  section="Motion"
+  script="motion"
+  description="Split text animations for Unictive headings: lines, words and characters rising from a mask or coming into focus, without GSAP."
+  intro="Headings that build themselves as they scroll in. motion.js splits the text into lines, words or letters and keeps links, emphasis and screen readers intact"
+  meta={[['Presets', textPresets.length], ['Dependencies', 'None'], ['Screen readers', 'Read whole words']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+  <Btn slot="action" size="Large" variant="Secondary" type="Neutral" label="Download motion.js" data-dl="/code/motion.js" data-dl-name="motion.js" />
+
+  <Section id="playground" label="Playground" desc="Type a heading and pick how it splits">
+    <MotionPlayground kind="text" />
+  </Section>
+
+  <Section id="presets" label="Presets" desc="Masked presets rise from below a clip line. Blur and fade presets have no mask, so they also work on multi-line paragraphs. Hover a tile to play it again">
+    <div class="grid2">
+      {textPresets.map(([v, t, d]) => (
+        <div class="tile tile-static mo-tile">
+          <span class="tile-top"><span class="label">{t}</span><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${t}`} set:html={replay} /><CopyHtml value={`<h2 data-motion="${v}">${samples[v]}</h2>`} what={`${t} HTML`} /></span></span>
+          <span class="tile-body"><p class="mo-text" data-motion={v}>{samples[v]}</p></span>
+          <p class="desc">{d}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="hero" label="Hero" title="Putting it together" desc="Characters for the headline, lines for the lead, a fade for the button. Delays chain them into one entrance">
+    <div class="mo-hero" data-hero>
+      <h3 data-motion="chars-up">Design that moves</h3>
+      <p data-motion="lines-up" style="--motion-delay: 400ms">One system for product and marketing, from tokens to motion.</p>
+      <div data-motion="fade-up" style="--motion-delay: 700ms"><Btn label="Get started" /></div>
+      <Btn size="Small" variant="Secondary" type="Neutral" label="Replay" data-replay-hero />
+    </div>
+    <div class="block" style="margin-top:24px">
+      <pre class="code"><code set:html={highlight(hero, 'html')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="timing" label="Timing" desc="The total time grows with the text. Keep the last piece landing within about 2 s">
+    <SpecsTable
+      label="Timing"
+      head={['Preset', 'Stagger', 'Duration']}
+      rows={[
+        ['Lines up', '—', '900 ms, 120 ms per line'],
+        ['Words up and words blur', 'stagger-word', '900 ms, 80 ms per word'],
+        ['Characters up and fade', 'stagger-char', '900 ms, 30 ms per letter'],
+      ]}
+    />
+  </Section>
+
+  <Section id="code" label="Code" desc="Text inside links, em and strong is split in place, so the markup stays intact">
+    <div class="block">
+      <p class="subhead">Install</p>
+      <pre class="code"><code set:html={highlight(motionSetup, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">What motion.js does</p>
+      <pre class="code"><code set:html={highlight(markup, 'html')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="accessibility" label="Accessibility" desc="Split text still reads as words">
+    <SpecsTable
+      label="Accessibility"
+      head={['Case', 'Handling', 'Result']}
+      rows={[
+        ['Words and lines', '—', 'Each word stays a whole word, screen readers read it as written'],
+        ['Characters', '—', 'Each word gets a hidden copy, the letters are aria-hidden'],
+        ['Reduced motion', '—', 'No movement or blur, a 150 ms fade only'],
+        ['No JavaScript', '—', 'The text is never split or hidden'],
+      ]}
+    />
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Hero headlines and section titles on landing pages', 'Short statements of one or two lines', 'Once per section, on the title only']}
+      avoid={['Body text or long paragraphs, except lines up', 'Labels, buttons and anything in product UI', 'Characters up on more than about 40 letters']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Reveal', 'Blocks, cards and images'],
+      ['Easing', 'Curves and timing'],
+      ['Typography', 'The type it moves'],
+      ['Usage', 'Loading the CSS'],
+    ]} />
+  </Section>
+</DocPage>

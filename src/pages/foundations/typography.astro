@@ -4,6 +4,8 @@ import Section from '../../components/doc/Section.astro';
 import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
+import { twType } from '../../lib/tokens-export';
 import { typeGroups, typeCount, type TypeStyle } from '../../data/foundations';
 
 const sample: Record<string, string> = {
@@ -18,10 +20,21 @@ const meta = ([, , size, line, tr]: TypeStyle) => `${size} / ${line} · ${tr ===
 const css = ([, w, size, line, tr]: TypeStyle, g: (typeof typeGroups)[number]) =>
   `font-size:${size}px;line-height:${line}px;font-weight:${w};letter-spacing:${tr / 100}em${g.italic ? ';font-style:italic' : ''}${g.upper ? ';text-transform:uppercase' : ''}`;
 const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789 !?&@#%(),.:;→';
+const twGroups = [...new Set(twType.map((t) => t.group))].map((key) => {
+  const g = typeGroups.find((x) => x.key === key)!;
+  return { title: g.name, rows: twType.filter((t) => t.group === key).map((t): [string, string, string] => [t.name, t.cls, `${t.size} / ${t.line} · ${t.weight}`]) };
+});
+twGroups.find((t) => t.title === 'Uppercase')!.note = 'Add uppercase next to the class';
+twGroups.find((t) => t.title === 'Paragraph')!.note = 'Add italic for the Italic styles: text-paragraph-md italic';
+twGroups[0].note = 'Each class sets size, line height, tracking and the first weight. Add font-medium, font-semibold or font-bold for the others';
+const twExample = `<h1 class="text-title-h4 text-text-strong-950">Payments</h1>
+<p class="text-paragraph-md text-text-sub-600">Track every invoice in one place.</p>
+<p class="text-subheading-xs uppercase text-text-soft-400">Overdue</p>
+<button class="text-label-sm font-semibold">Pay now</button>`;
 ---
 <DocPage
   title="Typography"
-  section="Foundations"
+  section="Components"
   script="foundations"
   description="Inter and the Unictive type scale: titles, labels, paragraphs, subheadings, uppercase and italic styles with sizes, line heights and tracking."
   intro="One family, Inter, in six style groups. Titles for headings, labels for UI, paragraphs for reading"
@@ -75,6 +88,12 @@ const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
       ))}
     </Section>
   ))}
+
+  <TailwindSection
+    desc="Every text style is a Tailwind text- class named group-size, like text-title-h1 or text-label-sm. Click a class to copy it"
+    tables={twGroups}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

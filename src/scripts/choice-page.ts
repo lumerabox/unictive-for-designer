@@ -2,6 +2,11 @@
 import { itemState } from '../data/rating';
 import { setupCopy, type Copyable } from './controls-copy';
 import { bare, labeled, group, ratingRow, copyPage, type ChoiceKind } from '../lib/figma/choice-copy';
+import { copy } from './foundations-page';
+import { codeExamples } from './code-examples';
+import { choiceHtml, type Kind } from '../lib/choice-code';
+import { ratingHtml } from '../lib/rating-code';
+import type { Size as RatingSize, Type as RatingType } from '../data/rating';
 
 export default function init(signal: AbortSignal) {
   const lower = (s: string) => s.toLowerCase();
@@ -230,5 +235,20 @@ export default function init(signal: AbortSignal) {
     };
     setupCopy(copyPage[kind as ChoiceKind | 'rating'], { signal, current, canvas, chip, restoreChip: render });
     render();
+
+    // html for the playground variant, with the texts on screen
+    function html() {
+      if (kind === 'rating') return ratingHtml({ type: get('type') as RatingType, size: get('size') as RatingSize, value: Number(get('value')), disabled: on('disabled') });
+      const labeledOn = get('component').endsWith('-label');
+      const shown = [...canvas.querySelectorAll<HTMLElement>('[data-labeled] .u-choice')].map((l) => {
+        const t = texts(l);
+        return { title: t.label, desc: t.desc || undefined, badge: t.badge || undefined, link: t.button || undefined };
+      });
+      const value = kind === 'checkbox' ? get('state') : kind === 'radio' ? get('selected') : get('select');
+      return choiceHtml({ kind: kind as Kind, labeled: labeledOn, size: get('size') as 'Medium' | 'Small', end: get('position') === 'Right', disabled: on('disabled'), value, texts: shown });
+    }
+    document.querySelector('[data-pg-copy]')!.addEventListener('click', () => copy(html(), `${kind} HTML`));
   }
+
+  codeExamples();
 }

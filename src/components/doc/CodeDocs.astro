@@ -1,0 +1,55 @@
+---
+// developer docs for a component: the class reference and examples with preview, html and copy
+import Section from './Section.astro';
+import Btn from '../Btn.astro';
+import { highlight } from '../../lib/highlight';
+import { previewCss } from '../../lib/global-css';
+import type { ClassRow, Example } from '../../lib/code-types';
+
+interface Props {
+  name: string;
+  classes: ClassRow[];
+  examples: Example[];
+}
+const { name, classes, examples } = Astro.props;
+---
+<Section id="classes" label="Classes" desc="Every class comes from global.css. Click a class to copy it">
+  <div class="table table-classes" role="table" aria-label={`${name} classes`}>
+    <div class="tr th" role="row">{['Class', 'Type', 'Description'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+    {classes.map(([cls, type, desc]) => (
+      <div class="tr" role="row">
+        <span role="cell"><button type="button" class="token cls" data-token={cls} title="Copy class name">{cls}</button></span>
+        <span role="cell" class="muted">{type}</span>
+        <span role="cell">{desc}</span>
+      </div>
+    ))}
+  </div>
+  <div class="cls-foot">
+    <p>The {name.toLowerCase()} rules live in <code>global.css</code>, next to the Tailwind theme from <a href="/foundations/export/">Foundations → Export</a></p>
+    <Btn size="Small" variant="Secondary" type="Neutral" label="Download global.css" data-css-download="/code/global.css" />
+  </div>
+</Section>
+
+<Section id="examples" label="Examples" desc="Ready to paste. Each preview is rendered from the HTML next to it">
+  <style is:inline set:html={previewCss}></style>
+  {examples.map((ex) => (
+    <div class="ex" id={ex.id}>
+      <p class="subhead">{ex.title}</p>
+      <p class="desc">{ex.desc}</p>
+      <div class="ex-card" data-ex>
+        <div class="ex-bar">
+          <div class="ex-tabs" role="tablist" aria-label={`${ex.title} example`}>
+            <button type="button" role="tab" aria-selected="true" data-ex-tab="preview">Preview</button>
+            <button type="button" role="tab" aria-selected="false" data-ex-tab="code">HTML</button>
+          </div>
+          <button type="button" class="ex-copy" data-ex-copy={ex.title}>
+            <span>Copy</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7L3 12L8 17M16 7L21 12L16 17M14 4L10 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class:list={['ex-stage', ex.stack && 'ex-stack', ex.height && 'ex-tall']} style={ex.height ? `min-height: ${ex.height}px` : undefined} data-ex-panel="preview" set:html={ex.html} />
+        <pre class="code ex-code" data-ex-panel="code" hidden><code set:html={highlight(ex.html, 'html')} /></pre>
+      </div>
+    </div>
+  ))}
+</Section>

@@ -15,6 +15,10 @@ export interface Part {
   texts?: Record<string, string>; // text layer name → new text
   hide?: string[]; // layer names to hide, or paths like "Frame > Layer" under the variant
   show?: string[]; // layer names to show
+  // replace a layer with another variant: path names the layer, or with index the container and its nth child
+  swap?: { path: string; index?: number; part: Part }[];
+  // replace every child of a container ("" is the variant itself) with these parts
+  fill?: { path: string; parts: Part[] }[];
 }
 
 // several parts in an auto layout frame, e.g. a rating row or a menu
@@ -72,8 +76,38 @@ export function loadTemplate(page: string) {
   return loading.get(page)!;
 }
 
+// a variant by name, or a layer inside one: "Breadcrumbs / Arrow / 2 / false > chevron-right-line"
+function findVariant(t: Template, name: string) {
+  if (t.byName.has(name)) return t.byName.get(name);
+  const [top, ...rest] = name.split(' > ');
+  const src = t.byName.get(top);
+  return src && rest.length ? walkPath(t.kids, src, rest.join(' > ')) : undefined;
+}
+
+// path segments are layer names, "Name#1" picks the second sibling with that name
+function walkPath(kids: Map<string, Node[]>, from: Node, path: string): Node | undefined {
+  let at: Node | undefined = from;
+  for (const seg of path.split(' > ')) {
+    const [name, nth = '0'] = seg.split('#');
+    at = (kids.get(gid(at!.guid)) ?? []).filter((k) => k.name === name)[Number(nth)];
+    if (!at) return undefined;
+  }
+  return at;
+}
+
+// "" is the root, one plain name matches the first layer with it anywhere, otherwise a path from the root
+function resolve(nodes: Node[], root: Node, path: string): Node {
+  if (!path) return root;
+  const kids = childrenIndex(nodes);
+  const hit = !path.includes(' > ') && !path.includes('#') ? nodes.find((n) => n !== root && n.name === path) : walkPath(kids, root, path);
+  if (!hit) throw new Error(`no layer ${path}`);
+  return hit;
+}
+
 const atlasFor = (n: Node): Atlas => (n.fontName?.style === 'Medium' ? (medium as Atlas) : regular);
 const glyphFor = (a: Atlas, ch: string) => (a.glyphs as Record<string, { advance: number; blob: string | null }>)[ch] ?? a.glyphs['?' as keyof typeof a.glyphs];
+
+const plain: Record<string, string> = { '’': "'", '‘': "'", '“': '"', '”': '"', '–': '-', '—': '-', '…': '...' };
 
 // greedy word wrap, a width of Infinity keeps one line
 function wrapLines(a: Atlas, chars: string[], width: number, size: number, track: number) {
@@ -103,7 +137,9 @@ function setText(n: Node, text: string, width: number | null, blobs: Uint8Array[
   const size = n.fontSize as number;
   const lh = n.lineHeight?.units === 'PIXELS' ? (n.lineHeight.value as number) : Math.round(a.fontLineHeight * size);
   const track = ((n.letterSpacing?.value ?? 0) / 100) * size;
-  const chars = [...text];
+  // typographic marks the atlas has no outline for fall back to their plain forms
+  const chars = [...text].map((ch) => (ch in a.glyphs ? ch : plain[ch] ?? ch));
+  text = chars.join('');
   const lines = wrapLines(a, chars, width ?? Infinity, size, track);
   const boxW = width ?? Math.ceil(Math.max(...lines.map((l) => l.w)));
   const boxH = lines.length * lh;
@@ -154,12 +190,13 @@ export function buildMessage(t: Template, spec: CopySpec) {
   const out: Node[] = [];
   const roots: Node[] = [];
 
-  for (const p of spec.parts) {
-    const src = t.byName.get(p.variant);
+  // one part as a fresh subtree: hide and show applied, texts recorded, swaps and fills grafted in
+  function instantiate(p: Part): { nodes: Node[]; root: Node; texts: Map<Node, string> } {
+    const src = findVariant(t, p.variant);
     if (!src) throw new Error(`no template for ${p.variant}`);
     // clone the subtree with fresh ids so a variant can repeat
     const map = new Map<string, any>();
-    const nodes: Node[] = [];
+    let nodes: Node[] = [];
     const collect = (n: Node) => {
       const c = structuredClone(n);
       map.set(gid(n.guid), (c.guid = fresh()));
@@ -169,8 +206,6 @@ export function buildMessage(t: Template, spec: CopySpec) {
     collect(src);
     for (const n of nodes) if (n.parentIndex && map.has(gid(n.parentIndex.guid))) n.parentIndex = { ...n.parentIndex, guid: map.get(gid(n.parentIndex.guid)) };
     const root = nodes[0];
-    const kids = childrenIndex(nodes);
-    const L = createLayout(kids);
 
     // a key matches a layer name, or with " > " the exact path under the variant, e.g. "Text-input (Outline) > Label"
     const byGid = new Map(nodes.map((n) => [gid(n.guid), n]));
@@ -179,19 +214,74 @@ export function buildMessage(t: Template, spec: CopySpec) {
       return !up || up === root ? n.name : `${pathOf(up)} > ${n.name}`;
     };
     const paths = new Map(nodes.map((n) => [n, pathOf(n)]));
-    const hits = (keys: string[] | undefined, n: Node) => !!keys?.some((k) => (k.includes(' > ') ? k === paths.get(n) : k === n.name));
-    const textOf = (n: Node) => p.texts![paths.get(n)!] ?? p.texts![n.name];
+    const hits = (keys: string[] | undefined, n: Node) => !!keys?.some((k) => (k.includes('#') ? picked.get(k) === n : k.includes(' > ') ? k === paths.get(n) : k === n.name));
+    // "Bar#1" style keys point at one sibling among several with the same name
+    const picked = new Map<string, Node | undefined>();
+    const kidsNow = childrenIndex(nodes);
+    for (const k of [...(p.hide ?? []), ...(p.show ?? [])]) if (k.includes('#')) picked.set(k, walkPath(kidsNow, root, k));
     for (const n of nodes) {
       if (hits(p.hide, n)) n.visible = false;
       if (hits(p.show, n)) n.visible = true;
     }
+    const texts = new Map<Node, string>();
+    if (p.texts) for (const n of nodes) if (n.type === 'TEXT' && (n.name in p.texts || paths.get(n)! in p.texts)) texts.set(n, p.texts[paths.get(n)!] ?? p.texts[n.name]);
+    // "Link-buttons#1 > Link Button" style keys pick one text among siblings with the same path
+    for (const [k, v] of Object.entries(p.texts ?? {})) {
+      const n = k.includes('#') ? walkPath(kidsNow, root, k) : undefined;
+      if (n?.type === 'TEXT') texts.set(n, v);
+    }
+
+    const subtree = (n: Node) => {
+      const kids = childrenIndex(nodes);
+      const out = new Set<Node>();
+      const walk = (x: Node) => { out.add(x); for (const k of kids.get(gid(x.guid)) ?? []) walk(k); };
+      walk(n);
+      return out;
+    };
+    // the grafted root takes the place, position and auto layout child settings of what it replaces
+    const graft = (old: Node, p2: Part, parent: Node, position: string) => {
+      const g = instantiate(p2);
+      g.root.parentIndex = { guid: parent.guid, position };
+      g.root.transform = { ...g.root.transform, m02: old.transform.m02, m12: old.transform.m12 };
+      for (const k of ['stackChildPrimaryGrow', 'stackChildAlignSelf', 'stackPositioning']) {
+        if (old[k] === undefined) delete g.root[k];
+        else g.root[k] = old[k];
+      }
+      nodes.push(...g.nodes);
+      for (const [n, v] of g.texts) texts.set(n, v);
+    };
+    const drop = (n: Node) => {
+      const gone = subtree(n);
+      nodes = nodes.filter((x) => !gone.has(x));
+      for (const x of gone) texts.delete(x);
+    };
+    for (const s of p.swap ?? []) {
+      const at = s.index === undefined ? resolve(nodes, root, s.path) : childrenIndex(nodes).get(gid(resolve(nodes, root, s.path).guid))?.[s.index];
+      if (!at) throw new Error(`no layer ${s.path}${s.index === undefined ? '' : `[${s.index}]`} in ${p.variant}`);
+      const parent = nodes.find((x) => gid(x.guid) === gid(at.parentIndex.guid))!;
+      drop(at);
+      graft(at, s.part, parent, at.parentIndex.position);
+    }
+    for (const f of p.fill ?? []) {
+      const box = resolve(nodes, root, f.path);
+      const old = childrenIndex(nodes).get(gid(box.guid)) ?? [];
+      if (!old.length) throw new Error(`no children in ${f.path} of ${p.variant}`);
+      old.forEach(drop);
+      f.parts.forEach((fp, i) => graft(old[Math.min(i, old.length - 1)], fp, box, String.fromCharCode(33 + i)));
+    }
+    return { nodes, root, texts };
+  }
+
+  for (const p of spec.parts) {
+    const { nodes, root, texts } = instantiate(p);
+    const L = createLayout(childrenIndex(nodes));
     // hug texts take their own width, fill texts wrap to the width layout gives them
-    const edits = nodes.filter((n) => n.type === 'TEXT' && p.texts && (n.name in p.texts || paths.get(n)! in p.texts));
+    const edits = [...texts.keys()];
     const hug = (n: Node) => n.textAutoResize === 'WIDTH_AND_HEIGHT';
-    for (const n of edits) if (hug(n)) setText(n, textOf(n) || ' ', null, blobs, glyphCache);
+    for (const n of edits) if (hug(n)) setText(n, texts.get(n) || ' ', null, blobs, glyphCache);
     L.layout(root, L.measure(root));
     if (edits.some((n) => !hug(n))) {
-      for (const n of edits) if (!hug(n)) setText(n, textOf(n) || ' ', n.size.x, blobs, glyphCache);
+      for (const n of edits) if (!hug(n)) setText(n, texts.get(n) || ' ', n.size.x, blobs, glyphCache);
       L.layout(root, L.measure(root));
     }
     for (const n of edits) n.name = n.textData.characters;

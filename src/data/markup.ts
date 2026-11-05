@@ -45,6 +45,12 @@ export function icon(name: IconName, size: number, cls = '') {
   return `<svg${c} width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${line[name]}" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
+// the same icons as bare svgs for code examples, global.css sizes and colors them
+export function plainIcon(name: IconName) {
+  if (name in solid) return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${solid[name]}"/></svg>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${line[name]}"/></svg>`;
+}
+
 // the five feedback statuses and their DS state colors
 export const statuses = ['Error', 'Warning', 'Success', 'Info', 'Feature'] as const;
 export type Status = (typeof statuses)[number];

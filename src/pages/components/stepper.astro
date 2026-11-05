@@ -6,6 +6,8 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { stepperCode as code } from '../../lib/nav-code';
 import Btn from '../../components/Btn.astro';
 import '../../styles/u-stepper.css';
 import { indicators, sizes, states, layouts, steps, render, indicator, chip, variantCount } from '../../data/stepper';
@@ -38,6 +40,7 @@ const specs: [string, string, string][] = [
   intro="Steppers break a long task into steps and show people what’s done, where they are and what’s left"
   meta={[['Variants', variantCount], ['Indicators', indicators.length], ['Layouts', layouts.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a layout and indicator, then step through with Back and Next, or click a finished step to go back to it">
     <form class="pg" data-playground data-kind="stepper" onsubmit="return false">
       <div class="fields">
@@ -53,8 +56,15 @@ const specs: [string, string, string][] = [
         <div class="canvas-fill"><div class="surface" data-host><Fragment set:html={render({ live: true })} /></div></div>
         <p class="chip" data-chip aria-live="polite">{chip({ layout: 'h01', type: 'Filled', size: 'Large', rounded: true })} · Step 2 of 4</p>
         <div class="canvas-tools">
-          <Btn size="Small" variant="Secondary" type="Neutral" label="Back" data-step-act="back" />
+          <Btn size="Small" variant="Tertiary" type="Neutral" label="Back" data-step-act="back" />
           <Btn size="Small" label="Next" data-step-act="next" />
+        </div>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
         </div>
       </div>
     </form>
@@ -113,6 +123,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Stepper tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Stepper" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

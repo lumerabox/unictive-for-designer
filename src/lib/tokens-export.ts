@@ -1,7 +1,8 @@
 // token files for code: css variables, a tailwind v4 theme and w3c design tokens json
 import { tokens, collections, cssName, refOf, resolve, display, get, type DsToken } from '../data/tokens';
+import { typeGroups, shadows } from '../data/foundations';
 
-const banner = (what: string) => `Unictive Design System 1.0 · ${what} · generated from design.wofyu.space/tokens`;
+const banner = (what: string) => `Unictive Design System 1.0 · ${what} · generated from ${new URL(import.meta.env.SITE).host}/tokens`;
 const order = ['foundations', 'radius', 'spacing', 'opacity', 'neutral', 'brand', 'tokens'] as const;
 const numCss = (x: DsToken) => (x.collection === 'opacity' ? String(+x.value! / 100) : `${x.value}px`);
 const cssValue = (x: DsToken) => (x.kind === 'number' ? numCss(x) : x.ref ? `var(${cssName(get(x.ref))})` : x.value!.toLowerCase());
@@ -23,11 +24,37 @@ export function css() {
   return lines.join('\n');
 }
 
+// tailwind names for the foundations pages. italic shares the paragraph sizes, so it is paragraph + italic
+const sizeKey: Record<string, string> = { 'Extra Large': 'xl', Large: 'lg', Medium: 'md', Small: 'sm', 'Extra Small': 'xs', 'Super Small': '2xs', '2x Small': '2xs', 'Very Small': '3xs' };
+export const twType = typeGroups.filter((g) => !g.italic).flatMap((g) =>
+  g.rows(g.weights[0]).map(([name, weight, size, line, tracking]) => {
+    const last = name.split('/').at(-1)!.replace(' Title', '');
+    return { group: g.key, name, cls: `text-${g.key}-${/^H\d$/.test(last) ? last.toLowerCase() : sizeKey[last]}`, weight, size, line, tracking };
+  }),
+);
+const shadowKey: Record<string, string> = { 'X-Small': 'xs', Small: 'sm', Medium: 'md', Large: 'lg' };
+export const twShadows = shadows.map((x) => {
+  const [group, size] = x.name.split('/');
+  return { ...x, cls: `shadow-${group.split('-')[0].toLowerCase().replace('reguler', 'regular')}-${shadowKey[size]}` };
+});
+
 // tailwind v4 reads theme variables from @theme; values are resolved so the file works on its own
 export function tailwind() {
   const lines = [`/* ${banner('Tailwind CSS v4 theme, Gray mode')} */`, '/* import it after tailwindcss: @import "tailwindcss"; @import "./unictive-tailwind.css"; */', '', '@theme {'];
   lines.push('  /* colors: bg-bg-weak-50, text-text-sub-600, border-stroke-soft-200 … */');
   for (const x of tokens.filter((x) => x.collection === 'tokens')) lines.push(`  --color-${x.name.replace(/\//g, '-')}: ${resolve(x).toLowerCase()};`);
+  lines.push('', '  /* primary roles of the active brand: bg-primary-base, text-primary-dark */');
+  for (const x of tokens.filter((x) => x.collection === 'brand')) lines.push(`  --color-${x.name.split('/').at(-1)}: ${resolve(x).toLowerCase()};`);
+  lines.push('', '  /* primitives, for charts and illustrations only: bg-blue-500, fill-core-500 */');
+  for (const x of tokens.filter((x) => x.collection === 'foundations' && !x.name.startsWith('alpha/'))) lines.push(`  --color-${x.name.replace(/^neutral\//, '').replace(/\//g, '-')}: ${x.value!.toLowerCase()};`);
+  lines.push('', '  /* text styles: text-title-h1, text-label-sm, text-paragraph-md. add font-bold for another weight, uppercase or italic for those groups */');
+  for (const t of twType) {
+    lines.push(`  --text-${t.cls.slice(5)}: ${t.size}px;`, `  --text-${t.cls.slice(5)}--line-height: ${t.line}px;`);
+    if (t.tracking) lines.push(`  --text-${t.cls.slice(5)}--letter-spacing: ${+(t.tracking / 100).toFixed(4)}em;`);
+    lines.push(`  --text-${t.cls.slice(5)}--font-weight: ${t.weight};`);
+  }
+  lines.push('', '  /* shadows: shadow-regular-md, shadow-custom-lg */');
+  for (const x of twShadows) lines.push(`  --${x.cls}: ${x.css};`);
   lines.push('', '  /* radius: rounded-8, rounded-full */');
   for (const x of tokens.filter((x) => x.collection === 'radius')) lines.push(`  --radius-${x.name.slice(7)}: ${numCss(x)};`);
   lines.push('', '  /* spacing: p-16, gap-24 */');
@@ -56,6 +83,6 @@ export function json() {
 
 export const formats = [
   { key: 'css', name: 'CSS', file: 'unictive-tokens.css', type: 'text/css', build: css, hint: 'Plain CSS variables. Aliases stay as var() so a Slate container or a new brand updates every token under it' },
-  { key: 'tailwind', name: 'Tailwind v4', file: 'unictive-tailwind.css', type: 'text/css', build: tailwind, hint: 'An @theme block with the semantic colors, radius and spacing, so classes like bg-bg-weak-50 and rounded-8 work' },
+  { key: 'tailwind', name: 'Tailwind v4', file: 'unictive-tailwind.css', type: 'text/css', build: tailwind, hint: 'An @theme block with the colors, text styles, shadows, radius and spacing, so classes like bg-bg-weak-50, text-title-h4, shadow-regular-md and rounded-8 work' },
   { key: 'json', name: 'JSON', file: 'unictive-tokens.json', type: 'application/json', build: json, hint: 'W3C Design Tokens format for Style Dictionary, Tokens Studio and other tools. Aliases are kept as references' },
 ] as const;

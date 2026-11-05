@@ -5,6 +5,8 @@ import SpecsTable from '../../components/doc/SpecsTable.astro';
 import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
+import { twShadows } from '../../lib/tokens-export';
 import { shadows } from '../../data/foundations';
 
 const groups = ['Regular', 'Card', 'Custom'];
@@ -14,10 +16,14 @@ const desc: Record<string, string> = {
   Custom: 'Stacked layers with a hairline ring and an inner highlight, for surfaces that need a crisp edge',
 };
 const short = (n: string) => n.split('/')[1];
+const twRows = twShadows.map((s): [string, string, string] => [s.name, s.cls, `${s.layers} ${s.layers === 1 ? 'layer' : 'layers'}`]);
+const twExample = `<div class="bg-bg-white-0 rounded-12 shadow-regular-md">Menu</div>
+<div class="bg-bg-white-0 rounded-16 shadow-custom-lg">Modal</div>
+<div class="rounded-16 hover:shadow-card-lg">Card</div>`;
 ---
 <DocPage
   title="Shadows"
-  section="Foundations"
+  section="Components"
   script="foundations"
   description="Unictive shadow effect styles: regular, card and custom layered shadows, with the CSS for each and where components use them."
   intro="Shadows say what floats. Keep them soft and few: most surfaces sit flat with a 1 px stroke, and only menus, popovers and modals lift"
@@ -33,7 +39,7 @@ const short = (n: string) => n.split('/')[1];
             <button type="button" class="tile shadow-tile" data-copy={`box-shadow: ${s.css};`} data-copy-label={`${s.name} CSS`}>
               <span class="tile-top"><span class="label muted">{short(s.name)}</span><span class="label muted">{s.layers} {s.layers === 1 ? 'layer' : 'layers'}</span></span>
               <span class="tile-body"><i class="shadow-card" style={`box-shadow:${s.css}`}></i></span>
-              <span class="copy-hint">Copy CSS</span>
+              <span class="copy-hint copy-hint-css">Copy CSS</span>
             </button>
           ))}
         </div>
@@ -48,6 +54,12 @@ const short = (n: string) => n.split('/')[1];
   <Section id="specs" label="Specs" title="Styles and layers" desc="Colors are neutral 950 and slate 950 at 1 to 16 % opacity. Custom X-Small and Small hold the same layers in the DS today">
     <SpecsTable label="Shadow CSS" head={['Style', 'Token', 'CSS']} rows={shadows.filter((s) => s.layers === 1).map((s): [string, string, string] => [short(s.name) + ' · ' + s.group, s.name, s.css])} />
   </Section>
+
+  <TailwindSection
+    desc="Each style is a shadow- class named group-size, with every layer included. Click a class to copy it"
+    tables={[{ rows: twRows }]}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

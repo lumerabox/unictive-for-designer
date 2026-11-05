@@ -14,6 +14,11 @@
 .u-btn svg { width: var(--icon); height: var(--icon); flex: none; }
 .u-btn svg[hidden] { display: none; }
 .u-btn svg path { stroke: currentColor; stroke-width: var(--sw, 2); }
+.u-btn svg[data-logo] { width: calc(var(--icon) * 0.5); height: calc(var(--icon) * 0.75); margin-right: calc(var(--icon) / 4); }
+.u-btn svg[data-logo] path { stroke: none; }
+/* copy buttons: label left, html icon or figma logo right, one shared width */
+.u-btn-copy { justify-content: space-between; min-width: 120px; }
+.u-btn-copy[data-size='large'] { min-width: 136px; }
 
 .u-btn[data-size='large'] { --h: 48px; --px: 12px; --icon: 24px; --fs: 16px; --lh: 24px; --ls: -0.011em; }
 .u-btn[data-size='small'] { --h: 32px; --px: 8px; --r: 6px; --icon: 16px; }

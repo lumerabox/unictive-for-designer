@@ -1,0 +1,61 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+---
+<DocPage
+  title="Figma Library"
+  section="Getting Started"
+  description="Design with the Unictive DS library in Figma: turn it on, use its variables and styles, paste components from this site and take updates."
+  intro="Everything on this site comes from one Figma library. Turn it on once, then pick values and components from it"
+  meta={[['Library', 'Unictive DS'], ['Version', 'DS 1.0'], ['Plugin', 'None']]}
+>
+  <Section id="enable" label="Enable" title="Turn on the library">
+    <ol class="steps">
+      <li>Open a design file and go to Assets → Libraries</li>
+      <li>Find Unictive DS and turn it on for the file</li>
+      <li>Colors, radius and spacing now show in the variable picker, text and shadows in the style picker</li>
+    </ol>
+  </Section>
+
+  <Section id="copy" label="Copy" title="Copy from this site" desc="Every component playground pastes the exact DS variant, as editable auto layout layers">
+    <ol class="steps">
+      <li>Open a component and pick a variant in the playground</li>
+      <li>Click Copy to Figma, or click the preview and press <kbd>⌘C</kbd></li>
+      <li>Paste in Figma with <kbd>⌘V</kbd>. Assets work the same way</li>
+    </ol>
+  </Section>
+
+  <Section id="tokens" label="Tokens" title="Use variables" desc="Pick from the semantic tokens, never from the color wheel">
+    <ol class="steps">
+      <li>Fills, strokes and text take semantic colors like bg/weak-50 or text/sub-600</li>
+      <li>To use Slate, select a frame and set 02-Neutral to Slate under Layer → Appearance</li>
+      <li>To switch product, set 03-Brand on the frame the same way</li>
+    </ol>
+  </Section>
+
+  <Section id="updates" label="Updates" title="Take updates">
+    <ol class="steps">
+      <li>When the library publishes a change, Figma shows an update in Assets</li>
+      <li>Review it and accept, so frames get the new values</li>
+      <li>The Changelog lists what changed on the site for each release</li>
+    </ol>
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <Usage
+      use={['Keep instances linked and change them through their properties', 'Use semantic variables for anything custom', 'Swap icons through the instance swap property']}
+      avoid={['Detaching an instance to change a color or padding', 'Pasting hex values or local styles over library ones', 'Renaming or restyling layers inside an instance']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Usage', 'Read a component page'],
+      ['Color', 'Ramps and semantic colors'],
+      ['How tokens work', 'Layers and modes'],
+      ['Button', 'Try Copy to Figma'],
+    ]} />
+  </Section>
+</DocPage>

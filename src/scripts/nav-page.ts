@@ -5,6 +5,11 @@ import * as tabs from '../data/tab-menu';
 import * as pg from '../data/pagination';
 import * as st from '../data/stepper';
 import { showToast } from './toast';
+import { codeExamples } from './code-examples';
+import { copy } from './foundations-page';
+import { breadcrumbHtml, tabsHtml, paginationHtml, stepperHtml } from '../lib/nav-code';
+import { setupCopy, type Copyable } from './controls-copy';
+import { copyPage, breadcrumbsSpec, tabsSpec, paginationSpec, stepperSpec } from '../lib/figma/nav-copy';
 
 export default function init(signal: AbortSignal) {
   type Opts = Record<string, any>;
@@ -167,5 +172,18 @@ export default function init(signal: AbortSignal) {
       }),
     );
     apply();
+
+    // html for what the preview shows, with its current page, tab or step
+    const htmlOf: Record<string, (o: any) => string> = { breadcrumbs: breadcrumbHtml, tabs: tabsHtml, pagination: paginationHtml, stepper: stepperHtml };
+    form.querySelector('[data-pg-copy]')?.addEventListener('click', () => copy(htmlOf[kind](optsOf(root())), `${kind} HTML`));
+
+    // copy to figma: the DS shell with its items swapped to match the preview
+    const specOf: Record<string, (o: any) => Copyable['spec']> = { breadcrumbs: breadcrumbsSpec, tabs: tabsSpec, pagination: paginationSpec, stepper: stepperSpec };
+    const current = (): Copyable => {
+      const o = optsOf(root());
+      return { label: label(o), spec: specOf[kind](o) };
+    };
+    setupCopy(copyPage[kind as keyof typeof copyPage], { signal, current, canvas: form.querySelector<HTMLElement>('[data-canvas]')!, chip, restoreChip: () => (chip.textContent = label(optsOf(root()))) });
   }
+  codeExamples();
 }

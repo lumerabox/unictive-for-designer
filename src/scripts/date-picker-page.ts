@@ -2,6 +2,9 @@
 import { rowsHTML, todayKey } from '../components/date-picker/render';
 import { keyOf, months, today, formatDate, formatRange, pickerCopy, optsLabel, type Align } from '../data/date-picker';
 import { setupCopy } from './controls-copy';
+import { copy } from './foundations-page';
+import { codeExamples } from './code-examples';
+import { datePickerHtml } from '../lib/date-picker-code';
 
 export default function init(signal: AbortSignal) {
   const form = document.querySelector<HTMLFormElement>('[data-dp-playground]')!;
@@ -251,4 +254,12 @@ export default function init(signal: AbortSignal) {
     chip,
     restoreChip: chipText,
   });
+
+  // html for the playground variant
+  document.querySelector('[data-pg-copy]')!.addEventListener('click', () => copy(datePickerHtml({
+    align: get('align'), open: get('calendar') === 'true', multiple: get('multiple') === 'true',
+    label: on('label'), required: on('required'), range: on('range'), value: s.value, ...opts(),
+  }), 'date picker HTML'));
+
+  codeExamples();
 }

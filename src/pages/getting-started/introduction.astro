@@ -1,0 +1,121 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+import { sideNav, livePages, topNav, sectionOf } from '../../data/nav';
+import { tokens } from '../../data/tokens';
+
+const countIn = (section: string) => sideNav.filter((g) => sectionOf(g.group) === section).flatMap((g) => g.items).filter((i) => livePages[i]).length;
+const foundationGroups = ['Foundations', 'Tokens'];
+const countWhere = (keep: (group: string) => boolean) => sideNav.filter((g) => sectionOf(g.group) === 'Components' && keep(g.group)).flatMap((g) => g.items).filter((i) => livePages[i]).length;
+const foundationCount = countWhere((g) => foundationGroups.includes(g));
+const componentCount = countWhere((g) => !foundationGroups.includes(g));
+const parts: [string, string, string, string?][] = [
+  ['Foundations', 'Color, type, radius, spacing, shadows, icons and every design token, at the top of Components', String(foundationCount), '/foundations/color/'],
+  ['Components', 'Each with a playground, Copy to Figma, usage guidance, specs and HTML for developers', String(componentCount), '/components/button/'],
+  ['Assets', 'Avatars, brand logos, country flags and emoji, ready to paste into Figma or download', String(countIn('Assets'))],
+  ['Changelog', 'What changed on the site, newest first', ''],
+];
+const hrefOf = (label: string) => topNav.find((n) => n.label === label)!.href;
+
+const stack: [string, string, string][] = [
+  ['Figma library', 'Design', 'Variables for color, radius and spacing, text and shadow styles, and every component with its variants'],
+  ['unictive-ds', 'Code', 'The same tokens and components as plain CSS, from a CDN link or npm. Works with any HTML, no framework needed'],
+  ['Tailwind CSS v4', 'Optional', 'A theme that turns the tokens into utilities such as bg-bg-weak-50 and rounded-8, for projects already on Tailwind'],
+];
+
+const faq: [string, string][] = [
+  ['Do I need Tailwind to use Unictive DS?', 'No. unictive.css works in any project with plain HTML. Tailwind is an extra layer for teams that already use it, and its utilities read the same tokens'],
+  ['Does it work with React, Vue or another framework?', 'Yes. The components are CSS classes, so they work in any framework that renders HTML. Copy the markup and swap class for className where needed'],
+  ['How do I paste a component into Figma?', 'Open a component, pick a variant in the playground and click Copy to Figma. Paste with ⌘V and you get the real DS instance, not a screenshot'],
+  ['Is the Figma library the source of truth?', 'Yes. Tokens, components and specs on this site are read from the DS library, so a value here always matches the one in Figma'],
+  ['What if a component I need isn’t here?', 'Build it from the semantic tokens so it follows light and dark mode, then ask the DS team to add it to the library'],
+  ['How do I know what changed?', 'The Changelog lists every update, newest first. Library updates show in Figma as an update notice you accept per file'],
+];
+---
+<DocPage
+  title="Introduction"
+  section="Getting Started"
+  description="Unictive for Designer is the reference for the Unictive Design System: foundations, components and assets for designers and developers."
+  intro="The reference for the Unictive Design System. One place to look up a value, pick the right component and take it into Figma or code"
+  meta={[['Version', 'DS 1.0'], ['Components', componentCount], ['Tokens', tokens.length]]}
+>
+  <Section id="welcome" label="Welcome" title="Welcome to Unictive DS">
+    <div class="prose">
+      <p>Glad you’re here. Unictive DS is the shared language our designers and developers use to build products that look and behave the same, whoever builds them and wherever they ship.</p>
+      <p>This site is the place to start. Every color, size and component on it comes straight from the Figma library, so what you see here is what you get in your file and in your code.</p>
+    </div>
+  </Section>
+
+  <Section id="what" label="What" title="What is Unictive DS?" desc="A Figma library and a CSS package built from the same tokens, documented in one place">
+    <div class="grid4">
+      {parts.map(([name, text, count, href]) => (
+        <a class="tile tile-intro" href={href ?? hrefOf(name)}>
+          <span class="tile-top"><span class="label">{name}</span><span class="label muted">{count}</span></span>
+          <p>{text}</p>
+        </a>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="stack" label="Stack" title="Tech stack" desc="One library in Figma, one package in code, both read from the same tokens">
+    <ul class="stack">
+      {stack.map(([name, role, text]) => (
+        <li>
+          <span class="stack-name"><strong>{name}</strong><span class="label muted">{role}</span></span>
+          <p>{text}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="next" label="Next" title="Next steps" desc="Pick where to start, depending on what you’re building today">
+    <Related items={[
+      ['Installation', 'Set up a project in code'],
+      ['Figma Library', 'Design with the DS'],
+      ['Usage', 'How a component page works'],
+      ['Button', 'The first component'],
+    ]} />
+  </Section>
+
+  <Section id="faq" label="FAQ" title="Frequently asked questions" desc="Can’t find an answer? Ask the DS team in the design channel">
+    <div class="faq">
+      {faq.map(([q, a], i) => (
+        <details name="faq" open={i === 0}>
+          <summary>
+            <span>{q}</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </summary>
+          <p>{a}</p>
+        </details>
+      ))}
+    </div>
+  </Section>
+</DocPage>
+
+<style>
+  .tile-intro { min-height: 168px; justify-content: space-between; gap: 24px; }
+  .tile-intro p { color: var(--text-sub-600); font-size: var(--fs-small); line-height: var(--lh-small); }
+
+  .prose { display: grid; gap: 16px; max-width: 640px; }
+  .prose p { font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--text-sub-600); }
+  .prose p:first-child { color: var(--text-strong-950); }
+
+  .stack { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-tile); }
+  .stack li { display: grid; align-content: start; gap: 12px; padding: var(--pad-tile); border-radius: var(--radius); background: var(--bg-weak-50); }
+  .stack-name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .stack-name strong { font-size: 16px; line-height: 24px; font-weight: 600; }
+  .stack p { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text-sub-600); }
+
+  .faq { max-width: 768px; border-top: var(--line); }
+  .faq details { border-bottom: var(--line); }
+  .faq summary { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px 0; list-style: none; cursor: pointer; font-size: 16px; line-height: 24px; font-weight: 500; color: var(--text-strong-950); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary svg { flex: none; color: var(--text-soft-400); transition: rotate var(--base) var(--ease), color var(--fast) var(--ease); }
+  .faq summary:hover svg { color: var(--text-strong-950); }
+  .faq details[open] summary svg { rotate: 45deg; color: var(--text-strong-950); }
+  .faq summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+  .faq details p { max-width: 640px; padding: 0 44px 20px 0; font-size: var(--fs-small); line-height: 22px; color: var(--text-sub-600); }
+
+  @media (max-width: 767px) { .stack { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,33 @@
+---
+// one easing curve: hover or focus loops a dot along the curve and down the track, click copies
+interface Props {
+  name: string;
+  value: string;
+  bezier?: [number, number, number, number];
+  copy?: string;
+  note?: string;
+}
+const { name, value, bezier, copy = value, note } = Astro.props;
+
+// the curve sits in a 100 × 100 box, y grows downward, overshoot spills out of it
+const d = bezier
+  ? `M0 100 C${bezier[0] * 100} ${100 - bezier[1] * 100} ${bezier[2] * 100} ${100 - bezier[3] * 100} 100 0`
+  : value.startsWith('steps(')
+    ? (() => {
+        const n = Number(value.slice(6).split(',')[0]);
+        return 'M0 100' + Array.from({ length: n }, (_, i) => ` H${((i + 1) / n) * 100} V${100 - ((i + 1) / n) * 100}`).join('');
+      })()
+    : 'M' + value.slice(7, -1).split(',').map(Number).map((y, i, a) => `${(i / (a.length - 1)) * 100} ${100 - y * 100}`).join(' L');
+---
+<button type="button" class="tile mo-ease" data-ease-tile data-copy-value={copy} data-copy-what={name} style={`--e: ${value}`} aria-label={`${name}, copy ${copy}`}>
+  <span class="tile-top"><span class="label">{name}</span>{note && <span class="label muted">{note}</span>}</span>
+  <span class="mo-plot" aria-hidden="true">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path class="grid" d="M0 0H100V100H0Z" />
+      <path class="line" d={d} />
+    </svg>
+    <span class="mo-px"><span class="mo-py"><i></i></span></span>
+  </span>
+  <span class="mo-track" aria-hidden="true"><span class="mo-run"><i></i></span></span>
+  <span class="mo-val">{bezier && !value.startsWith('cubic') && value !== 'linear' ? `cubic-bezier(${bezier.join(', ')})` : value.startsWith('linear(') ? 'linear(…)' : value}</span>
+</button>

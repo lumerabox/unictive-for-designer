@@ -1,0 +1,49 @@
+---
+// reveal and text reveal playground: options on top, a live demo that replays on every change, copy html
+import PgSelect from '../choice/PgSelect.astro';
+import Btn from '../Btn.astro';
+import { easings, durations, blockPresets, imagePresets, textPresets } from '../../data/motion';
+
+interface Props {
+  kind: 'block' | 'text';
+}
+const { kind } = Astro.props;
+const presets: [string, string][] = kind === 'text'
+  ? textPresets.map(([v, t]) => [v, t])
+  : [...blockPresets.map(([v, t]): [string, string] => [v, t]), ['reveal-clip', 'Image clip'], ['reveal-zoom', 'Image zoom'], ['reveal-curtain', 'Image curtain']];
+const eases: [string, string][] = [['', 'Preset default'], ...easings.map((e): [string, string] => [e.name, e.name])];
+const durs: [string, string][] = [['', 'Preset default'], ...durations.map((d): [string, string] => [d.name, `${d.ms} ms`])];
+const third: [string, string][] = kind === 'text'
+  ? [['', 'Preset default'], ['20ms', '20 ms'], ['30ms', '30 ms'], ['50ms', '50 ms'], ['80ms', '80 ms'], ['120ms', '120 ms']]
+  : [['', 'distance-md'], ['var(--distance-sm)', 'distance-sm'], ['var(--distance-lg)', 'distance-lg']];
+---
+<form class="pg" data-motion-pg data-kind={kind} onsubmit="return false">
+  <div class="fields">
+    <PgSelect name="preset" label="Preset" options={presets} value={kind === 'text' ? 'chars-up' : 'fade-up'} />
+    <PgSelect name="ease" label="Easing" options={eases} />
+    <PgSelect name="duration" label="Duration" options={durs} />
+    {kind === 'text'
+      ? <PgSelect name="stagger" label="Stagger" options={third} />
+      : <PgSelect name="distance" label="Distance" options={third} />}
+  </div>
+  <div class="options">
+    {kind === 'text'
+      ? <label class="text-field mo-input"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4.5V3h10v1.5M8 3v10M6 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><input type="text" name="text" placeholder="Type a heading to preview" aria-label="Preview text" maxlength="80" spellcheck="false" autocomplete="off" /></label>
+      : <>
+          <label class="toggle"><input type="checkbox" name="children" /><span>Stagger children</span></label>
+          <span data-from-opts hidden>
+            {['bottom', 'top', 'left', 'right', 'center'].map((f, i) => <label class="toggle"><input type="radio" name="from" value={f} checked={i === 0} /><span>From {f}</span></label>)}
+          </span>
+        </>}
+  </div>
+  <div class="canvas mo-canvas" data-canvas>
+    <div data-host></div>
+    <div class="canvas-tools"><Btn size="Small" variant="Secondary" type="Neutral" label="Replay" data-pg-replay /></div>
+  </div>
+  <div class="pg-foot">
+    <p>Every change replays the demo, so does pointing at it. Copy HTML gives the markup with your overrides as CSS variables</p>
+    <div class="pg-actions">
+      <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-motion-copy />
+    </div>
+  </div>
+</form>

@@ -1,0 +1,61 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+
+const key = 'sdgeykOfCNdBzYR9Dr8KAg';
+const url = `https://www.figma.com/design/${key}/Unictive-Design-System-1.0?node-id=0-1`;
+---
+<DocPage
+  title="Figma File"
+  section="Assets"
+  description="Open the Unictive Design System 1.0 Figma file, the library every component on this site comes from."
+  intro="The Figma file behind the Unictive DS library. Open it to inspect core elements, assets and every base component"
+  meta={[['Version', 'DS 1.0'], ['Components', 25], ['Access', 'View']]}
+>
+  <Section id="cover" label="Cover" title="Unictive Design System 1.0" desc="Opens in the browser, or in Figma Desktop when it is installed">
+    <a class="ff-cover" href={url} target="_blank" rel="noopener" aria-label="Open the file in Figma">
+      <img src="/figma/cover.png" width="1920" height="1080" alt="Cover of the Unictive Design System 1.0 Figma file" />
+      <span class="ff-badge">
+        <svg viewBox="0 0 38 57" aria-hidden="true"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" /><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" /><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" /><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" /><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" /></svg>
+        Figma Design
+      </span>
+    </a>
+    <div class="ff-actions">
+      <Btn as="a" href={url} target="_blank" rel="noopener" label="Open in Figma" rightIcon />
+      <Btn as="a" href={`figma://file/${key}`} variant="Secondary" type="Neutral" label="Open in desktop app" />
+      <Btn variant="Tertiary" type="Neutral" label="Copy link" data-ff-copy={url} />
+    </div>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Figma Library', 'Turn on the library'],
+      ['Avatars', 'Illustrated characters'],
+      ['Brand Logos', 'Company and app logos'],
+      ['Icons', 'The icon set'],
+    ]} />
+  </Section>
+</DocPage>
+
+<style>
+  .ff-cover { position: relative; display: block; margin-top: var(--gap-tile); border-radius: var(--radius); overflow: hidden; background: var(--bg-weak-50); box-shadow: inset 0 0 0 1px var(--stroke-soft-200); }
+  .ff-cover img { display: block; width: 100%; height: auto; transition: scale 400ms var(--ease); }
+  .ff-cover:hover img { scale: 1.02; }
+  .ff-badge { position: absolute; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--bg-white-0); box-shadow: 0 1px 2px rgb(10 13 20 / 0.06), inset 0 0 0 1px var(--stroke-soft-200); font-size: 12px; font-weight: 500; color: var(--text-strong-950); }
+  .ff-badge svg { width: 10px; height: 15px; }
+  .ff-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  @media (max-width: 767px) { .ff-actions > :global(.u-btn) { flex: 1; } }
+  @media (prefers-reduced-motion: reduce) { .ff-cover img { transition: none; } }
+</style>
+
+<script>
+  import { showToast } from '../../scripts/toast';
+  document.querySelectorAll<HTMLElement>('[data-ff-copy]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(b.dataset.ffCopy!);
+      showToast('Link copied');
+    }),
+  );
+</script>

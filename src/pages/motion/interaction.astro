@@ -1,0 +1,121 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import CopyHtml from '../../components/doc/CopyHtml.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+import { interactions, motionSetup } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+type Item = (typeof interactions)[number]['items'][number];
+const icon = {
+  arrow: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.17 10h11.66M10 15.83 15.83 10 10 4.17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  plus: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4.17v11.66M4.17 10h11.66" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  heart: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17s-6.67-4.04-6.67-8.75A3.75 3.75 0 0 1 10 6.04a3.75 3.75 0 0 1 6.67 2.21C16.67 12.96 10 17 10 17Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+};
+// the hook goes in as a class or an attribute; the demo and the copied snippet share it
+const hookAttr = (h: string, extra = '') => (h.startsWith('data-') ? `class="${extra}" ${h}`.replace('class="" ', '') : `class="${[extra, h].filter(Boolean).join(' ')}"`);
+const demo = (it: Item) => {
+  const a = (extra: string) => hookAttr(it.hook, extra);
+  switch (it.demo) {
+    case 'card': return `<div ${a('mo-card mo-card-lg')}><b></b><i></i><i></i></div>`;
+    case 'link': return `<a href="#" ${a('mo-link')}>Read the story</a>`;
+    case 'arrow': return `<a href="#" ${a('mo-link mo-link-icon')}>Learn more ${icon.arrow}</a>`;
+    case 'image': return `<figure ${a('mo-frame')}><div class="m-media mo-img mo-img-2"></div></figure>`;
+    case 'outline': return `<button type="button" ${a('mo-btn mo-btn-outline')}>Hover me</button>`;
+    case 'plus': return `<button type="button" ${a('mo-icon-btn')} aria-label="Add">${icon.plus}</button>`;
+    case 'like': return `<button type="button" ${a('mo-icon-btn mo-like')} aria-pressed="false" aria-label="Like" data-toggle-press>${icon.heart}</button>`;
+    case 'panel': return `<div ${a('mo-panel')}><strong>Move the pointer here</strong><span>The glow follows it</span></div>`;
+    default: return `<button type="button" ${a(it.hook === 'm-press' ? 'mo-btn' : 'mo-btn m-press')}>Get started</button>`;
+  }
+};
+const snippet = (it: Item) => {
+  const a = hookAttr(it.hook);
+  switch (it.demo) {
+    case 'card': return `<div ${a}>…</div>`;
+    case 'link': return `<a href="/story" ${a}>Read the story</a>`;
+    case 'arrow': return `<a href="/more" ${a}>Learn more <svg>…</svg></a>`;
+    case 'image': return `<figure ${a}>\n  <img src="photo.jpg" alt="">\n</figure>`;
+    case 'outline': case 'button': return `<button ${a}>Get started</button>`;
+    case 'plus': return `<button ${a} aria-label="Add"><svg>…</svg></button>`;
+    case 'like': return `<!-- toggle aria-pressed in your click handler -->\n<button ${a} aria-pressed="false" aria-label="Like"><svg>…</svg></button>`;
+    default: return `<div ${a}>…</div>`;
+  }
+};
+const count = interactions.reduce((n, g) => n + g.items.length, 0);
+const varsCss = `[data-motion-magnetic="0.4"]   /* pull, 0.3 by default */
+[data-motion-tilt="12"]        /* max degrees, 8 by default */
+.panel { --motion-glow: rgb(24 104 208 / .2); --motion-glow-size: 320px; }
+.cta { --motion-fill: #0a0d14; --motion-fill-text: #fff; }
+.btn { --motion-ripple: #fff; }`;
+---
+<DocPage
+  title="Interaction"
+  section="Motion"
+  script="motion"
+  description="Hover, press and pointer interactions for Unictive: lift, underline, nudge, zoom, fill, rotate, press, ripple, pop, magnetic, tilt and spotlight."
+  intro="Small responses to the pointer tell people what can be clicked and that it heard them. Hover, press or move over each demo; the copy button gives the markup"
+  meta={[['Effects', count], ['CSS only', interactions.slice(0, 2).reduce((n, g) => n + g.items.filter((i) => i.hook.startsWith('m-')).length, 0)], ['Touch', 'Press and ripple']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+  <Btn slot="action" size="Large" variant="Secondary" type="Neutral" label="Download motion.js" data-dl="/code/motion.js" data-dl-name="motion.js" />
+
+  {interactions.map((g) => (
+    <Section id={g.group.toLowerCase().replace(/ .*/, '')} label={g.group} desc={g.group === 'Hover' ? 'Pure CSS classes. They only run on devices that hover, so touch screens never get stuck in a hover state' : g.group === 'Pointer' ? 'Attributes that motion.js wires up. They follow a mouse or trackpad and switch off for touch and reduced motion' : 'Feedback that works with a finger too'}>
+      <div class="grid3">
+        {g.items.map((it) => (
+          <div class="tile tile-static mo-tile">
+            <span class="tile-top"><span class="label">{it.name}</span><CopyHtml value={snippet(it)} what={`${it.name} HTML`} /></span>
+            <span class="tile-body mo-stage" set:html={demo(it)} />
+            <p class="desc">{it.desc}</p>
+            <p><button type="button" class="token cls" data-token={it.hook}>{it.hook}</button></p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  ))}
+
+  <Section id="code" label="Code" desc="Classes need only motion.css. Ripple, magnetic, tilt and spotlight also need motion.js">
+    <div class="block">
+      <p class="subhead">Install</p>
+      <pre class="code"><code set:html={highlight(motionSetup, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Combine them</p>
+      <pre class="code"><code set:html={highlight(`<a href="/pricing" class="card m-lift">…</a>\n<button class="btn m-press" data-motion-ripple>Start free trial</button>\n<button class="btn m-press" data-motion-magnetic>Book a demo</button>`, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Tuning</p>
+      <pre class="code"><code set:html={highlight(varsCss, 'css')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Press on every button, so taps feel answered', 'Lift, zoom or underline on things that navigate', 'Magnetic, tilt and spotlight on one or two hero elements of a landing page']}
+      avoid={['Hover as the only way to reveal information; touch has no hover', 'Pointer effects in dense product UI like tables and forms', 'Stacking three effects on one element']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Keep hover quick: 300 to 400 ms, and let it leave as fast as it came"
+      dontText="Don’t move things far on hover. A card that jumps 20 px under the pointer is hard to click"
+    >
+      <Fragment slot="do"><span class="mo-card" style="width:96px;translate:0 -4px;box-shadow:0 12px 24px -8px rgb(14 18 27 / .16)"><b style="height:40px"></b><i></i></span></Fragment>
+      <Fragment slot="dont"><span class="mo-card" style="width:96px;translate:0 -20px;scale:1.1;box-shadow:0 24px 40px -8px rgb(14 18 27 / .3)"><b style="height:40px"></b><i></i></span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Easing', 'Curves under the pointer'],
+      ['Duration', 'Why hover stays short'],
+      ['Button', 'Where press lives'],
+      ['Reveal', 'Motion on scroll'],
+    ]} />
+  </Section>
+</DocPage>

@@ -1,38 +1,56 @@
 export const topNav = [
-  { label: 'Foundations', href: '/foundations/color/' },
-  { label: 'Components', href: '/components/button/' },
-  { label: 'Tokens', href: '/tokens/how-tokens-work/' },
+  { label: 'Getting Started', href: '/getting-started/introduction/' },
+  { label: 'Components', href: '/foundations/color/' },
+  { label: 'Motion', href: '/motion/easing/' },
   { label: 'Assets', href: '/assets/avatars/' },
-  { label: "What's new", href: '/whats-new/' },
+  { label: 'Changelog', href: '/changelog/' },
 ];
 
-export const sideNav = [
+// a group sits under the top-nav section of the same name, or the one in section, else Components
+export const sideNav: { group: string; items: string[]; section?: string }[] = [
+  { group: 'Getting Started', items: ['Introduction', 'Installation', 'Claude Code', 'Figma Library', 'Usage'] },
   { group: 'Foundations', items: ['Color', 'Typography', 'Radius & spacing', 'Shadows', 'Icons'] },
+  { group: 'Tokens', items: ['How tokens work', 'All tokens', 'Export'] },
   { group: 'Actions', items: ['Button', 'Icon Button', 'Link Button', 'Compact Button', 'Social Button'] },
   { group: 'Inputs', items: ['Text Input', 'Text Area', 'Dropdown', 'Date Picker', 'File Upload', 'Checkbox', 'Radio Group', 'Switch', 'Rating'] },
   { group: 'Navigation', items: ['Breadcrumbs', 'Tab Menu', 'Pagination', 'Stepper'] },
   { group: 'Feedback', items: ['Alert', 'Banner', 'Badge', 'Progress Bar', 'Tooltip'] },
   { group: 'Overlays', items: ['Modal', 'Popover'] },
-  { group: 'Tokens', items: ['How tokens work', 'All tokens', 'Export'] },
-  { group: 'Assets', items: ['Avatars', 'Brand Logos', 'Country Flags', 'Emoji'] },
-  { group: "What's new", items: ['Changelog'] },
+  { group: 'Timing', items: ['Easing', 'Duration', 'Choreography'], section: 'Motion' },
+  { group: 'Animations', items: ['Reveal', 'Text Reveal', 'Scroll', 'Interaction'], section: 'Motion' },
+  { group: 'Assets', items: ['Figma File', 'Avatars', 'Brand Logos', 'Country Flags', 'File Icons', 'Emoji'] },
+  { group: 'Changelog', items: ['Changelog'] },
 ];
 
 // pages that are live; everything else is listed as coming soon
 export const livePages: Record<string, string> = {
+  Introduction: '/getting-started/introduction/',
+  'Installation': '/getting-started/quick-start/',
+  'Claude Code': '/getting-started/claude/',
+  'Figma Library': '/getting-started/figma-library/',
+  Usage: '/getting-started/usage/',
   Color: '/foundations/color/',
   Typography: '/foundations/typography/',
   'Radius & spacing': '/foundations/radius-and-spacing/',
   Shadows: '/foundations/shadows/',
   Icons: '/foundations/icons/',
-  'How tokens work': '/tokens/how-tokens-work/',
-  'All tokens': '/tokens/all-tokens/',
-  Export: '/tokens/export/',
+  'How tokens work': '/foundations/how-tokens-work/',
+  'All tokens': '/foundations/all-tokens/',
+  Export: '/foundations/export/',
+  'Figma File': '/assets/figma-file/',
   Avatars: '/assets/avatars/',
   'Brand Logos': '/assets/brand-logos/',
   'Country Flags': '/assets/country-flags/',
+  'File Icons': '/assets/file-icons/',
   Emoji: '/assets/emoji/',
-  Changelog: '/whats-new/',
+  Changelog: '/changelog/',
+  Easing: '/motion/easing/',
+  Duration: '/motion/duration/',
+  Choreography: '/motion/choreography/',
+  Reveal: '/motion/reveal/',
+  'Text Reveal': '/motion/text-reveal/',
+  Scroll: '/motion/scroll/',
+  Interaction: '/motion/interaction/',
   Button: '/components/button/',
   'Icon Button': '/components/icon-button/',
   'Link Button': '/components/link-button/',
@@ -59,3 +77,9 @@ export const livePages: Record<string, string> = {
   Modal: '/components/modal/',
   Popover: '/components/popover/',
 };
+
+// foundations pages keep their /foundations/ urls but sit in the Components section
+export const sectionOfPath = (segment: string) => (segment === 'foundations' ? 'components' : segment);
+
+export const sectionOf = (group: string) =>
+  sideNav.find((g) => g.group === group)?.section ?? (topNav.some((n) => n.label === group) ? group : 'Components');

@@ -39,7 +39,7 @@ const brandRows = tokens.filter((x) => x.collection === 'brand').map((x): [strin
 ---
 <DocPage
   title="How tokens work"
-  section="Tokens"
+  section="Components"
   script="tokens"
   description="How the Unictive design tokens are built: primitive values, a theme layer for Gray, Slate and brand, and the semantic names to design with."
   intro="Every value has a name. Primitives hold the values, the theme layer picks Gray or Slate and a brand, and semantic tokens say where each one goes"
@@ -80,7 +80,7 @@ const brandRows = tokens.filter((x) => x.collection === 'brand').map((x): [strin
       <div class="tr th" role="row">{['Collection', 'Layer', 'Holds', 'Modes', 'Tokens'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
       {collections.map((c) => (
         <div class="tr" role="row">
-          <span role="cell"><a class="token" href={`/tokens/all-tokens/?c=${c.key}`}>{c.name}</a></span>
+          <span role="cell"><a class="token" href={`/foundations/all-tokens/?c=${c.key}`}>{c.name}</a></span>
           <span role="cell">{c.layer}</span>
           <span role="cell" class="muted-cell">{c.holds}</span>
           <span role="cell">{c.modes.join(', ')}</span>

@@ -6,6 +6,9 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { paginationCode as code } from '../../lib/nav-code';
 import '../../styles/u-pagination.css';
 import { types, sizes, typeName, metrics, render, part, chip, variantCount, partCount } from '../../data/pagination';
 
@@ -47,6 +50,7 @@ const specs: [string, string, string][] = [
   intro="Pagination splits a long list or table into pages, and shows people where they are and how much is left"
   meta={[['Variants', variantCount], ['Parts', partCount], ['Sizes', sizes.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then page through 120 results or change the rows per page">
     <form class="pg" data-playground data-kind="pagination" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -57,6 +61,13 @@ const specs: [string, string, string][] = [
       <div class="canvas" data-canvas>
         <div class="canvas-fill" data-host><Fragment set:html={render({ size: 'Medium', live: true })} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ type: '01', size: 'Medium' })} · Page 1 of 12</p>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -115,6 +126,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Pagination tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Pagination" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

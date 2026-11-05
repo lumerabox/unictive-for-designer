@@ -1,0 +1,87 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import SpecsTable from '../../components/doc/SpecsTable.astro';
+import Usage from '../../components/doc/Usage.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import { highlight } from '../../lib/highlight';
+import { durations } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const tokenCss = `:root {
+${durations.map((d) => `  --${d.name}: ${d.ms}ms;`).join('\n')}
+}`;
+const sizes = [
+  ['Icon, button, chip, tooltip', '24 – 40 px', '300 ms'],
+  ['Menu, popover, toast', '200 – 400 px', '400 ms'],
+  ['Drawer, sheet, modal', 'Half the screen', '500 ms'],
+  ['Large move, card stagger', 'A third of the screen', '700 ms'],
+  ['Section reveal, hero', 'Full width', '900 – 1400 ms'],
+];
+---
+<DocPage
+  title="Duration"
+  section="Motion"
+  script="motion"
+  description="Unictive duration tokens from 300 ms to 1400 ms, with rules for matching duration to size, distance and whether people wait on it."
+  intro="Duration is how long a change takes. Small and frequent things move fast, large and rare things can take their time. Hover a row to feel it"
+  meta={[['Tokens', durations.length], ['Default', '300 ms'], ['Minimum', '300 ms']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+
+  <Section id="scale" label="Scale" desc="Hover a row to play it, click to copy the token. 300 ms is the default and nothing goes shorter">
+    <div class="mo-durs-head">
+      <p class="desc">Or race them all side by side</p>
+      <Btn size="Small" variant="Secondary" type="Neutral" label="Play all" data-play-durs />
+    </div>
+    <div class="mo-durs">
+      {durations.map((d) => (
+        <button type="button" class="mo-dur" data-dur-row data-copy-value={`var(--${d.name})`} style={`--t: ${d.ms}ms`}>
+          <span><strong>{d.name}</strong><br /><span class="muted">{d.use}</span></span>
+          <span class="muted">{d.ms} ms</span>
+          <span class="mo-track" aria-hidden="true"><span class="mo-run"><i></i></span></span>
+        </button>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="size" label="Size and distance" desc="The bigger the thing and the further it travels, the longer it may take">
+    <div class="table" role="table" aria-label="Size">
+      <div class="tr th" role="row">{['Element', 'Size', 'Duration'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {sizes.map(([a, b, c]) => <div class="tr" role="row"><span role="cell">{a}</span><span role="cell" class="muted">{b}</span><span role="cell">{c}</span></div>)}
+    </div>
+  </Section>
+
+  <Section id="rules" label="Rules" desc="Three rules cover most decisions">
+    <SpecsTable
+      label="Rules"
+      head={['Rule', 'Token', 'Why']}
+      rows={[
+        ['Start at 300 ms', 'duration-base', 'The default for anything small. Shorter than that reads as a jump, not a motion'],
+        ['Exits are shorter than enters', 'duration-base', 'What leaves should get out of the way. Enter at 400, leave at 300'],
+        ['Nobody waits on decoration', 'duration-slow', 'Anything blocking a task stays at 500 ms or less'],
+      ]}
+    />
+  </Section>
+
+  <Section id="code" label="Code" desc="The duration tokens in motion.css">
+    <pre class="code"><code set:html={highlight(tokenCss, 'css')} /></pre>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to go long">
+    <Usage
+      use={['A hero or section reveal on a landing page, played once', 'Page and shared-element transitions', 'A curtain or image reveal that tells a story']}
+      avoid={['Menus, tooltips and anything opened with the keyboard', 'Repeated feedback such as hover and press', 'Loading states; show progress instead of slowing things down']}
+    />
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Easing', 'The shape of the motion'],
+      ['Choreography', 'Stagger and order'],
+      ['Reveal', 'Long durations on scroll'],
+      ['Interaction', 'Short durations under the pointer'],
+    ]} />
+  </Section>
+</DocPage>

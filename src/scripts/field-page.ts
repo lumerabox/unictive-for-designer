@@ -3,6 +3,10 @@ import { showsValue, slug, statesFor, metrics as inputMetrics, type State, type 
 import { metrics as areaMetrics, maxLength } from '../data/text-area';
 import { writeClipboard, writeClipboardLater } from './figma-copy';
 import { showToast, pasteKey } from './toast';
+import { copy } from './foundations-page';
+import { codeExamples } from './code-examples';
+import { textAreaHtml, type AreaSpec } from '../lib/text-area-code';
+import { textInputHtml, type InputSpec } from '../lib/text-input-code';
 
 export default function init(signal: AbortSignal) {
   const form = document.querySelector<HTMLFormElement>('[data-playground]')!;
@@ -149,6 +153,12 @@ export default function init(signal: AbortSignal) {
       render();
     }, 2200);
   }
+
+  // html for the playground variant
+  document.querySelector('[data-pg-copy]')?.addEventListener('click', () =>
+    isArea ? copy(textAreaHtml(playgroundSpec() as AreaSpec), 'text area HTML') : copy(textInputHtml(playgroundSpec() as InputSpec), 'text input HTML'),
+  );
+  codeExamples();
 
   document.querySelectorAll<HTMLElement>('[data-copy-current]').forEach((b) =>
     b.addEventListener('click', async () => {

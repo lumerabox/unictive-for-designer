@@ -1,0 +1,157 @@
+---
+import DocPage from '../../layouts/DocPage.astro';
+import Section from '../../components/doc/Section.astro';
+import CopyHtml from '../../components/doc/CopyHtml.astro';
+import Usage from '../../components/doc/Usage.astro';
+import DoDont from '../../components/doc/DoDont.astro';
+import Related from '../../components/doc/Related.astro';
+import Btn from '../../components/Btn.astro';
+import MotionPlayground from '../../components/foundations/MotionPlayground.astro';
+import { highlight } from '../../lib/highlight';
+import { blockPresets, imagePresets, attributes, api, motionSetup } from '../../data/motion';
+import '../../styles/u-motion.css';
+
+const card = '<span class="mo-card"><b></b><i></i><i></i></span>';
+const replay = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.67 8a5.33 5.33 0 1 0 1.56-3.77M2.67 2.67v2.66h2.66" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const stagDemos: [string, string, string, string][] = [
+  ['Cards', 'fade-up · stagger-item. Features and pricing cards', `<ul class="mo-row" data-motion="fade-up" data-motion-children>${`<li>${card}</li>`.repeat(3)}</ul>`, `<ul data-motion="fade-up" data-motion-children>\n${'  <li>…</li>\n'.repeat(3)}</ul>`],
+  ['List', 'fade-left · stagger-list. Menu rows and search results', `<ul class="mo-list" data-motion="fade-left" data-motion-children style="--motion-stagger: var(--stagger-list); --motion-distance: var(--distance-sm)">${'<li><b></b><i></i></li>'.repeat(5)}</ul>`, `<ul data-motion="fade-left" data-motion-children style="--motion-stagger: var(--stagger-list); --motion-distance: var(--distance-sm)">\n${'  <li>…</li>\n'.repeat(5)}</ul>`],
+  ['Gallery', 'scale-in · 60 ms. A grid of images or logos', `<div class="mo-gallery" data-motion="scale-in" data-motion-children style="--motion-stagger: 60ms">${[1, 2, 3, 2, 3, 1].map((n) => `<div class="mo-img mo-img-${n}"></div>`).join('')}</div>`, `<div data-motion="scale-in" data-motion-children style="--motion-stagger: 60ms">\n${'  <img src="logo.svg" alt="">\n'.repeat(6)}</div>`],
+];
+const examples = {
+  basic: `<section>
+  <h2 data-motion="fade-up">Built for teams</h2>
+  <p data-motion="fade-up" style="--motion-delay: 80ms">Plan, ship and measure in one place.</p>
+</section>`,
+  children: `<ul class="features" data-motion="fade-up" data-motion-children>
+  <li>Fast</li>
+  <li>Secure</li>
+  <li>Simple</li>
+</ul>`,
+  image: `<figure data-motion="reveal-clip" data-motion-from="left">
+  <img src="hero.jpg" alt="Team at work">
+</figure>`,
+};
+---
+<DocPage
+  title="Reveal"
+  section="Motion"
+  script="motion"
+  description="Scroll reveal animations for Unictive: fade up, scale, blur, staggered children, clip, zoom and curtain image reveals."
+  intro="Reveals bring content in as it scrolls into view. Add one attribute, motion.js plays it once, and nothing stays hidden if the script never loads"
+  meta={[['Presets', blockPresets.length + 3], ['Dependencies', 'None'], ['motion.js', '≈ 3 kB gzip']]}
+>
+  <link rel="stylesheet" href="/code/motion.css" />
+  <Btn slot="action" size="Large" variant="Secondary" type="Neutral" label="Download motion.js" data-dl="/code/motion.js" data-dl-name="motion.js" />
+
+  <Section id="playground" label="Playground" desc="Pick a preset, then tune the curve, duration and distance">
+    <MotionPlayground kind="block" />
+  </Section>
+
+  <Section id="entrance" label="Entrance" desc="Each tile plays when it scrolls in. Hover a tile to play it again">
+    <div class="grid3">
+      {blockPresets.map(([v, t, d]) => (
+        <div class="tile tile-static mo-tile">
+          <span class="tile-top"><span class="label">{t}</span><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${t}`} set:html={replay} /><CopyHtml value={`<div data-motion="${v}">…</div>`} what={`${t} HTML`} /></span></span>
+          <span class="tile-body"><span data-motion={v} set:html={card} /></span>
+          <p class="desc">{d}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="stagger" label="Stagger" desc="data-motion-children moves the children one after another, 100 ms apart by default. Pick the preset and stagger by what the group is">
+    <div class="grid3">
+      {stagDemos.map(([t, d, html, snip]) => (
+        <div class="tile tile-static mo-tile">
+          <span class="tile-top"><span class="label">{t}</span><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${t}`} set:html={replay} /><CopyHtml value={snip} what={`${t} HTML`} /></span></span>
+          <span class="tile-body" set:html={html} />
+          <p class="desc">{d}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="image" label="Image reveal" desc="Put the image inside a frame and reveal the frame. The image settles from a slight zoom while the frame opens">
+    <div class="grid3">
+      {imagePresets.map(([v, t, d, from], i) => (
+        <div class="tile tile-static mo-tile">
+          <span class="tile-top"><span class="label">{t}</span><span class="mo-tile-acts"><button type="button" class="mo-replay" data-replay aria-label={`Replay ${t}`} set:html={replay} /><CopyHtml value={`<figure data-motion="${v}"${from ? ` data-motion-from="${from}"` : ''}>\n  <img src="photo.jpg" alt="">\n</figure>`} what={`${t} HTML`} /></span></span>
+          <span class="tile-body"><figure class="mo-frame" data-motion={v} data-motion-from={from}><div class={`m-media mo-img mo-img-${(i % 3) + 1}`}></div></figure></span>
+          <p class="desc">{d}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="code" label="Code" desc="Load motion.css and motion.js once, then mark what should reveal">
+    <div class="block">
+      <p class="subhead">Install</p>
+      <pre class="code"><code set:html={highlight(motionSetup, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Fade up with a delay</p>
+      <pre class="code"><code set:html={highlight(examples.basic, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Staggered children</p>
+      <pre class="code"><code set:html={highlight(examples.children, 'html')} /></pre>
+    </div>
+    <div class="block">
+      <p class="subhead">Image reveal</p>
+      <pre class="code"><code set:html={highlight(examples.image, 'html')} /></pre>
+    </div>
+  </Section>
+
+  <Section id="attributes" label="Attributes" desc="Attributes switch a reveal on, CSS variables tune it per element">
+    <div class="table table-classes" role="table" aria-label="Attributes">
+      <div class="tr th" role="row">{['Attribute', 'Value', 'Description'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {attributes.map(([n, t, d]) => (
+        <div class="tr" role="row">
+          <span role="cell"><button type="button" class="token cls" data-token={n}>{n}</button></span>
+          <span role="cell" class="muted">{t}</span>
+          <span role="cell">{d}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="api" label="JavaScript" desc="motion.js sets window.UnictiveMotion. You only need it for content added after load or for custom triggers">
+    <div class="table table-classes" role="table" aria-label="JavaScript API">
+      <div class="tr th" role="row">{['Call', 'Type', 'Description'].map((h) => <span class="label muted" role="columnheader">{h}</span>)}</div>
+      {api.map(([n, t, d]) => (
+        <div class="tr" role="row">
+          <span role="cell"><code>{n}</code></span>
+          <span role="cell" class="muted">{t}</span>
+          <span role="cell">{d}</span>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="usage" label="Usage" title="When to use">
+    <Usage
+      use={['Landing and marketing pages, as sections scroll in', 'The first view of a hero, once', 'Groups of cards or features, with a short stagger']}
+      avoid={['Product screens people work in every day', 'Content above the fold that people need right away, like a form', 'Every element on the page. Reveal the section, not each line in it']}
+    />
+  </Section>
+
+  <Section id="guidance" label="Guidance" title="Do and don’t">
+    <DoDont
+      doText="Reveal one group at a time with a short stagger, so the eye has one place to go"
+      dontText="Don’t send things in from every direction. Pick one, usually up, and keep it for the whole page"
+    >
+      <Fragment slot="do"><span class="mo-row" style="flex-wrap:nowrap">{[0, 1, 2].map((i) => <span class="mo-card" style={`width:64px;padding:8px;translate:0 ${i * 6}px;opacity:${1 - i * 0.3}`}><b style="height:28px"></b><i></i></span>)}</span></Fragment>
+      <Fragment slot="dont"><span class="mo-row" style="flex-wrap:nowrap">{['-10px 8px', '0 -12px', '10px 6px'].map((t) => <span class="mo-card" style={`width:64px;padding:8px;translate:${t};opacity:.7`}><b style="height:28px"></b><i></i></span>)}</span></Fragment>
+    </DoDont>
+  </Section>
+
+  <Section id="related" label="Related" title="Related">
+    <Related items={[
+      ['Text Reveal', 'Lines, words and characters'],
+      ['Easing', 'Curves and timing'],
+      ['Scroll', 'Tied to the scroll position'],
+      ['Interaction', 'Hover and press'],
+    ]} />
+  </Section>
+</DocPage>

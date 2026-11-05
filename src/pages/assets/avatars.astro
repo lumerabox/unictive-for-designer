@@ -3,10 +3,17 @@ import DocPage from '../../layouts/DocPage.astro';
 import Section from '../../components/doc/Section.astro';
 import Usage from '../../components/doc/Usage.astro';
 import Related from '../../components/doc/Related.astro';
+import TailwindSection from '../../components/doc/TailwindSection.astro';
 import AssetLibrary from '../../components/AssetLibrary.astro';
 import data from '../../data/assets.json';
 
 const count = data.filter((g) => g.kind === 'avatars').reduce((n, g) => n + g.items.length, 0);
+const twSizes: [string, string, string][] = [['spacing-24', 'size-24', '24 px'], ['spacing-32', 'size-32', '32 px'], ['spacing-40', 'size-40', '40 px'], ['spacing-48', 'size-48', '48 px'], ['spacing-64', 'size-64', '64 px']];
+const twShape: [string, string, string][] = [['radius-full', 'rounded-full', '999 px']];
+const twExample = `<div class="flex items-center gap-12">
+  <img class="size-40 rounded-full object-cover" src="character-01.png" alt="Character 01" />
+  <span class="text-label-sm text-text-strong-950">Character 01</span>
+</div>`;
 ---
 <DocPage
   title="Avatars"
@@ -19,6 +26,15 @@ const count = data.filter((g) => g.kind === 'avatars').reduce((n, g) => n + g.it
   <Section id="library" label="Library" desc="Pastes into Figma as a 64 × 64 image. Use the arrow to download the PNG at 2x">
     <AssetLibrary kind="avatars" size={64} paste={64} placeholder="01, background…" />
   </Section>
+
+  <TailwindSection
+    desc="Download the PNG with the arrow, then size it with size- and round it with rounded-full. Click a class to copy it"
+    tables={[
+      { title: 'Size', rows: twSizes },
+      { title: 'Shape', note: 'The characters are already round. Keep rounded-full on so a real photo swapped in later stays round too', rows: twShape },
+    ]}
+    example={twExample}
+  />
 
   <Section id="usage" label="Usage" title="When to use">
     <Usage

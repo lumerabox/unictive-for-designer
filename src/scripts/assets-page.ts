@@ -67,9 +67,10 @@ export default function init(signal: AbortSignal) {
     if (!b) return;
     try {
       // safari keeps the user gesture only when the clipboard write starts synchronously
-      const text = markup(b.dataset.asset!, size);
+      // emoji go out as unicode text, so they paste as an editable text layer
+      const text = b.dataset.text ? Promise.resolve(b.dataset.text) : markup(b.dataset.asset!, size);
       await navigator.clipboard.write([new ClipboardItem({ 'text/plain': text.then((s) => new Blob([s], { type: 'text/plain' })) })]);
-      showToast(`Copied ${b.dataset.label}. Press <kbd>${pasteKey()}</kbd> in Figma`);
+      showToast(`Copied ${b.dataset.label}. Press <kbd>${pasteKey()}</kbd> in Figma${b.dataset.text ? ' or code' : ''}`);
     } catch {
       showToast('Copy failed');
     }

@@ -6,6 +6,9 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import Btn from '../../components/Btn.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { breadcrumbCode as code } from '../../lib/nav-code';
 import '../../styles/u-breadcrumbs.css';
 import { types, counts, render, chip, variantCount, baseCount } from '../../data/breadcrumbs';
 
@@ -40,6 +43,7 @@ const specs: [string, string, string][] = [
   intro="Breadcrumbs show where a page sits in the site and let people jump back to any parent in one click"
   meta={[['Variants', variantCount], ['Base items', baseCount], ['Items', '2–5']]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Pick a variant, then click a parent crumb to go back up the trail">
     <form class="pg" data-playground data-kind="breadcrumbs" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -54,6 +58,13 @@ const specs: [string, string, string][] = [
       <div class="canvas" data-canvas>
         <div class="canvas-fill" data-host><Fragment set:html={render({ count: 4, icon: true, live: true })} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ type: 'Arrow', count: 4, rounded: false })}</p>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -118,6 +129,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Breadcrumbs tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Breadcrumbs" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[

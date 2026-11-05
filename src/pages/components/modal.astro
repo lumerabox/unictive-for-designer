@@ -6,6 +6,8 @@ import Usage from '../../components/doc/Usage.astro';
 import DoDont from '../../components/doc/DoDont.astro';
 import Related from '../../components/doc/Related.astro';
 import PgSelect from '../../components/choice/PgSelect.astro';
+import CodeDocs from '../../components/doc/CodeDocs.astro';
+import { modalCode as code } from '../../lib/overlay-code';
 import Btn from '../../components/Btn.astro';
 import '../../styles/u-feedback.css';
 import '../../styles/u-modal.css';
@@ -50,6 +52,7 @@ const specs: [string, string, string][] = [
   intro="Modals sit on top of the page and ask for one decision or one short task before people carry on"
   meta={[['Variants', variantCount], ['Headers', headers.length], ['Footers', footers.length]]}
 >
+  <Btn slot="action" size="Large" label="Copy" copy="figma" data-copy-current />
   <Section id="playground" label="Playground" desc="Mix a header and a footer, then open it for real. Escape, the overlay or Cancel closes it">
     <form class="pg" data-playground data-kind="modal" onsubmit="return false">
       <div class="fields" data-cols="3">
@@ -65,6 +68,13 @@ const specs: [string, string, string][] = [
         <div class="canvas-fill" data-host><Fragment set:html={render({})} /></div>
         <p class="chip" data-chip aria-live="polite">{chip({ header: 'Default', description: true, align: 'Left', footer: 'Default' })}</p>
         <div class="canvas-tools"><Btn size="Small" label="Open modal" data-open-modal /></div>
+      </div>
+      <div class="pg-foot">
+        <p>Copy to Figma pastes editable auto layout layers, Copy HTML gives the markup for code. Press <kbd>⌘C</kbd> to copy to Figma</p>
+        <div class="pg-actions">
+          <Btn variant="Secondary" type="Neutral" label="Copy" copy="html" data-pg-copy />
+          <Btn label="Copy" copy="figma" data-copy-current />
+        </div>
       </div>
     </form>
   </Section>
@@ -122,6 +132,8 @@ const specs: [string, string, string][] = [
   <Section id="specs" label="Specs" title="Tokens and specs">
     <SpecsTable label="Modal tokens and specs" rows={specs} />
   </Section>
+
+  <CodeDocs name="Modal" classes={code.classes} examples={code.examples} />
 
   <Section id="related" label="Related" title="Related components">
     <Related items={[
